@@ -1,3 +1,7 @@
+---
+title: About
+---
+
 ## Kohei Shinohara / 篠原 航平
 Graduate student at Department of Materials Science and Engineering in Kyoto University, Japan
 
