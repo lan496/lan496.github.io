@@ -1,5 +1,9 @@
-## Kohei Shinohara
+## Kohei Shinohara / 篠原 航平
 Graduate student at Department of Materials Science and Engineering in Kyoto University, Japan
+
+### Education
+- Apr. 2018 -, Department of Materials Science and Engineering, Kyoto University
+- Apr. 2014 - May 2018, Department of Engineering Science, Kyoto University
 
 ### Codes
 - [dsenum](https://github.com/lan496/dsenum): enumerate derivative structures for primitive multilattice
