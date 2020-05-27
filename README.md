@@ -29,3 +29,9 @@ bundle exec jekyll serve
 ```
 
 4. visit `http://localhost:4000` (or `http://*.*.*.*:4000`)
+
+### Update gem
+```
+gem install <gem_name> -v <version>
+bundle update
+```
