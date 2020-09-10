@@ -9,8 +9,8 @@ title: About
 - Apr. 2018 - Mar. 2020, M.Eng., Department of Materials Science and Engineering, Kyoto University
 - Apr. 2014 - Mar. 2018, B.Eng., Department of Engineering Science, Kyoto University
 
-### arXiv
-1. **K. Shinohara**, A. Seko, T. Horiyama, M. Ishihata, J. Honda and I. Tanaka, Derivative structure enumeration using binary decision diagram [[arxiv:2002.12603](https://arxiv.org/abs/2002.12603)]
+### Journal Publications
+1. **K. Shinohara**, A. Seko, T. Horiyama, M. Ishihata, J. Honda and I. Tanaka, Enumeration of nonequivalent substitutional structures using advanced data structure of binary decision diagram, [J. Chem. Phys. 153, 104109 (2020)](Derivative structure enumeration using binary decision diagram) [[arxiv:2002.12603](https://arxiv.org/abs/2002.12603)]
 
 ### Conference
 1. **K. Shinohara**, A. Seko, T. Horiyama, M. Ishihata, J. Honda and I. Tanaka, Accelerated enumeration of derivative structures using zero-suppressed binary decision diagram, APS March Meeting 2020, March, 2020 [[Web](http://meetings.aps.org/Meeting/MAR20/Session/X43.7)]
