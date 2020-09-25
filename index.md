@@ -22,6 +22,9 @@ title: About
 1. ○篠原航平, 未知構造探索を目的とした結晶構造列挙手法の開発, 新学術領域研究 機能コアの材料科学 「第一回若手の会」, 9月, 2019年 [[Web](https://www.core.mp.pse.nagoya-u.ac.jp/topics/post-152/)]
 1. ○篠原航平, 世古敦人, 田中功, Graphillionを利用した結晶構造列挙, 基盤(S) 離散構造処理系プロジェクト 「2019年度 初夏のワークショップ」, 6月, 2019年 [[Web](http://www-erato.ist.hokudai.ac.jp/html/php/sub_html.php?id=53)]
 
+### Fellowship
+1. 2021.04 - 2023.3 [Research Fellowships for Young Scientists (DC2)](https://www.jsps.go.jp/english/e-pd/)
+
 ### Award
 1. 平成30年度吉田卒業研究・論文賞 [[Web](https://www.t.kyoto-u.ac.jp/ja/news/topics/sa/20180625)]
 
