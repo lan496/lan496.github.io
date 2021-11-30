@@ -12,7 +12,7 @@ title: About
 ### arXiv
 
 ### Journal Publications
-2. **K. Shinohara**, A. Seko, T. Horiyama, I. Tanaka, Finding well-optimized special quasirandom structures with decision diagram, (Phys. Rev. Mater. in press) [[arxiv:2107.07683](https://arxiv.org/abs/2107.07683)]
+2. **K. Shinohara**, A. Seko, T. Horiyama, I. Tanaka, Finding well-optimized special quasirandom structures with decision diagram, [Phys. Rev. Mater. 5, 113803 (2021)](https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.5.113803) [[arxiv:2107.07683](https://arxiv.org/abs/2107.07683)]
 1. **K. Shinohara**, A. Seko, T. Horiyama, M. Ishihata, J. Honda and I. Tanaka, Enumeration of nonequivalent substitutional structures using advanced data structure of binary decision diagram, [J. Chem. Phys. 153, 104109 (2020)](https://aip.scitation.org/doi/10.1063/5.0021663) [[arxiv:2002.12603](https://arxiv.org/abs/2002.12603)]
 
 ### Conference
