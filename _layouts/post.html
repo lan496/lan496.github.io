@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang | default: "en-US" }}">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% if page.use_math %}
+    {% include mathjax_support.html %}
+    {% endif %}
+
+    {% seo %}
+    <link rel="stylesheet" href="{{ "/assets/css/style.css?v=" | append: site.github.build_revision | relative_url }}">
+  </head>
+  <body>
+    <div class="wrapper">
+
+      <h1 class="post-title">{{ page.title }}</h1>
+
+      <article class="post-content">
+      {{ content }}
+      </article>
+
+    </div>
+  </body>
+</html>
