@@ -41,3 +41,6 @@ Now, visit `http://localhost:4000` (or `http://*.*.*.*:4000`).
 gem install <gem_name> -v <version>
 bundle update
 ```
+
+## References
+- [MathJax, Jekyll and github pages - Ben Lansdell](https://benlansdell.github.io/computing/mathjax/)
