@@ -13,14 +13,16 @@ Let $\mathbf{A}\_{ \mathrm{rcell} }$ be column-wise lattice vectors (that is, $\
 where $\mathbf{T}$ is a transformation matrix of axes.
 
 ### `FreeSurface.__init__`
+
 To enumerate all terminations, we first get unique coordinates of `rcell` normal to `hkl` axis.
 Then, we only need to consider middle plane locating at the consecutive unique coordinates, which we refer as `shifts`.
 
 ### `region.Plane.Plane.isclose`
+
 Next, we consider crystal planes passing `shifts`.
-Crystal plane $(\mathbf{n}, \mathbf{s})$ can be specified with normal direction $\mathbf{n}$ and one of passed point $\mathbf{p}$
+Crystal plane $(\mathbf{n}, \mathbf{s})$ can be specified with normal direction $\mathbf{n}$ and one of passed point $\mathbf{s}$
 \begin{equation}
-    (\mathbf{n}, \mathbf{s}) = \left\\{ \mathbf{r} | (\mathbf{r} - \mathbf{p}) \cdot \mathbf{n} > 0 \right\\}.
+    (\mathbf{n}, \mathbf{s}) = \left\\{ \mathbf{r} | (\mathbf{r} - \mathbf{s}) \cdot \mathbf{n} > 0 \right\\}.
 \end{equation}
 Two crystal planes $(\mathbf{n}, \mathbf{s})$ and $(\mathbf{n}', \mathbf{s}')$ are the same if
 \begin{equation}
