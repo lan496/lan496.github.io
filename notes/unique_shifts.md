@@ -47,7 +47,7 @@ Thus, two crystal planes $(\mathbf{n}, \mathbf{s})$ and $(\mathbf{n}', \mathbf{s
 \end{equation}
 and
 \begin{equation}
-    \mathbf{Rs} + \mathbf{v} + \mathbf{T} \mathbf{A}_{\mathrm{ucell}}^{\top} \mathbf{m} = \mathbf{s}',
+    \mathbf{n}' \cdot ( \mathbf{Rs} + \mathbf{v} + \mathbf{T} \mathbf{A}_{\mathrm{ucell}}^{\top} \mathbf{m} - \mathbf{s}') = 0
 \end{equation}
 where $\mathbf{m}$ is `trial_image`, integer vector.
 
