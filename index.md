@@ -32,7 +32,7 @@ title: About
 1. 平成30年度吉田卒業研究・論文賞 [[Web](https://www.t.kyoto-u.ac.jp/ja/news/topics/sa/20180625)]
 
 ### Experiences
-- Preferred Networks, Inc. (Aug. 2021 - Sept. 2021, summer internship)
+- Preferred Networks, Inc. (Aug. 2021 - Sept. 2021, summer internship) [[Blog](https://tech.preferred.jp/en/blog/neural-network-potential-with-charge-transfer/)] [[Blog(Japanese)](https://tech.preferred.jp/ja/blog/neural-network-potential-with-charge-transfer/)] [[Code](https://github.com/pfnet-research/charge_transfer_nnp)]
 - DATAGRID Inc. (July 2018 - Mar. 2020, part time)
 - Amazon Web Services (Aug. 2018, 1 week, summer internship)
 

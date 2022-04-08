@@ -29,8 +29,8 @@ bundle install
 3. Running jekyll site locally
 
 ```shell
-bundle exec jekyll serve
-# bundle exec jekyll serve --host=0.0.0.0
+bundle exec jekyll serve --livereload
+# bundle exec jekyll serve --livereload --host=0.0.0.0
 ```
 
 Now, visit `http://localhost:4000` (or `http://*.*.*.*:4000`).
