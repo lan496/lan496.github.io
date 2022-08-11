@@ -37,16 +37,20 @@ title: About
 - Amazon Web Services (Aug. 2018, 1 week, summer internship)
 
 ### Codes
+- [spgrep](https://github.com/spglib/spgrep): On-the-fly generator of space-group irreducible representations
 - [dsenum](https://github.com/lan496/dsenum): Enumerate derivative structures for primitive multilattice
 - [nvc](https://github.com/lan496/nvc): nglview wrapper for crystal structure
 - [jax-xtal](https://github.com/lan496/jax-xtal): An unofficial jax/haiku implementation of Crystal Graph Convolutional Neural Networks (CGCNN)
 - [hsnf](https://github.com/lan496/hsnf): Compute Hermite normal form and Smith normal form with transformation matrices
+- [pyzdd](https://github.com/lan496/pyzdd): Python wrapper to TdZdd
 - [tensor-factorization-using-auxiliary-information](https://github.com/lan496/tensor-factorization-using-auxiliary-information): A python implementation of Narita, A., Hayashi, K., Tomioka, R., & Kashima, H. (n.d.). Tensor Factorization Using Auxiliary Information, 501–516.
 
 ### OSS contributions
-- Pymatgen [[PRs](https://github.com/materialsproject/pymatgen/pulls?q=is%3Apr+author%3A%40me+is%3Aclosed)]
-- AiiDA-VASP [[PR](https://github.com/aiida-vasp/aiida-vasp/pulls?q=is%3Apr+author%3A%40me+is%3Aclosed)]
-- TensorLy [[PR](https://github.com/tensorly/tensorly/pulls?q=is%3Apr+author%3A%40me+is%3Aclosed)]
+- Spglib [[PRs](https://github.com/spglib/spglib/pulls?q=is%3Apr+author%3Alan496+sort%3Aupdated-desc+is%3Aclosed)] (developer)
+- Pymatgen [[PRs](https://github.com/materialsproject/pymatgen/pulls?q=is%3Apr+author%3Alan496+is%3Aclosed+)] (contributor)
+- AiiDA-VASP [[PRs](https://github.com/aiida-vasp/aiida-vasp/pulls?q=is%3Apr+author%3Alan496+is%3Aclosed+)] (contributor)
+- Atomman[[PRs](https://github.com/lmhale99/atomman/pulls?q=is%3Apr+author%3Alan496+sort%3Aupdated-desc+is%3Aclosed)] (contributor)
+- TensorLy [[PR](https://github.com/tensorly/tensorly/pulls?q=is%3Apr+author%3Alan496+is%3Aclosed+)] (contributor)
 
 ### Contact
 - github: <https://github.com/lan496>
