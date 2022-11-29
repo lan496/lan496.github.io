@@ -10,9 +10,10 @@ title: About
 - Apr. 2014 - Mar. 2018, B.Eng., Department of Engineering Science, Kyoto University
 
 ### arXiv
+1. **K. Shinohara**, A. Togo, and I. Tanaka, Algorithm for deriving magnetic space-group information [[arxiv:2211.15008](https://arxiv.org/abs/2211.15008)]
 
 ### Journal Publications
-2. **K. Shinohara**, A. Seko, T. Horiyama, I. Tanaka, Finding well-optimized special quasirandom structures with decision diagram, [Phys. Rev. Mater. 5, 113803 (2021)](https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.5.113803) [[arxiv:2107.07683](https://arxiv.org/abs/2107.07683)]
+2. **K. Shinohara**, A. Seko, T. Horiyama, and I. Tanaka, Finding well-optimized special quasirandom structures with decision diagram, [Phys. Rev. Mater. 5, 113803 (2021)](https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.5.113803) [[arxiv:2107.07683](https://arxiv.org/abs/2107.07683)]
 1. **K. Shinohara**, A. Seko, T. Horiyama, M. Ishihata, J. Honda and I. Tanaka, Enumeration of nonequivalent substitutional structures using advanced data structure of binary decision diagram, [J. Chem. Phys. 153, 104109 (2020)](https://aip.scitation.org/doi/10.1063/5.0021663) [[arxiv:2002.12603](https://arxiv.org/abs/2002.12603)]
 
 ### Conference
@@ -38,9 +39,12 @@ title: About
 
 ### Codes
 - [spgrep](https://github.com/spglib/spgrep): On-the-fly generator of space-group irreducible representations
+- [spgrep-modulation](https://github.com/phonopy/spgrep-modulation): Collective atomic modulation analysis with irreducible space-group representation
 - [dsenum](https://github.com/lan496/dsenum): Enumerate derivative structures for primitive multilattice
+- [atomman-gb](https://github.com/lan496/atomman-gb): Grain-boundary generator with Atomman
 - [nvc](https://github.com/lan496/nvc): nglview wrapper for crystal structure
 - [jax-xtal](https://github.com/lan496/jax-xtal): An unofficial jax/haiku implementation of Crystal Graph Convolutional Neural Networks (CGCNN)
+- [torch-m3gnet](https://github.com/lan496/torch-m3gnet): PyTorch/PyG implementation of M3GNet
 - [hsnf](https://github.com/lan496/hsnf): Compute Hermite normal form and Smith normal form with transformation matrices
 - [pyzdd](https://github.com/lan496/pyzdd): Python wrapper to TdZdd
 - [tensor-factorization-using-auxiliary-information](https://github.com/lan496/tensor-factorization-using-auxiliary-information): A python implementation of Narita, A., Hayashi, K., Tomioka, R., & Kashima, H. (n.d.). Tensor Factorization Using Auxiliary Information, 501–516.
@@ -53,5 +57,6 @@ title: About
 - TensorLy [[PR](https://github.com/tensorly/tensorly/pulls?q=is%3Apr+author%3Alan496+is%3Aclosed+)] (contributor)
 
 ### Contact
-- github: <https://github.com/lan496>
-- e-mail: shinohara[at]cms.mtl.kyoto-u.ac.jp
+- E-mail: kshinohara0508[at]gmail.com
+- Github: <https://github.com/lan496>
+- Linkedin: <https://www.linkedin.com/in/kohei-shinohara-78ba66168/>
