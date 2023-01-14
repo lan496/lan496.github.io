@@ -9,8 +9,9 @@ title: About
 - Apr. 2018 - Mar. 2020, M.Eng., Department of Materials Science and Engineering, Kyoto University
 - Apr. 2014 - Mar. 2018, B.Eng., Department of Engineering Science, Kyoto University
 
-### arXiv
+### arXiv/submitted
 1. **K. Shinohara**, A. Togo, and I. Tanaka, Algorithm for deriving magnetic space-group information [[arxiv:2211.15008](https://arxiv.org/abs/2211.15008)]
+1. **K. Shinohara**, A. Togo, and I. Tanaka, spgrep: On-the-fly generator of space-group irreducible representations [![status](https://joss.theoj.org/papers/9a9b64fd8961e7d09f21fc85a6a4fb4e/status.svg)](https://joss.theoj.org/papers/9a9b64fd8961e7d09f21fc85a6a4fb4e)
 
 ### Journal Publications
 2. **K. Shinohara**, A. Seko, T. Horiyama, and I. Tanaka, Finding well-optimized special quasirandom structures with decision diagram, [Phys. Rev. Mater. 5, 113803 (2021)](https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.5.113803) [[arxiv:2107.07683](https://arxiv.org/abs/2107.07683)]
