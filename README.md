@@ -2,11 +2,10 @@
 
 0. Installing Ruby
 
-https://jekyllrb.com/docs/installation/macos/
 ```shell
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-brew install ruby@2.7
-echo 'export PATH="/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/2.7.0/bin:$PATH"' >> ~/.zshrc
+brew install rbenv ruby-build
+rbenv install 3.2.2
+rbenv global 3.2.2
 echo $SHELL
 which ruby
 ruby -v

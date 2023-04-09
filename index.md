@@ -4,8 +4,11 @@ title: About
 
 ## Kohei Shinohara / 篠原 航平
 
+### Work Experience
+- Apr. 2023 - Present, Researcher, Preferred Networks, Inc.
+
 ### Education
-- Apr. 2020 - , in doctoral course, Department of Materials Science and Engineering, Kyoto University
+- Apr. 2020 - Mar. 2023, Ph.D., Department of Materials Science and Engineering, Kyoto University
 - Apr. 2018 - Mar. 2020, M.Eng., Department of Materials Science and Engineering, Kyoto University
 - Apr. 2014 - Mar. 2018, B.Eng., Department of Engineering Science, Kyoto University
 
@@ -38,14 +41,21 @@ title: About
 - DATAGRID Inc. (July 2018 - Mar. 2020, part time)
 - Amazon Web Services (Aug. 2018, 1 week, summer internship)
 
-### Codes
+### Projects and Codes
+
+#### Crystal symmetry
+- [crystal-symmetry-primer](https://github.com/lan496/crystal-symmetry-primer): Lecture note for crystal symmetry and space group
 - [spgrep](https://github.com/spglib/spgrep): On-the-fly generator of space-group irreducible representations
 - [spgrep-modulation](https://github.com/phonopy/spgrep-modulation): Collective atomic modulation analysis with irreducible space-group representation
+
+#### Atomistic modeling
 - [dsenum](https://github.com/lan496/dsenum): Enumerate derivative structures for primitive multilattice
 - [atomman-gb](https://github.com/lan496/atomman-gb): Grain-boundary generator with Atomman
 - [nvc](https://github.com/lan496/nvc): nglview wrapper for crystal structure
 - [jax-xtal](https://github.com/lan496/jax-xtal): An unofficial jax/haiku implementation of Crystal Graph Convolutional Neural Networks (CGCNN)
 - [torch-m3gnet](https://github.com/lan496/torch-m3gnet): PyTorch/PyG implementation of M3GNet
+
+#### Others
 - [hsnf](https://github.com/lan496/hsnf): Compute Hermite normal form and Smith normal form with transformation matrices
 - [pyzdd](https://github.com/lan496/pyzdd): Python wrapper to TdZdd
 - [tensor-factorization-using-auxiliary-information](https://github.com/lan496/tensor-factorization-using-auxiliary-information): A python implementation of Narita, A., Hayashi, K., Tomioka, R., & Kashima, H. (n.d.). Tensor Factorization Using Auxiliary Information, 501–516.
