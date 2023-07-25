@@ -14,6 +14,9 @@ title: About
 
 ### arXiv/submitted
 
+1. **K. Shinohara**, A. Togo, H. Watanabe, T. Nomoto, I. Tanaka, and R. Arita, Algorithm for spin symmetry operation search [[arxiv:2307.12228]](https://arxiv.org/abs/2307.12228)
+1. H. Watanabe, **K. Shinohara**, T. Nomoto, A. Togo, and R. Arita, Symmetry Analysis with Spin Crystallographic Groups: Disentangling Spin-Orbit-Free Effects in Emergent Electromagnetism, [[arxiv:2307.11560]](https://arxiv.org/abs/2307.11560)
+
 ### Journal Publications
 
 1. **K. Shinohara**, A. Togo, and I. Tanaka, Algorithms for magnetic symmetry operation search and identification of magnetic space group from magnetic crystal structure, Acta Cryst. A (to be published)[[arxiv:2211.15008](https://arxiv.org/abs/2211.15008)]
