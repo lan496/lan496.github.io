@@ -1,6 +1,6 @@
 ---
 title: "Listing nonequivalent terminations of free surfaces"
-layout: post
+layout: posts
 use_math: true
 ---
 

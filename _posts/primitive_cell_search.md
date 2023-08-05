@@ -1,6 +1,6 @@
 ---
 title: "Primitive cell search problem"
-layout: post
+layout: posts
 use_math: true
 ---
 

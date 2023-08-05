@@ -21,7 +21,6 @@ gem install --user-install bundler jekyll
 2. Installing dependencies
 
 ```shell
-# bundle add webrick
 bundle install
 ```
 
@@ -43,3 +42,9 @@ bundle update
 
 ## References
 - [MathJax, Jekyll and github pages - Ben Lansdell](https://benlansdell.github.io/computing/mathjax/)
+
+## License
+
+This repository includes the following softwares
+- [minimal-mistakes](https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE)
+- [academicons](https://github.com/jpswalsh/academicons)
