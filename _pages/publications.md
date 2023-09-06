@@ -11,7 +11,7 @@ permalink: /publications/
 
 ## Journal Publications
 
-1. **K. Shinohara**, A. Togo, and I. Tanaka, Algorithms for magnetic symmetry operation search and identification of magnetic space group from magnetic crystal structure, Acta Cryst. A (to be published)[[arxiv:2211.15008](https://arxiv.org/abs/2211.15008)]
+1. **K. Shinohara**, A. Togo, and I. Tanaka, Algorithms for magnetic symmetry operation search and identification of magnetic space group from magnetic crystal structure, [Acta Cryst. A 79, 390-398 (2023)](http://scripts.iucr.org/cgi-bin/paper?ib5114) [[arxiv:2211.15008](https://arxiv.org/abs/2211.15008)]
 1. **K. Shinohara**, A. Togo, and I. Tanaka, spgrep: On-the-fly generator of space-group irreducible representations, [J. Open Source Softw., 8(85), 5269 (2023)](https://joss.theoj.org/papers/10.21105/joss.05269)
 1. **K. Shinohara**, A. Seko, T. Horiyama, and I. Tanaka, Finding well-optimized special quasirandom structures with decision diagram, [Phys. Rev. Mater. 5, 113803 (2021)](https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.5.113803) [[arxiv:2107.07683](https://arxiv.org/abs/2107.07683)]
 1. **K. Shinohara**, A. Seko, T. Horiyama, M. Ishihata, J. Honda and I. Tanaka, Enumeration of nonequivalent substitutional structures using advanced data structure of binary decision diagram, [J. Chem. Phys. 153, 104109 (2020)](https://aip.scitation.org/doi/10.1063/5.0021663) [[arxiv:2002.12603](https://arxiv.org/abs/2002.12603)]
