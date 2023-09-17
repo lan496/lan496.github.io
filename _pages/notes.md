@@ -1,6 +1,7 @@
 ---
-title: "Posts by Year"
-layout: archive
+title: "Notes"
+layout: single 
 permalink: /notes/
-author_profile: true
 ---
+
+[Cell gradient](cell_grad.pdf)
