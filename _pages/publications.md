@@ -6,6 +6,7 @@ permalink: /publications/
 
 ## arXiv/submitted
 
+1. J. Fu, M. Kuisma, A. H. Larsen, **K. Shinohara**, A. Togo, and K. S. Thygesen, Layer group classification of two-dimensional materials, [[arxiv:2401.16705]](https://arxiv.org/abs/2401.16705)
 1. H. Watanabe, **K. Shinohara**, T. Nomoto, A. Togo, and R. Arita, Symmetry Analysis with Spin Crystallographic Groups: Disentangling Spin-Orbit-Free Effects in Emergent Electromagnetism, [[arxiv:2307.11560]](https://arxiv.org/abs/2307.11560)
 
 ## Journal Publications
