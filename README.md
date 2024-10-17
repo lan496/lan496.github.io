@@ -6,7 +6,7 @@
 brew install rbenv ruby-build
 rbenv install 3.2.2
 rbenv global 3.2.2
-echo $SHELL
+exec $SHELL
 which ruby
 ruby -v
 ```

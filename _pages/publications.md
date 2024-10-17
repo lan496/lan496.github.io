@@ -6,10 +6,9 @@ permalink: /publications/
 
 ## arXiv/submitted
 
-1. A. Togo, **K. Shinohara**, and I. Tanaka, Spglib: a software library for crystal symmetry search [[arxiv:1808.01590]](https://arxiv.org/abs/1808.01590)
-
 ## Journal Publications
 
+1. A. Togo, **K. Shinohara**, and I. Tanaka, Spglib: a software library for crystal symmetry search, [STAM-M 4, 1, 2384822 (2024)](https://www.tandfonline.com/doi/full/10.1080/27660400.2024.2384822) [[arxiv:1808.01590]](https://arxiv.org/abs/1808.01590)
 1. J. Fu, M. Kuisma, A. H. Larsen, **K. Shinohara**, A. Togo, and K. S. Thygesen, Symmetry classification of 2D materials: layer groups versus space groups, [2D Mater. 11, 3, 035009 (2024)](https://iopscience.iop.org/article/10.1088/2053-1583/ad3e0c) [[arxiv:2401.16705]](https://arxiv.org/abs/2401.16705)
 1. H. Watanabe, **K. Shinohara**, T. Nomoto, A. Togo, and R. Arita, Symmetry Analysis with Spin Crystallographic Groups: Disentangling Spin-Orbit-Free Effects in Emergent Electromagnetism, [Phys. Rev. B 109, 094438 (2024)](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.109.094438) [[arxiv:2307.11560]](https://arxiv.org/abs/2307.11560)
 1. **K. Shinohara**, A. Togo, H. Watanabe, T. Nomoto, I. Tanaka, and R. Arita, Algorithm for spin symmetry operation search, [Acta Cryst. A 80, 1, 94-103 (2024)](https://scripts.iucr.org/cgi-bin/paper?S2053273323009257) [[arxiv:2307.12228]](https://arxiv.org/abs/2307.12228)
