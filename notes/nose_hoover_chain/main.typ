@@ -12,8 +12,8 @@
 #set math.equation(numbering: "(1)")
 
 #set document(
-  title: "Free energy calculation",
-  author: "Kohei Shinohara (@kshinohara)",
+  title: "The canonical and isobaric ensembles via molecular dynamics",
+  author: "Kohei Shinohara (@lan496)",
 )
 
 #outline()
@@ -77,7 +77,7 @@ $
   Q_j &= k T tau^2 quad (j = 2, dots, M).
 $
 
-Nosè-Hoover chain equations converse
+Nosè-Hoover chain equations conserves
 $
   cal(H)' = cal(H)(r^N, p^N) + sum_(j=1)^M frac( p_(eta_j)^2, 2 Q_j ) + d N k T eta_1 + k T sum_(j=2)^M eta_j.
 $
@@ -182,8 +182,17 @@ $
 where
 $
   G'_1 &:= frac(p_epsilon^2, W) - k T \
-  G'_j &:= frac(p_(xi_(j-1))^2, Q'_(j-1)) - k T quad (j = 2, dots, M) \
+  G'_j &:= frac(p_(xi_(j-1))^2, Q'_(j-1)) - k T quad (j = 2, dots, M).
 $
+
+Ref.~#cite(label("10.1063/1.467468")) suggests to set
+$
+  W  &= (N_f + d) k T tau^2 \
+  Q'_1 &= d^2 k T tau^2 \
+  Q'_j &= k T tau^2 quad (j = 2, dots, M),
+$
+where $tau$ is a characteristic time scale for barostat.
+
 
 The conserved energy
 $
@@ -279,6 +288,7 @@ $
   Q'_j &= k T tau^2 quad (j = 2, dots, M),
 $
 where $tau$ is a characteristic time scale for barostat.
+$d^2$ in $Q'_1$ should be substituted with the degree of freedoms in basis vectors.
 
 == Integrating the MTK equations
 
