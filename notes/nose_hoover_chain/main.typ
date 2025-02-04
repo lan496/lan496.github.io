@@ -166,6 +166,8 @@ $
 
 === Isotropic volume fluctuations
 
+==== MTK equations for isotropic volume fluctuations
+
 MTK equations:
 $
   dot(bold(r))_i &= frac( bold(p)_i, m_i ) + frac(p_epsilon, W) bold(r)_i \
@@ -200,6 +202,8 @@ $
     + sum_(j=1)^M ( frac(p_(eta_j)^2, 2 Q_j) + frac(p_(xi_j)^2, 2 Q'_j) + k T xi_j )
     + N_f k T eta_1 + k T sum_(j=2)^M eta_j
 $
+
+==== Integrating the MTK equations for isotropic volume fluctuations
 
 $
   i L               &:= i L_1 + i L_2 + i L_(epsilon, 1) + i L_(epsilon, 2) + i L_("NHC-baro") + i L_("NHC-thermo") \
@@ -250,6 +254,8 @@ $
 
 === Anisotropic cell fluctuations
 
+==== MTK equations for anisotropic cell fluctuations
+
 MTK equations:
 $
   dot(bold(r))_i &= frac( bold(p)_i, m_i ) + frac(bold("p ")_g, W_g) bold(r)_i \
@@ -290,7 +296,7 @@ $
 where $tau$ is a characteristic time scale for barostat.
 $d^2$ in $Q'_1$ should be substituted with the degree of freedoms in basis vectors.
 
-== Integrating the MTK equations
+==== Integrating the MTK equations for anisotropic cell fluctuations
 
 Ref.~#cite(label("Tuckerman_2006"))
 
@@ -365,7 +371,7 @@ $
       &times exp( frac(delta_alpha, 2) G'_M pdv(, p_(xi_M)) )
 $
 
-=== Actions of $e^(i L_1 Delta t)$ and $e^(i L_2 frac(Delta t, 2))$
+==== Actions of $e^(i L_1 Delta t)$ and $e^(i L_2 frac(Delta t, 2))$
 
 $
   bold(x)_i := bold(U)^top bold(r)_i \
@@ -409,7 +415,7 @@ $
   kappa_alpha &:= lambda_alpha + frac("Tr"[bold("p ")_g], N_f)
 $
 
-== Action of $e^(i L_(g, 1) Delta t)$
+==== Action of $e^(i L_(g, 1) Delta t)$
 
 $
   bold("n ") := bold("h ") bold("U ") \
@@ -422,18 +428,5 @@ $
       e^(frac(Delta t lambda_alpha, W_g)) n_(mu alpha)
     )_(mu alpha) bold("U ")^top \
 $
-
-
-== LAMMPS
-
-- tchain=3
-- pchain=3
-- tloop=1 ($n$ in $delta t = frac(Delta t, n)$)
-- ploop=1
-
-LAMMPS uses the first-order Suzuki-Yoshida scheme
-
-= Appendix
-
 
 #bibliography("references.bib")
