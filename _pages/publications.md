@@ -6,12 +6,14 @@ permalink: /publications/
 
 ## arXiv/submitted
 
+1. T. Shibayama, H. Imamura, K. Nishimra, **K. Shinohara**, C. Shinagawa, S. Takamoto, and J. Li, "Efficient Crystal Structure Prediction Using Genetic Algorithm and Universal Neural Network Potential" [[arXiv:2503.21201](https://arxiv.org/abs/2503.21201)]
+
 ## Journal Publications
 
-1. A. Togo, **K. Shinohara**, and I. Tanaka, Spglib: a software library for crystal symmetry search, [STAM-M 4, 1, 2384822 (2024)](https://www.tandfonline.com/doi/full/10.1080/27660400.2024.2384822) [[arxiv:1808.01590]](https://arxiv.org/abs/1808.01590)
-1. J. Fu, M. Kuisma, A. H. Larsen, **K. Shinohara**, A. Togo, and K. S. Thygesen, Symmetry classification of 2D materials: layer groups versus space groups, [2D Mater. 11, 3, 035009 (2024)](https://iopscience.iop.org/article/10.1088/2053-1583/ad3e0c) [[arxiv:2401.16705]](https://arxiv.org/abs/2401.16705)
-1. H. Watanabe, **K. Shinohara**, T. Nomoto, A. Togo, and R. Arita, Symmetry Analysis with Spin Crystallographic Groups: Disentangling Spin-Orbit-Free Effects in Emergent Electromagnetism, [Phys. Rev. B 109, 094438 (2024)](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.109.094438) [[arxiv:2307.11560]](https://arxiv.org/abs/2307.11560)
-1. **K. Shinohara**, A. Togo, H. Watanabe, T. Nomoto, I. Tanaka, and R. Arita, Algorithm for spin symmetry operation search, [Acta Cryst. A 80, 1, 94-103 (2024)](https://scripts.iucr.org/cgi-bin/paper?S2053273323009257) [[arxiv:2307.12228]](https://arxiv.org/abs/2307.12228)
+1. A. Togo, **K. Shinohara**, and I. Tanaka, Spglib: a software library for crystal symmetry search, [STAM-M 4, 1, 2384822 (2024)](https://www.tandfonline.com/doi/full/10.1080/27660400.2024.2384822) [[arxiv:1808.01590](https://arxiv.org/abs/1808.01590)]
+1. J. Fu, M. Kuisma, A. H. Larsen, **K. Shinohara**, A. Togo, and K. S. Thygesen, Symmetry classification of 2D materials: layer groups versus space groups, [2D Mater. 11, 3, 035009 (2024)](https://iopscience.iop.org/article/10.1088/2053-1583/ad3e0c) [[arxiv:2401.16705](https://arxiv.org/abs/2401.16705)]
+1. H. Watanabe, **K. Shinohara**, T. Nomoto, A. Togo, and R. Arita, Symmetry Analysis with Spin Crystallographic Groups: Disentangling Spin-Orbit-Free Effects in Emergent Electromagnetism, [Phys. Rev. B 109, 094438 (2024)](https://journals.aps.org/prb/abstract/10.1103/PhysRevB.109.094438) [[arxiv:2307.11560](https://arxiv.org/abs/2307.11560)]
+1. **K. Shinohara**, A. Togo, H. Watanabe, T. Nomoto, I. Tanaka, and R. Arita, Algorithm for spin symmetry operation search, [Acta Cryst. A 80, 1, 94-103 (2024)](https://scripts.iucr.org/cgi-bin/paper?S2053273323009257) [[arxiv:2307.12228](https://arxiv.org/abs/2307.12228)]
 1. **K. Shinohara**, A. Togo, and I. Tanaka, Algorithms for magnetic symmetry operation search and identification of magnetic space group from magnetic crystal structure, [Acta Cryst. A 79, 390-398 (2023)](http://scripts.iucr.org/cgi-bin/paper?ib5114) [[arxiv:2211.15008](https://arxiv.org/abs/2211.15008)]
 1. **K. Shinohara**, A. Togo, and I. Tanaka, spgrep: On-the-fly generator of space-group irreducible representations, [J. Open Source Softw., 8(85), 5269 (2023)](https://joss.theoj.org/papers/10.21105/joss.05269)
 1. **K. Shinohara**, A. Seko, T. Horiyama, and I. Tanaka, Finding well-optimized special quasirandom structures with decision diagram, [Phys. Rev. Mater. 5, 113803 (2021)](https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.5.113803) [[arxiv:2107.07683](https://arxiv.org/abs/2107.07683)]
