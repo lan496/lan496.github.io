@@ -19,7 +19,13 @@ permalink: /publications/
 1. **K. Shinohara**, A. Seko, T. Horiyama, and I. Tanaka, Finding well-optimized special quasirandom structures with decision diagram, [Phys. Rev. Mater. 5, 113803 (2021)](https://journals.aps.org/prmaterials/abstract/10.1103/PhysRevMaterials.5.113803) [[arxiv:2107.07683](https://arxiv.org/abs/2107.07683)]
 1. **K. Shinohara**, A. Seko, T. Horiyama, M. Ishihata, J. Honda and I. Tanaka, Enumeration of nonequivalent substitutional structures using advanced data structure of binary decision diagram, [J. Chem. Phys. 153, 104109 (2020)](https://aip.scitation.org/doi/10.1063/5.0021663) [[arxiv:2002.12603](https://arxiv.org/abs/2002.12603)]
 
-## Conference
+## Contributed Articles (in Japanese)
+
+1. 汎用原子レベルシミュレータを用いた物性予測と材料探索,セラミックス 第60巻 7月号（2025）[[オープンアクセス](https://member.ceramic.or.jp/journal/content/pdf_free_access/60_7_476.pdf)]
+
+## Conference (not refereed)
+
+1. **K. Shinohara**, T. Shibayama, H. Imamura, K. Nishimra, C. Shinagawa. S. Takamoto, and J. Li, Finite-Temperature Crystal Structure Prediction with Universal Neural Network Potential and Free Energy Calculation, 2024 MRS Fall Meeting, December, 2024 [[Web](https://www.mrs.org/meetings-events/annual-meetings/archive/meeting/presentations/view/2024-fall-meeting/2024-fall-meeting-4152651)]
 1. **K. Shinohara**, A. Seko, T. Horiyama, M. Ishihata, J. Honda and I. Tanaka, Accelerated enumeration of derivative structures using zero-suppressed binary decision diagram, APS March Meeting 2020, March, 2020 [[Web](http://meetings.aps.org/Meeting/MAR20/Session/X43.7)]
 
 ## Domestic Conference (not refereed, in Japanese)
