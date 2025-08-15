@@ -59,9 +59,9 @@ $
 
 == Canonical ensembles
 
-=== Nosè-Hoover chain
+=== Nosé-Hoover chain
 
-Nosè-Hoover chain equations:
+Nosé-Hoover chain equations:
 $
   dot(bold(r))_i &= frac( bold(p)_i, m_i ) \
   dot(bold(p))_i &= bold(F)_i - frac( p_(eta_1), Q_1 ) bold(p)_i \
@@ -77,12 +77,12 @@ $
   Q_j &= k T tau^2 quad (j = 2, dots, M).
 $
 
-Nosè-Hoover chain equations conserves
+Nosé-Hoover chain equations conserves
 $
   cal(H)' = cal(H)(r^N, p^N) + sum_(j=1)^M frac( p_(eta_j)^2, 2 Q_j ) + d N k T eta_1 + k T sum_(j=2)^M eta_j.
 $
 
-=== Integrating the Nosè-Hoover chain equations
+=== Integrating the Nosé-Hoover chain equations
 
 The Liouville operator
 $
@@ -331,7 +331,7 @@ $
       &times e^(i L_"NHC-thermo" frac(Delta t, 2)) e^(i L_"NHC-baro" frac(Delta t, 2)) + O(Delta t^3).
 $
 
-The actions of $e^(i L_"NHC-baro" frac(Delta t, 2))$ and $e^(i L_"NHC-thermo" frac(Delta t, 2))$ can be evaluated similarly to the Nosè-Hoover chain equations.
+The actions of $e^(i L_"NHC-baro" frac(Delta t, 2))$ and $e^(i L_"NHC-thermo" frac(Delta t, 2))$ can be evaluated similarly to the Nosé-Hoover chain equations.
 The action of $e^(i L_(g, 2) frac(Delta t, 2))$ just translates $bold("p ")_g$.
 
 Since $bold("p ")_g$ is a symmetric real matrix, we can diagonalize it as
