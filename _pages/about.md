@@ -6,6 +6,7 @@ permalink: /about/
 
 ## Work Experience
 - Apr. 2023 - Present, Researcher, Preferred Networks, Inc.
+- May 2025 - Present, Project Researcher, The University of Tokyo
 
 ## Education
 - Apr. 2020 - Mar. 2023, Ph.D., Department of Materials Science and Engineering, Kyoto University
