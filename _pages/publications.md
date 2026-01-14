@@ -6,6 +6,7 @@ permalink: /publications/
 
 ## arXiv/submitted
 
+1. T. Ishii, K. Hisama, **K. Shinohara**, "Symmetry-aware Conditional Generation of Crystal Structures Using Diffusion Models" [[arXiv:2601.08115](https://arxiv.org/abs/2601.08115)]
 1. T. Shibayama, H. Imamura, K. Nishimra, **K. Shinohara**, C. Shinagawa, S. Takamoto, and J. Li, "Efficient Crystal Structure Prediction Using Genetic Algorithm and Universal Neural Network Potential" [[arXiv:2503.21201](https://arxiv.org/abs/2503.21201)]
 
 ## Journal Publications
