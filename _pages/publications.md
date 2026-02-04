@@ -27,6 +27,7 @@ permalink: /publications/
 
 ## Conference (not refereed)
 
+1. **K. Shinohara**, H. Imamura, K. Nishimra, S. Watanabe, K. Hisama, C. Shinagawa, S. Takamoto, and J. Li, Enhancing Crystal Structure Prediction with r2SCAN-Level Universal Neural Network Potentials, 2025 MRS Fall Meeting, December, 2025 [[Web](https://www.mrs.org/meetings-events/annual-meetings/archive/meeting/presentations/view/2025-mrs-fall-meeting/2025-mrs-fall-meeting-4375829)]
 1. **K. Shinohara**, T. Shibayama, H. Imamura, K. Nishimra, C. Shinagawa. S. Takamoto, and J. Li, Finite-Temperature Crystal Structure Prediction with Universal Neural Network Potential and Free Energy Calculation, 2024 MRS Fall Meeting, December, 2024 [[Web](https://www.mrs.org/meetings-events/annual-meetings/archive/meeting/presentations/view/2024-fall-meeting/2024-fall-meeting-4152651)]
 1. **K. Shinohara**, A. Seko, T. Horiyama, M. Ishihata, J. Honda and I. Tanaka, Accelerated enumeration of derivative structures using zero-suppressed binary decision diagram, APS March Meeting 2020, March, 2020 [[Web](http://meetings.aps.org/Meeting/MAR20/Session/X43.7)]
 
