@@ -6,6 +6,7 @@ permalink: /publications/
 
 ## arXiv/submitted
 
+1. C. Shinagawa, S. Takamoto, D. Shintani, Y.-B. Zhuang, Y. Tsuboi, K. Nishimra, **K. Shinohara**, S. Iwase, Y. Tanaka, and J. Li, "Matlantis-PFP v8: Universal Machine Learning Interatomic Potential with Better Experimental Agreements via r2SCAN Functional" [[arXiv:2603.11063](https://arxiv.org/abs/2603.11063)]
 1. T. Nomoto, **K. Shinohara**, H. Watanabe, and R. Arita, "Systematic Magnetic Structure Generation Based on Oriented Spin Space Groups: Formulation, Applications, and High-Throughput First-Principles Calculations" [[arXiv:2601.15735](https://arxiv.org/abs/2601.15735)]
 1. T. Ishii, K. Hisama, **K. Shinohara**, "Symmetry-aware Conditional Generation of Crystal Structures Using Diffusion Models" [[arXiv:2601.08115](https://arxiv.org/abs/2601.08115)]
 1. T. Shibayama, H. Imamura, K. Nishimra, **K. Shinohara**, C. Shinagawa, S. Takamoto, and J. Li, "Efficient Crystal Structure Prediction Using Genetic Algorithm and Universal Neural Network Potential" [[arXiv:2503.21201](https://arxiv.org/abs/2503.21201)]

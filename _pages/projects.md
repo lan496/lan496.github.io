@@ -7,6 +7,7 @@ permalink: /projects/
 ## Codes
 
 ### Crystal symmetry
+- [moyo](https://github.com/spglib/moyo): A fast and robust crystal symmetry finder, written in Rust.
 - [crystal-symmetry-primer](https://github.com/lan496/crystal-symmetry-primer): Lecture note for crystal symmetry and space group
 - [spgrep](https://github.com/spglib/spgrep): On-the-fly generator of space-group irreducible representations
 - [spgrep-modulation](https://github.com/phonopy/spgrep-modulation): Collective atomic modulation analysis with irreducible space-group representation
