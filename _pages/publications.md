@@ -8,10 +8,10 @@ permalink: /publications/
 
 1. C. Shinagawa, S. Takamoto, D. Shintani, Y.-B. Zhuang, Y. Tsuboi, K. Nishimra, **K. Shinohara**, S. Iwase, Y. Tanaka, and J. Li, "Matlantis-PFP v8: Universal Machine Learning Interatomic Potential with Better Experimental Agreements via r2SCAN Functional" [[arXiv:2603.11063](https://arxiv.org/abs/2603.11063)]
 1. T. Nomoto, **K. Shinohara**, H. Watanabe, and R. Arita, "Systematic Magnetic Structure Generation Based on Oriented Spin Space Groups: Formulation, Applications, and High-Throughput First-Principles Calculations" [[arXiv:2601.15735](https://arxiv.org/abs/2601.15735)]
-1. T. Shibayama, H. Imamura, K. Nishimra, **K. Shinohara**, C. Shinagawa, S. Takamoto, and J. Li, "Efficient Crystal Structure Prediction Using Genetic Algorithm and Universal Neural Network Potential" [[arXiv:2503.21201](https://arxiv.org/abs/2503.21201)]
 
 ## Journal Publications
 
+1. T. Shibayama, H. Imamura, K. Nishimra, **K. Shinohara**, C. Shinagawa, S. Takamoto, and J. Li, Efficient crystal structure prediction using universal neural network potential with diversity preservation in genetic algorithms, [Phys. Rev. Mater. 10, 063401 (2026)](https://journals.aps.org/prmaterials/abstract/10.1103/4knt-ccqg) [[arxiv:2503.21201](https://arxiv.org/abs/2503.21201)]
 1. T. Ishii, K. Hisama, and **K. Shinohara**, Symmetry-aware conditional generation of crystal structures using diffusion models, [Comput. Mater. Sci. 271, 114789 (2026)](https://doi.org/10.1016/j.commatsci.2026.114789) [[arxiv:2601.08115](https://arxiv.org/abs/2601.08115)]
 1. A. Togo, **K. Shinohara**, and I. Tanaka, Spglib: a software library for crystal symmetry search, [STAM-M 4, 1, 2384822 (2024)](https://www.tandfonline.com/doi/full/10.1080/27660400.2024.2384822) [[arxiv:1808.01590](https://arxiv.org/abs/1808.01590)]
 1. J. Fu, M. Kuisma, A. H. Larsen, **K. Shinohara**, A. Togo, and K. S. Thygesen, Symmetry classification of 2D materials: layer groups versus space groups, [2D Mater. 11, 3, 035009 (2024)](https://iopscience.iop.org/article/10.1088/2053-1583/ad3e0c) [[arxiv:2401.16705](https://arxiv.org/abs/2401.16705)]
