@@ -1,6 +1,6 @@
 ---
 title: "Notes"
-layout: single 
+layout: single
 permalink: /notes/
 ---
 
