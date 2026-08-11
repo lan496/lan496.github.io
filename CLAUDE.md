@@ -32,34 +32,8 @@ outside the repo and to the network, so both need the sandbox disabled.
 - `_data/navigation.yml` -- masthead links. A new page needs an entry here.
 - `_config.yml` -- theme is set via `theme:`, not `remote_theme:`.
 - `_includes/head/custom.html` -- only pulls in academicons.
-- `assets/css/main.scss` -- token mapping on top of the theme; not a fork.
-- `_sass/moyo/_tokens.scss` -- Moyo Design System tokens.
+- `assets/css/main.scss` -- 15 lines on top of the theme; not a fork.
 - `notes/` and `assets/poster/` -- PDFs, committed directly.
-
-## Styling
-
-The site follows the **Moyo Design System**: one brand hue (moyo orange,
-`#be481f`), Tailwind *stone* as the only neutral family, system fonts, a
-compact five-step type scale (12/14/16/18/24), and semibold as the heaviest
-weight. Structure comes from 1px hairlines, not cards; there are no shadows and
-no gradients in the system.
-
-`_sass/moyo/_tokens.scss` is the source of truth. It defines the tokens as Sass
-variables *and* re-emits them as CSS custom properties -- both are needed,
-because minimal-mistakes runs colours through Sass colour functions that
-`var()` cannot satisfy, while hand-written CSS wants `var(--moyo-600)`.
-
-**Theme variable overrides must sit before `@import "minimal-mistakes"`** in
-`assets/css/main.scss`. Every theme variable is declared `!default` upstream,
-so an assignment after the import is silently ignored. Where the theme
-hardcodes a value with no variable (several `font-weight: bold` rules), the
-override goes in the block *after* the import and wins on cascade order.
-
-Adopted so far: colours and type only, deliberately -- the layout is still
-minimal-mistakes, so the author sidebar, cards, and shadows remain. Two colour
-sets sit outside the system: the shipped syntax-highlighting theme (currently
-dormant, the site renders no code blocks) and third-party social brand colours
-in the author sidebar.
 
 ## Gotchas
 
