@@ -153,6 +153,7 @@ exclude:
   - assets/js/vendor
   - Capfile
   - CHANGELOG
+  - CLAUDE.md
   - config
   - Gemfile
   - Gemfile.lock
