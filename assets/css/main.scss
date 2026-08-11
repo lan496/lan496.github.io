@@ -5,11 +5,120 @@ search: false
 
 @charset "utf-8";
 
+// Moyo Design System tokens, and their mapping onto minimal-mistakes.
+// Every theme variable below is declared !default upstream, so these
+// assignments must come before the theme import to take effect.
+@import "moyo/tokens";
+
+/* Colors
+   ========================================================================== */
+
+// Neutrals: Tailwind stone, the only neutral family the system uses.
+$gray: $stone-500;
+$dark-gray: $stone-800;
+$darker-gray: $stone-950;
+$light-gray: $stone-300;
+$lighter-gray: $stone-200;
+
+$background-color: #fff;
+$text-color: $stone-800;
+$muted-text-color: $stone-500;
+$border-color: $stone-300; // the system's dominant 1px hairline
+$code-background-color: $stone-50;
+$code-background-color-dark: $stone-200;
+$form-background-color: $stone-50;
+$footer-background-color: $stone-50;
+
+// One brand hue. Emerald is the sole positive accent, red only for errors;
+// the system defines no warning or info colour, so those fall back to the
+// brand and to a neutral rather than introducing new hues.
+$primary-color: $moyo-600;
+$success-color: $emerald-600;
+$warning-color: $moyo-600;
+$danger-color: $red-900;
+$info-color: $stone-600;
+$focus-color: $moyo-600;
+$active-color: $moyo-100;
+
+$link-color: $moyo-700; // link hover is moyo-700 in the source; prose links lead with it
+$link-color-hover: $moyo-800;
+$link-color-visited: $moyo-900;
+
+/* Type
+   ========================================================================== */
+
+$serif: $moyo-font-sans; // the system has no serif face
+$sans-serif: $moyo-font-sans;
+$sans-serif-narrow: $moyo-font-sans;
+$monospace: $moyo-font-mono;
+
+$global-font-family: $sans-serif;
+$header-font-family: $sans-serif;
+$caption-font-family: $sans-serif;
+
+$doc-font-size: 16px;
+
+// The system's scale has only five steps (12/14/16/18/24), deliberately
+// compact. Mapping eight theme sizes onto it means steps repeat.
+$type-size-1: 1.5em; // 24px — text-2xl
+$type-size-2: 1.125em; // 18px — text-lg
+$type-size-3: 1.125em; // 18px — text-lg
+$type-size-4: 1em; // 16px — text-base
+$type-size-5: 1em; // 16px — text-base
+$type-size-6: 0.875em; // 14px — text-sm
+$type-size-7: 0.75em; // 12px — text-xs
+$type-size-8: 0.75em; // 12px — text-xs
+
+$h-size-1: 1.5em; // 24px — page titles
+$h-size-2: 1.125em; // 18px — section titles
+$h-size-3: 1.125em; // 18px
+$h-size-4: 1em; // 16px
+$h-size-5: 1em; // 16px
+$h-size-6: 0.875em; // 14px
+
 @import "minimal-mistakes/skins/{{ site.minimal_mistakes_skin | default: 'default' }}"; // skin
 @import "minimal-mistakes"; // main partials
 
+/* Typographic treatments the theme has no variable for
+   ========================================================================== */
+
+// Tabular figures everywhere: counts, years, and volume numbers are content.
+html {
+  font-feature-settings: "tnum";
+}
+
+// Semibold is the heaviest weight in the system; the theme reaches for bold.
+// Headings and the wordmark also carry tracking-tight, matching the source.
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.page__title,
+.archive__item-title,
+.sidebar .author__name,
+.site-title {
+  font-weight: $moyo-weight-semibold;
+  letter-spacing: $moyo-tracking-tight;
+}
+
+// Chrome the theme hardcodes to bold/700, with no variable to reach it.
+.masthead__menu-item--lg,
+.nav__title,
+.nav__sub-title,
+.toc .active,
+.btn {
+  font-weight: $moyo-weight-semibold;
+}
+
+strong,
+b {
+  font-weight: $moyo-weight-semibold;
+}
+
 .social-icons {
   .fa-orcid {
-    color: #A6CE39;
+    color: #a6ce39;
   }
 }
