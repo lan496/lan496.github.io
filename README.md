@@ -1,50 +1,54 @@
-## [Local build](https://help.github.com/en/github/working-with-github-pages/testing-your-github-pages-site-locally-with-jekyll)
+# lan496.github.io
 
-0. Installing Ruby
+Personal page, built with [Jekyll](https://jekyllrb.com/) and the
+[minimal-mistakes](https://github.com/mmistakes/minimal-mistakes) theme,
+deployed to GitHub Pages by GitHub Actions.
 
-```shell
-brew install rbenv ruby-build
-rbenv install 3.2.2
-rbenv global 3.2.2
-exec $SHELL
-which ruby
-ruby -v
-```
+## Local development
 
-1. Installing Bundler and jekyll
+Ruby is pinned in `mise.toml`. With [mise](https://mise.jdx.dev/) installed:
 
 ```shell
-gem update --system
-gem install --user-install bundler jekyll
-```
-
-2. Installing dependencies
-
-```shell
+mise trust
+mise install
 bundle install
 ```
 
-3. Running jekyll site locally
+Then serve the site at `http://localhost:4000`:
 
 ```shell
-bundle exec jekyll serve --livereload
-# bundle exec jekyll serve --livereload --host=0.0.0.0
+mise run serve
 ```
 
-Now, visit `http://localhost:4000` (or `http://*.*.*.*:4000`).
+Other tasks:
 
-### Update gem
-
-```
-gem install <gem_name> -v <version>
-bundle update
+```shell
+mise run build   # build into _site/
+mise run check   # build, then validate internal links and HTML
 ```
 
-## References
-- [MathJax, Jekyll and github pages - Ben Lansdell](https://benlansdell.github.io/computing/mathjax/)
+## Updating dependencies
+
+`Gemfile.lock` is committed so local and CI builds resolve identically.
+
+```shell
+bundle update            # all gems
+bundle update jekyll     # a single gem
+```
+
+The theme is a versioned gem (`minimal-mistakes-jekyll`) rather than a
+`remote_theme`, so a theme upgrade is a `Gemfile` bump plus `bundle update`.
+
+## Deployment
+
+`.github/workflows/pages.yml` builds the site on every push and pull request,
+runs `htmlproofer` over the output, and deploys to GitHub Pages from `main`.
+The repository's Pages source must be set to **GitHub Actions**
+(Settings -> Pages -> Build and deployment -> Source).
 
 ## License
 
-This repository includes the following softwares
+This repository includes the following software:
+
 - [minimal-mistakes](https://github.com/mmistakes/minimal-mistakes/blob/master/LICENSE)
 - [academicons](https://github.com/jpswalsh/academicons)
