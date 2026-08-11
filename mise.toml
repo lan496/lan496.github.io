@@ -1,0 +1,20 @@
+[tools]
+ruby = "3.4.10"
+
+[env]
+BUNDLE_PATH = "vendor/bundle"
+
+[tasks.serve]
+description = "Serve the site locally with live reload at http://localhost:4000"
+run = "bundle exec jekyll serve --livereload"
+
+[tasks.build]
+description = "Build the site into _site/"
+run = "bundle exec jekyll build"
+
+[tasks.check]
+description = "Build the site and validate internal links and HTML"
+run = [
+  "bundle exec jekyll build",
+  "bundle exec htmlproofer _site --disable-external --ignore-empty-alt --checks Links,Images,Scripts",
+]

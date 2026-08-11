@@ -1,16 +1,16 @@
-remote_theme             : "mmistakes/minimal-mistakes@4.24.0"
+theme                    : "minimal-mistakes-jekyll"
 minimal_mistakes_skin    : # "air", "aqua", "contrast", "dark", "dirt", "neon", "mint", "plum", "sunrise"
 
 # Site Settings
-locale                   : "ja-JP.UTF-8"
+locale                   : "en-US"
 title                    : "Kohei Shinohara"
 title_separator          : "-"
 subtitle                 : # site tagline that appears below site title in masthead
 name                     : "Kohei Shinohara"
-description              : #
-url                      : # the base hostname & protocol for your site e.g. "https://mmistakes.github.io"
+description              : "Personal page of Kohei Shinohara, a researcher working on crystal symmetry analysis, atomistic modeling, and scientific software."
+url                      : "https://lan496.github.io"
 baseurl                  : # the subpath of your site, e.g. "/blog"
-repository               : # GitHub username/repo-name e.g. "mmistakes/minimal-mistakes"
+repository               : "lan496/lan496.github.io"
 teaser                   : # path of fallback teaser image, e.g. "/assets/images/500x300.png"
 logo                     : # path of logo image to display in the masthead, e.g. "/assets/images/88x88.png"
 masthead_title           : # overrides the website title displayed in the masthead, use " " for no title
@@ -73,7 +73,7 @@ facebook:
   username               :
   app_id                 :
   publisher              :
-og_image                 : # Open Graph/Twitter default site image
+og_image                 : "/assets/images/icon.png"
 # For specifying social profiles
 # - https://developers.google.com/structured-data/customize/social-profiles
 social:
@@ -99,7 +99,7 @@ author:
   links:
     - label: "Email"
       icon: "fas fa-fw fa-envelope-square"
-      url: "kshinohara0508@gmail.com"
+      url: "mailto:kshinohara0508@gmail.com"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
       url: "https://github.com/lan496"
@@ -155,6 +155,8 @@ exclude:
   - CHANGELOG
   - config
   - Gemfile
+  - Gemfile.lock
+  - mise.toml
   - Gruntfile.js
   - gulpfile.js
   - LICENSE
@@ -198,30 +200,23 @@ kramdown:
 sass:
   sass_dir: _sass
   style: compressed # https://sass-lang.com/documentation/file.SASS_REFERENCE.html#output_style
+  quiet_deps: true # the theme vendors Susy, which still uses deprecated @import and / division
+  # minimal-mistakes is @import-based upstream, so main.scss cannot move to @use yet.
+  silence_deprecations: ["import"]
 
 
 # Outputting
 permalink: /:categories/:title/
-paginate: 5 # amount of posts to show
-paginate_path: /page:num/
-timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+timezone: "Asia/Tokyo" # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 
 
 # Plugins (previously gems:)
 plugins:
-  - jekyll-paginate
   - jekyll-sitemap
   - jekyll-gist
   - jekyll-feed
   - jekyll-include-cache
-
-# mimic GitHub Pages with --safe
-whitelist:
-  - jekyll-paginate
-  - jekyll-sitemap
-  - jekyll-gist
-  - jekyll-feed
-  - jekyll-include-cache
+  - jekyll-seo-tag
 
 
 # Archives
