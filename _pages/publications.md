@@ -6,6 +6,7 @@ permalink: /publications/
 
 ## arXiv/submitted
 
+1. J. George, M. K. Horton, A. D. Kaplan, S. R. Kavanagh, J. Riebesell, A. S. Rosen, H. Yang, ..., **K. Shinohara**, ..., K. A. Persson, A. Jain, and S. P. Ong (166 authors), "pymatgen: 15 years of community growth, new functionality, and future prospects" [[arXiv:2610.23538](https://arxiv.org/abs/2610.23538)]
 1. C. Shinagawa, S. Takamoto, D. Shintani, Y.-B. Zhuang, Y. Tsuboi, K. Nishimra, **K. Shinohara**, S. Iwase, Y. Tanaka, and J. Li, "Matlantis-PFP v8: Universal Machine Learning Interatomic Potential with Better Experimental Agreements via r2SCAN Functional" [[arXiv:2603.11063](https://arxiv.org/abs/2603.11063)]
 1. T. Nomoto, **K. Shinohara**, H. Watanabe, and R. Arita, "Systematic Magnetic Structure Generation Based on Oriented Spin Space Groups: Formulation, Applications, and High-Throughput First-Principles Calculations" [[arXiv:2601.15735](https://arxiv.org/abs/2601.15735)]
 
