@@ -1,0 +1,7 @@
+/.lake
+/blueprint/web
+/blueprint/print
+/blueprint/lean_decls
+/blueprint/src/*.paux
+/blueprint/src/figures/*.pdf
+/blueprint/src/figures/*.svg

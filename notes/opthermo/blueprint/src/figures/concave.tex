@@ -1,0 +1,27 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}[x=1.4cm, y=2.2cm]
+  \draw[->] (0,0) -- (6.6,0) node[right] {$u$};
+  \draw[->] (0,0) -- (0,2.45) node[above right] {$s$};
+  % homogeneous entropy (not concave)
+  \draw[thick, dashed, gray, domain=0.6:5.6, samples=150]
+    plot (\x, {0.9*ln(\x/0.5) - 0.3*exp(-(\x-3)^2/0.3)});
+  % concave envelope
+  \draw[very thick, rod, domain=0.6:2.095, samples=80]
+    plot (\x, {0.9*ln(\x/0.5) - 0.3*exp(-(\x-3)^2/0.3)});
+  \draw[very thick, rod] (2.095, 1.2699) -- (3.97, 1.8517);
+  \draw[very thick, rod, domain=3.97:5.6, samples=80]
+    plot (\x, {0.9*ln(\x/0.5) - 0.3*exp(-(\x-3)^2/0.3)});
+  \fill[okc] (2.095, 1.2699) circle (2pt);
+  \fill[okc] (3.97, 1.8517) circle (2pt);
+  \draw[densely dotted] (2.095, 0) -- (2.095, 1.2699);
+  \draw[densely dotted] (3.97, 0) -- (3.97, 1.8517);
+  \node[note, below] at (2.095, 0) {$u_1$};
+  \node[note, below] at (3.97, 0) {$u_2$};
+  \node[note, rod, anchor=south east] at (2.9, 1.66) {二相共存：傾き $1/T$ が一定};
+  \node[note, gray, anchor=north west] at (3.05, 1.32) {一様な状態 $s_{\mathrm{hom}}$};
+  \node[note, rod, anchor=west] at (5.65, 2.17) {平衡 $s$ (凹包)};
+  \draw[<->, thick, ngc] (2.095, -0.38) -- node[below, note] {潜熱 $L = u_2 - u_1$} (3.97, -0.38);
+\end{tikzpicture}
+\end{document}

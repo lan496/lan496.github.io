@@ -1,0 +1,35 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}
+  % (a) balance
+  \node[anchor=west, font=\bfseries] at (-2.6, 1.1) {(a) 天秤：比較と同じ皿への連結};
+  \fill[gray!60] (0,0) -- (-0.3,-0.6) -- (0.3,-0.6) -- cycle;
+  \draw[very thick] (-2,0) -- (2,0);
+  \draw (-1.7,0) -- (-1.7,-0.8); \draw (1.7,0) -- (1.7,-0.8);
+  \draw[thick] (-2.2,-0.8) -- (-1.2,-0.8); \draw[thick] (1.2,-0.8) -- (2.2,-0.8);
+  \draw[rodA] (-2.0,-0.8) rectangle (-1.6,-0.4) node[midway, font=\footnotesize] {$a$};
+  \draw[rodB] (-1.6,-0.8) rectangle (-1.25,-0.45) node[midway, font=\footnotesize] {$c$};
+  \draw[draw, fill=gray!20] (1.45,-0.8) rectangle (1.95,-0.3) node[midway, font=\footnotesize] {$b$};
+  \node[note] at (0,-1.4) {$a \circ c$ と $b$ を比べる};
+
+  % (b) lever and virtual work
+  \begin{scope}[xshift=7.2cm]
+    \node[anchor=west, font=\bfseries] at (-3.4, 1.1) {(b) てこ：仮想仕事の原理};
+    \fill[gray!60] (0,0) -- (-0.3,-0.6) -- (0.3,-0.6) -- cycle;
+    \draw[very thick] (-2.4,0) -- (1.2,0);
+    \draw[very thick, dashed, gray] ({-2.4*cos(14)},{-2.4*sin(14)}) -- ({1.2*cos(14)},{1.2*sin(14)});
+    \draw[rodA] (-2.6,0) rectangle (-2.2,0.5) node[midway, font=\footnotesize] {$b$};
+    \draw[draw, fill=gray!20] (1.0,0) rectangle (1.4,0.5) node[midway, font=\footnotesize] {$u$};
+    \draw[->, ngc, thick] (-2.75, 0.0) -- (-2.75,{-2.4*sin(14)}) node[midway, left, font=\footnotesize] {$h_b$ 下がる};
+    \draw[->, okc, thick] (1.55, 0.0) -- (1.55,{1.2*sin(14)}) node[midway, right, font=\footnotesize] {$h_u$ 上がる};
+    \draw[brace, decoration={mirror}] (-2.4,-0.75) -- (0,-0.75) node[midway, below=4pt, font=\footnotesize] {$\ell_b$};
+    \draw[brace, decoration={mirror}] (0,-0.75) -- (1.2,-0.75) node[midway, below=4pt, font=\footnotesize] {$\ell_u$};
+    \node[expl, anchor=north west, text width=12.5cm] at (-10.0, -1.9)
+      {$\sum m h = m(b)\, h_b - m(u)\, h_u$ とおく。\\[2pt]
+       $\sum m h = 0$ となる動かし方は、理想的なてこで実現できる。\\[2pt]
+       力学的な装置だけで重り全体を持ち上げることはできない ($\sum m h \ge 0$)。\\[2pt]
+       この法則を満たす重みづけ $m$ は、天秤の質量に比例するものに限られる。};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

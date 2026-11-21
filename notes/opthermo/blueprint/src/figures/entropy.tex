@@ -1,0 +1,23 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}[x=9cm]
+  \def\S{0.62}
+  \fill[okc!25] (-0.15,-0.25) rectangle (\S,0.25);
+  \fill[ngc!20] (\S,-0.25) rectangle (1.15,0.25);
+  \draw[->] (-0.18,0) -- (1.2,0) node[right] {$s$};
+  \foreach \x/\l in {0/$0$, 1/$1$} {\draw (\x,0.08) -- (\x,-0.08) node[below] {\l};}
+  \draw[very thick] (\S,0.35) -- (\S,-0.35) node[below] {$S(X)$};
+  \node[okc!70!black, note, text width=5cm] at ({(\S-0.15)/2}, 1.0)
+    {$\mathrm{Below}(X, s)$\\ $(1-s)X_0 + s X_1 \prec X$};
+  \node[ngc!80!black, note, text width=4.2cm] at ({(\S+1.15)/2}, 1.0)
+    {$\mathrm{Above}(X, s)$\\ $X \prec (1-s)X_0 + s X_1$};
+  \node[box, font=\footnotesize] at (0,-1.1) {$X_0$ だけ};
+  \node[box, font=\footnotesize] at (1,-1.1) {$X_1$ だけ};
+  \node[note, text width=11cm, anchor=north] at (0.5,-1.6)
+    {$X$ が $X_0$ と同じ組成の場合 ($\mathrm{base}(X) = X_0$)。\\
+     基準状態 $X_0 \prec\!\prec X_1$ を混ぜた系 $(1-s)X_0 + sX_1$ と $X$ を比較仮説で比べる。\\
+     $X$ に断熱的に到達できる混合の割合 $s$ の上限が $S(X)$ である。\\
+     $s < 0$ や $s > 1$ も、負の係数を反対側に移した形式的な不等式として扱う。};
+\end{tikzpicture}
+\end{document}

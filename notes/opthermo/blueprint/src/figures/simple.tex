@@ -1,0 +1,22 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}
+  \node[anchor=west, font=\bfseries] at (-0.2, 3.1) {(a) 単純系};
+  \draw[box] (0,0.6) rectangle (3.2,2.6);
+  \node[align=center] at (1.6,1.6) {$U, V, N$};
+  \node[note] at (1.6, 0.15) {状態は一つに決まる};
+  \begin{scope}[xshift=5cm]
+    \node[anchor=west, font=\bfseries] at (-0.2, 3.1) {(b) 仕切りのある系};
+    \foreach \k/\a/\b in {0/{$U/2$}/{$U/2$}, 1/{$U/3$}/{$2U/3$}} {
+      \begin{scope}[xshift=\k*3.9cm]
+        \draw[box] (0,0.6) rectangle (3.2,2.6);
+        \draw[very thick] (1.6,0.6) -- (1.6,2.6);
+        \node at (0.8,1.6) {\a};
+        \node at (2.4,1.6) {\b};
+      \end{scope}
+    }
+    \node[note, text width=7cm] at (3.55, 0.15) {全体の $U, V, N$ は同じでも、エネルギーの分け方の数だけ状態がある};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

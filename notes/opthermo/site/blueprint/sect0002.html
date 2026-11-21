@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$'], ['\\(','\\)']] },
+  };
+  // MathJax 4 may re-render formulas after load, so tag the current containers at copy time.
+  function tagFormulas() {
+    for (const item of MathJax.startup.document.math) {
+      const root = item.typesetRoot;
+      if (!root) continue;
+      root.setAttribute('data-tex', item.math.trim());
+      if (item.display) root.setAttribute('data-display', 'true');
+    }
+  }
+  document.addEventListener('copy', (event) => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || !window.MathJax || !MathJax.startup) return;
+    tagFormulas();
+    const frag = sel.getRangeAt(0).cloneContents();
+    const boxes = frag.querySelectorAll('mjx-container[data-tex]');
+    if (boxes.length === 0) return;
+    for (const box of boxes) {
+      const tex = box.getAttribute('data-tex').replace(/\{\\gt\}/g, '>').replace(/\{\\lt\}/g, '<');
+      const text = box.hasAttribute('data-display') ? '\n$$' + tex + '$$\n' : '$' + tex + '$';
+      box.replaceWith(document.createTextNode(text));
+    }
+    const holder = document.createElement('div');
+    holder.style.position = 'fixed';
+    holder.style.left = '-10000px';
+    holder.appendChild(frag);
+    document.body.appendChild(holder);
+    const plain = holder.innerText;
+    holder.remove();
+    event.clipboardData.setData('text/plain', plain);
+    event.preventDefault();
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>長さの測定</title>
+<link rel="next" href="sect0003.html" title="状態と平衡状態" />
+<link rel="prev" href="sect0001.html" title="概要" />
+<link rel="up" href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">概要</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000010"><span class="toc_ref">1.1</span> <span class="toc_entry">用語</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active current">
+  <a href="sect0002.html"><span class="toc_ref">2</span> <span class="toc_entry">長さの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">3</span> <span class="toc_entry">状態と平衡状態</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0003.html#a0000000011"><span class="toc_ref">3.1</span> <span class="toc_entry">時間の目盛り</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000012"><span class="toc_ref">3.2</span> <span class="toc_entry">状態の空間</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">4</span> <span class="toc_entry">仕事の力学的な基礎</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">5</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html"><span class="toc_ref">6</span> <span class="toc_entry">断熱到達性とエントロピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html#sec:accessibility-axioms"><span class="toc_ref">6.1</span> <span class="toc_entry">断熱操作から断熱到達性へ</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000013"><span class="toc_ref">6.2</span> <span class="toc_entry">複合系の内部エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000014"><span class="toc_ref">6.3</span> <span class="toc_entry">相殺則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000015"><span class="toc_ref">6.4</span> <span class="toc_entry">基準状態と形式的な不等式</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000016"><span class="toc_ref">6.5</span> <span class="toc_entry">エントロピーの構成</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000017"><span class="toc_ref">6.6</span> <span class="toc_entry">エントロピーの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000018"><span class="toc_ref">6.7</span> <span class="toc_entry">エントロピー原理</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#sec:second-law"><span class="toc_ref">6.8</span> <span class="toc_entry">第二法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000019"><span class="toc_ref">6.9</span> <span class="toc_entry">無矛盾性</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">7</span> <span class="toc_entry">温度、圧力、化学ポテンシャル</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0007.html#a0000000020"><span class="toc_ref">7.1</span> <span class="toc_entry">温度の定義</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000021"><span class="toc_ref">7.2</span> <span class="toc_entry">熱接触と温度の比較</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000022"><span class="toc_ref">7.3</span> <span class="toc_entry">圧力と化学ポテンシャル</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:ideal-gas"><span class="toc_ref">7.4</span> <span class="toc_entry">理想気体</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:fundamental"><span class="toc_ref">7.5</span> <span class="toc_entry">基本関係式</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:concavity"><span class="toc_ref">7.6</span> <span class="toc_entry">エントロピーの凹性</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0007.html#a0000000023"><span class="toc_ref">7.6.1</span> <span class="toc_entry">凹性から出ること</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000024"><span class="toc_ref">7.6.2</span> <span class="toc_entry">安定性</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000025"><span class="toc_ref">7.6.3</span> <span class="toc_entry">相の共存</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000026"><span class="toc_ref">7.6.4</span> <span class="toc_entry">凹性と自由エネルギー</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:heat-capacity"><span class="toc_ref">7.7</span> <span class="toc_entry">熱容量</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:third-law"><span class="toc_ref">7.8</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html"><span class="toc_ref">8</span> <span class="toc_entry">自由エネルギーとエンタルピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-potentials.html#a0000000027"><span class="toc_ref">8.1</span> <span class="toc_entry">環境</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-potentials.html#sec:large-reservoir"><span class="toc_ref">8.1.1</span> <span class="toc_entry">大きな溜め</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000028"><span class="toc_ref">8.2</span> <span class="toc_entry">Helmholtz 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000029"><span class="toc_ref">8.3</span> <span class="toc_entry">エンタルピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000030"><span class="toc_ref">8.4</span> <span class="toc_entry">Gibbs 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000031"><span class="toc_ref">8.5</span> <span class="toc_entry">エネルギーとエンタルピーの最小原理</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000032"><span class="toc_ref">8.6</span> <span class="toc_entry">ポテンシャルの微分</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html"><span class="toc_ref">9</span> <span class="toc_entry">実験室での熱測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-calorimetry.html#sec:thermometry"><span class="toc_ref">9.1</span> <span class="toc_entry">温度の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000033"><span class="toc_ref">9.1.1</span> <span class="toc_entry">温度計が測っているもの</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000034"><span class="toc_ref">9.1.2</span> <span class="toc_entry">温度の比と単位</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000035"><span class="toc_ref">9.1.3</span> <span class="toc_entry">一次温度計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000036"><span class="toc_ref">9.1.4</span> <span class="toc_entry">国際温度目盛</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000037"><span class="toc_ref">9.1.5</span> <span class="toc_entry">一次温度計どうしの一致</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:measure-heat-capacity"><span class="toc_ref">9.2</span> <span class="toc_entry">熱容量の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000038"><span class="toc_ref">9.2.1</span> <span class="toc_entry">断熱型熱量計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000039"><span class="toc_ref">9.2.2</span> <span class="toc_entry">定圧と定積</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000040"><span class="toc_ref">9.2.3</span> <span class="toc_entry">相転移</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000041"><span class="toc_ref">9.2.4</span> <span class="toc_entry">ほかの熱量計</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000042"><span class="toc_ref">9.3</span> <span class="toc_entry">エントロピーの値</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000043"><span class="toc_ref">9.3.1</span> <span class="toc_entry">エントロピーは直接は測れない</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000044"><span class="toc_ref">9.3.2</span> <span class="toc_entry">第三法則と絶対エントロピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000045"><span class="toc_ref">9.3.3</span> <span class="toc_entry">ほかの方法</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:tests"><span class="toc_ref">9.4</span> <span class="toc_entry">熱力学は実験で確かめられているか</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000046"><span class="toc_ref">9.4.1</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000047"><span class="toc_ref">9.4.2</span> <span class="toc_entry">恒等式の検査</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000048"><span class="toc_ref">9.4.3</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000049"><span class="toc_ref">9.4.4</span> <span class="toc_entry">温度</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000050"><span class="toc_ref">9.4.5</span> <span class="toc_entry">小さな系</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000051"><span class="toc_ref">9.4.6</span> <span class="toc_entry">公理の検査</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-assumptions.html"><span class="toc_ref">10</span> <span class="toc_entry">残っている仮定</span></a>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref">11</span> <span class="toc_entry">参考文献</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000003">2 長さの測定</h1>
+<p>棒に対して行う手順は二つだけである。 棒を端と端でつなぐこと (連結) と、二本の棒の一端をそろえて並べ、他端がどちらに出るかを見ること (比較) である。 「長さ」という量は仮定せず、棒の集まりとこの二つの手順を原始概念とする。 比較と連結の構造から数値の目盛りを作る問題は、測定理論の基本問題である&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Holder1901" >20</a>
+	, 
+	<a href="sect0008.html#KLST1971" >21</a>
+	]
+</span>。 </p>
+<figure id="fig:length">
+  <div class="centered"><img src="images/img-0002.svg" alt="\includegraphics{figures/length.svg}" style="width: ; height: " />
+ <figcaption>
+  <span class="caption_title">図</span> 
+  <span class="caption_ref">2.1</span> 
+  <span class="caption_text">長さの比較と連結。(a) 一端をそろえて並べる比較、(b) 端と端でつなぐ連結。(c) 単位の棒の本数で挟むことが、目盛りの存在と一意性の証明の中心である。</span> 
+</figcaption>  </div>
+
+</figure>
+<div class="definition_thmwrapper theorem-style-definition" id="def:compare-concat">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">1</span>
+    <span class="definition_thmtitle">比較と連結</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#def:compare-concat">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.ExtensiveStructure.le" class="lean_decl">OpThermo.ExtensiveStructure.le</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.ExtensiveStructure.cat" class="lean_decl">OpThermo.ExtensiveStructure.cat</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   棒の集まり \(A\) の上で、\(a\) と \(b\) の一端をそろえて並べたとき \(a\) の他端が \(b\) の他端を越えないことを \(a \preceq b\) と書く。 \(a\) と \(b\) を端と端でつないだ棒を \(a \circ b\) と書く。 </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:extensive">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">2</span>
+    <span class="definition_thmtitle">外延的構造</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#def:extensive">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0002.html#def:compare-concat">定義 1</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.ExtensiveStructure" class="lean_decl">OpThermo.ExtensiveStructure</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    比較と連結が次の法則を満たすとき、外延的構造という。 </p>
+<ul class="itemize">
+  <li><p>比較は全順序的で推移的。 </p>
+</li>
+  <li><p>連結は、比較で区別できない範囲で結合的かつ可換。 </p>
+</li>
+  <li><p>単調性：\(a \preceq b \iff a \circ c \preceq b \circ c\)。 </p>
+</li>
+  <li><p>正値性：\(a \circ b \not\preceq a\)。 </p>
+</li>
+  <li><p>アルキメデス性：\(a \not\preceq b\) なら、任意の \(c, d\) に対しある \(n\) で \((n+1) b \circ d \preceq (n+1) a \circ c\)。 </p>
+</li>
+</ul>
+
+  </div>
+</div>
+<div class="empirical_thmwrapper theorem-style-definition" id="emp:rods">
+  <div class="empirical_thmheading">
+    <span class="empirical_thmcaption">
+    経験則
+    </span>
+    <span class="empirical_thmlabel">3</span>
+    <span class="empirical_thmtitle">棒の比較と連結</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#emp:rods">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0002.html#def:extensive">定義 2</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.ExtensiveStructure.length_exists" class="lean_decl">OpThermo.ExtensiveStructure.length_exists</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="empirical_thmcontent">
+  <p>    棒の比較と連結は外延的構造をなす。 </p>
+
+  </div>
+</div>
+<p>同じ構造は、天秤の比較と同じ皿への同時載せによる質量にも使う (経験則&#160;<a href="sect0004.html#emp:balance">31</a>)。 </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:represents">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">4</span>
+    <span class="definition_thmtitle">表現</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#def:represents">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0002.html#def:extensive">定義 2</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.ExtensiveStructure.Represents" class="lean_decl">OpThermo.ExtensiveStructure.Represents</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    目盛り \(\ell : A \to \mathbb {R}\) が構造を表現するとは、\(a \preceq b \iff \ell (a) \le \ell (b)\) かつ \(\ell (a \circ b) = \ell (a) + \ell (b)\) が成り立つことをいう。 表現する目盛りの値は正である。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:length-exists">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">5</span>
+    <span class="theorem_thmtitle">目盛りの存在</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#thm:length-exists">#</a>
+    
+    <a class="icon proof" href="sect0002.html#a0000000052"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0002.html#def:represents">定義 4</a></li>
+          
+          <li><a href="sect0002.html#emp:rods">経験則 3</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.ExtensiveStructure.length_exists" class="lean_decl">OpThermo.ExtensiveStructure.length_exists</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.scale_exists_of_archimedean" class="lean_decl">OpThermo.scale_exists_of_archimedean</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    単位の棒 \(u\) を選ぶと、構造を表現する目盛り \(\ell \) で \(\ell (u) = 1\) を満たすものが存在する。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000052">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>比較で区別できない棒を同一視した商 \(Q\) は、全順序を持つ可換半群になり、単調性から相殺則が成り立つ。 \(Q \times Q\) の形式的な差 \((x, y) \mapsto x - y\) で群 \(G\) を作り、順序 \((x,y) \le (z,w) :\iff x + w \le z + y\) を入れる。 アルキメデス性の公理から \(G\) はアルキメデス的になる。 \(G\) を Hölder の定理 (Mathlib の <span class="ttfamily">Archimedean.embedReal</span>) で \(\mathbb {R}\) に埋め込み、棒 \(a\) を \(G\) の元 \((a + a) - a\) に送る写像と合成する。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:length-unique">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">6</span>
+    <span class="theorem_thmtitle">目盛りの一意性</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#thm:length-unique">#</a>
+    
+    <a class="icon proof" href="sect0002.html#a0000000053"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0002.html#def:represents">定義 4</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.ExtensiveStructure.length_unique" class="lean_decl">OpThermo.ExtensiveStructure.length_unique</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    構造を表現する二つの目盛りが単位の棒に \(1\) を割り当てるなら、両者は一致する。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000053">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(\ell (r) {\lt} \ell '(r)\) と仮定し、有理数 \(M/N\) を \(\ell (r) {\lt} M/N {\lt} \ell '(r)\) となるようにとる。 \(N\) 本の \(r\) と \(M\) 本の \(u\) を比較すると、どちらの向きでも \(\ell \) か \(\ell '\) の表現性に矛盾する。 </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:compatible">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">7</span>
+    <span class="definition_thmtitle">目盛りの両立性</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#def:compatible">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Compatible" class="lean_decl">OpThermo.Compatible</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   対象の集まりの上の二つの目盛り (実数値関数) \(m_A, m_B\) が両立するとは、ある \(c {\gt} 0\) で \(m_B = c\,  m_A\) となることをいう。 </p>
+
+  </div>
+</div>
+<p>\(c\) は単位の違いに対応する。 異なる手順を同じ量として扱うときは、両立を経験則か定理として明示する。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:compatible-represents">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">8</span>
+    <span class="theorem_thmtitle">同じ構造を表現する目盛りは比例する</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0002.html#thm:compatible-represents">#</a>
+    
+    <a class="icon proof" href="sect0002.html#a0000000054"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0002.html#thm:length-unique">定理 6</a></li>
+          
+          <li><a href="sect0002.html#def:compatible">定義 7</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.ExtensiveStructure.compatible_of_represents" class="lean_decl">OpThermo.ExtensiveStructure.compatible_of_represents</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    同じ外延的構造を表現する二つの目盛りは両立する。 経験的に確かめるべきなのは、二つの手続きが同じ比較と連結の結果を与えることの方である。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000054">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>それぞれを単位の棒での値で割ると、一意性の定理から一致する。 </p>
+
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sect0001.html" title="概要"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0003.html" title="状態と平衡状態"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

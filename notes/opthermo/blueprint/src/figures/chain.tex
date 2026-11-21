@@ -1,0 +1,30 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}[node distance=6mm, every node/.append style={text width=29mm, minimum height=13mm}]
+  \node[box] (ext) at (0,0) {\textbf{外延的構造}\\[1pt]\small 比較と連結の法則};
+  \node[box] (len) at (3.6, 2.0) {\textbf{長さ}\\[1pt]\small 棒を並べる\\\small 棒をつなぐ};
+  \node[box] (mass) at (3.6, 0) {\textbf{質量}\\[1pt]\small 天秤\\\small 同じ皿に載せる};
+  \node[box] (time) at (3.6,-2.0) {\textbf{時間}\\[1pt]\small 同時に始める\\\small 続けて待つ};
+  \node[box] (work) at (7.2, 1.0) {\textbf{仕事}\\[1pt]\small 仮想仕事の原理\\\small $\sum m h$};
+  \node[box] (state) at (7.2,-2.0) {\textbf{状態、平衡状態}\\[1pt]\small 準備手順、測定手順、待ち手順};
+  \node[box] (U) at (10.8, 1.0) {\textbf{内部エネルギー $U$}\\[1pt]\small 断熱仕事の\\\small 経路独立性};
+  \node[box] (acc) at (10.8,-2.0) {\textbf{断熱到達性 $\prec$}\\[1pt]\small 公理 A1--A6\\\small 比較仮説};
+  \node[box] (S) at (14.4,-2.0) {\textbf{エントロピー $S$}\\[1pt]\small 基準状態の\\\small 混合と比べる};
+  \node[box] (T) at (18.0,-2.0) {\textbf{$T$, $p$, $\mu$}\\[1pt]\small 交換平衡};
+  \node[box] (G) at (18.0, 1.0) {\textbf{Gibbs $G$}\\[1pt]\small $U + p_0 V - T_0 S$\\\small の最小};
+  \draw[->] (ext) -- (len);
+  \draw[->] (ext) -- (mass);
+  \draw[->] (ext) -- (time);
+  \draw[->] (len) -- (work);
+  \draw[->] (mass) -- (work);
+  \draw[->, dashed] (time) -- (state);
+  \draw[->] (work) -- (U);
+  \draw[->] (state) -- (U);
+  \draw[->] (state) -- (acc);
+  \draw[->] (acc) -- (S);
+  \draw[->] (S) -- (T);
+  \draw[->] (S) -- (G);
+  \draw[->] (U) -- (G);
+\end{tikzpicture}
+\end{document}

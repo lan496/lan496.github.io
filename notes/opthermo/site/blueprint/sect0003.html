@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$'], ['\\(','\\)']] },
+  };
+  // MathJax 4 may re-render formulas after load, so tag the current containers at copy time.
+  function tagFormulas() {
+    for (const item of MathJax.startup.document.math) {
+      const root = item.typesetRoot;
+      if (!root) continue;
+      root.setAttribute('data-tex', item.math.trim());
+      if (item.display) root.setAttribute('data-display', 'true');
+    }
+  }
+  document.addEventListener('copy', (event) => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || !window.MathJax || !MathJax.startup) return;
+    tagFormulas();
+    const frag = sel.getRangeAt(0).cloneContents();
+    const boxes = frag.querySelectorAll('mjx-container[data-tex]');
+    if (boxes.length === 0) return;
+    for (const box of boxes) {
+      const tex = box.getAttribute('data-tex').replace(/\{\\gt\}/g, '>').replace(/\{\\lt\}/g, '<');
+      const text = box.hasAttribute('data-display') ? '\n$$' + tex + '$$\n' : '$' + tex + '$';
+      box.replaceWith(document.createTextNode(text));
+    }
+    const holder = document.createElement('div');
+    holder.style.position = 'fixed';
+    holder.style.left = '-10000px';
+    holder.appendChild(frag);
+    document.body.appendChild(holder);
+    const plain = holder.innerText;
+    holder.remove();
+    event.clipboardData.setData('text/plain', plain);
+    event.preventDefault();
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>状態と平衡状態</title>
+<link rel="next" href="sect0004.html" title="仕事の力学的な基礎" />
+<link rel="prev" href="sect0002.html" title="長さの測定" />
+<link rel="up" href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">概要</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000010"><span class="toc_ref">1.1</span> <span class="toc_entry">用語</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">2</span> <span class="toc_entry">長さの測定</span></a>
+ </li>
+<li class=" active current">
+  <a href="sect0003.html"><span class="toc_ref">3</span> <span class="toc_entry">状態と平衡状態</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sect0003.html#a0000000011"><span class="toc_ref">3.1</span> <span class="toc_entry">時間の目盛り</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000012"><span class="toc_ref">3.2</span> <span class="toc_entry">状態の空間</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">4</span> <span class="toc_entry">仕事の力学的な基礎</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">5</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html"><span class="toc_ref">6</span> <span class="toc_entry">断熱到達性とエントロピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html#sec:accessibility-axioms"><span class="toc_ref">6.1</span> <span class="toc_entry">断熱操作から断熱到達性へ</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000013"><span class="toc_ref">6.2</span> <span class="toc_entry">複合系の内部エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000014"><span class="toc_ref">6.3</span> <span class="toc_entry">相殺則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000015"><span class="toc_ref">6.4</span> <span class="toc_entry">基準状態と形式的な不等式</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000016"><span class="toc_ref">6.5</span> <span class="toc_entry">エントロピーの構成</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000017"><span class="toc_ref">6.6</span> <span class="toc_entry">エントロピーの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000018"><span class="toc_ref">6.7</span> <span class="toc_entry">エントロピー原理</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#sec:second-law"><span class="toc_ref">6.8</span> <span class="toc_entry">第二法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000019"><span class="toc_ref">6.9</span> <span class="toc_entry">無矛盾性</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">7</span> <span class="toc_entry">温度、圧力、化学ポテンシャル</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0007.html#a0000000020"><span class="toc_ref">7.1</span> <span class="toc_entry">温度の定義</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000021"><span class="toc_ref">7.2</span> <span class="toc_entry">熱接触と温度の比較</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000022"><span class="toc_ref">7.3</span> <span class="toc_entry">圧力と化学ポテンシャル</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:ideal-gas"><span class="toc_ref">7.4</span> <span class="toc_entry">理想気体</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:fundamental"><span class="toc_ref">7.5</span> <span class="toc_entry">基本関係式</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:concavity"><span class="toc_ref">7.6</span> <span class="toc_entry">エントロピーの凹性</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0007.html#a0000000023"><span class="toc_ref">7.6.1</span> <span class="toc_entry">凹性から出ること</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000024"><span class="toc_ref">7.6.2</span> <span class="toc_entry">安定性</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000025"><span class="toc_ref">7.6.3</span> <span class="toc_entry">相の共存</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000026"><span class="toc_ref">7.6.4</span> <span class="toc_entry">凹性と自由エネルギー</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:heat-capacity"><span class="toc_ref">7.7</span> <span class="toc_entry">熱容量</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:third-law"><span class="toc_ref">7.8</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html"><span class="toc_ref">8</span> <span class="toc_entry">自由エネルギーとエンタルピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-potentials.html#a0000000027"><span class="toc_ref">8.1</span> <span class="toc_entry">環境</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-potentials.html#sec:large-reservoir"><span class="toc_ref">8.1.1</span> <span class="toc_entry">大きな溜め</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000028"><span class="toc_ref">8.2</span> <span class="toc_entry">Helmholtz 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000029"><span class="toc_ref">8.3</span> <span class="toc_entry">エンタルピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000030"><span class="toc_ref">8.4</span> <span class="toc_entry">Gibbs 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000031"><span class="toc_ref">8.5</span> <span class="toc_entry">エネルギーとエンタルピーの最小原理</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000032"><span class="toc_ref">8.6</span> <span class="toc_entry">ポテンシャルの微分</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html"><span class="toc_ref">9</span> <span class="toc_entry">実験室での熱測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-calorimetry.html#sec:thermometry"><span class="toc_ref">9.1</span> <span class="toc_entry">温度の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000033"><span class="toc_ref">9.1.1</span> <span class="toc_entry">温度計が測っているもの</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000034"><span class="toc_ref">9.1.2</span> <span class="toc_entry">温度の比と単位</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000035"><span class="toc_ref">9.1.3</span> <span class="toc_entry">一次温度計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000036"><span class="toc_ref">9.1.4</span> <span class="toc_entry">国際温度目盛</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000037"><span class="toc_ref">9.1.5</span> <span class="toc_entry">一次温度計どうしの一致</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:measure-heat-capacity"><span class="toc_ref">9.2</span> <span class="toc_entry">熱容量の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000038"><span class="toc_ref">9.2.1</span> <span class="toc_entry">断熱型熱量計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000039"><span class="toc_ref">9.2.2</span> <span class="toc_entry">定圧と定積</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000040"><span class="toc_ref">9.2.3</span> <span class="toc_entry">相転移</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000041"><span class="toc_ref">9.2.4</span> <span class="toc_entry">ほかの熱量計</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000042"><span class="toc_ref">9.3</span> <span class="toc_entry">エントロピーの値</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000043"><span class="toc_ref">9.3.1</span> <span class="toc_entry">エントロピーは直接は測れない</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000044"><span class="toc_ref">9.3.2</span> <span class="toc_entry">第三法則と絶対エントロピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000045"><span class="toc_ref">9.3.3</span> <span class="toc_entry">ほかの方法</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:tests"><span class="toc_ref">9.4</span> <span class="toc_entry">熱力学は実験で確かめられているか</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000046"><span class="toc_ref">9.4.1</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000047"><span class="toc_ref">9.4.2</span> <span class="toc_entry">恒等式の検査</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000048"><span class="toc_ref">9.4.3</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000049"><span class="toc_ref">9.4.4</span> <span class="toc_entry">温度</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000050"><span class="toc_ref">9.4.5</span> <span class="toc_entry">小さな系</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000051"><span class="toc_ref">9.4.6</span> <span class="toc_entry">公理の検査</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-assumptions.html"><span class="toc_ref">10</span> <span class="toc_entry">残っている仮定</span></a>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref">11</span> <span class="toc_entry">参考文献</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000004">3 状態と平衡状態</h1>
+<p>「状態」も「平衡」も「時間」も原始概念にしない。 原始概念は、準備手順、測定手順、読み、待ち手順の四つである。 読みは、準備手順の直後に測定手順を行って得る実数である。 準備手順 \(p\) に待ち手順 \(d\) を続けたものも一つの準備手順であり、\(\mathrm{wait}_d\,  p\) と書く。 読みが実数で再現することは仮定として置く。 </p>
+<figure id="fig:states">
+  <div class="centered"><img src="images/img-0003.svg" alt="\includegraphics{figures/states.svg}" style="width: ; height: " />
+ <figcaption>
+  <span class="caption_title">図</span> 
+  <span class="caption_ref">3.1</span> 
+  <span class="caption_text">状態と平衡状態。(a) 読みが一致する準備手順を一つの状態とみなす。(b) 平衡は、どの待ち手順の後も読みが変わらないことで定義する。(c) 読みが一致しても待った後の振る舞いが違いうるので、平衡を状態の性質にするには仮定が要る (定理&#160;<a href="sect0003.html#thm:stationary-not-state">13</a>)。</span> 
+</figcaption>  </div>
+
+</figure>
+<div class="definition_thmwrapper theorem-style-definition" id="def:laboratory">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">9</span>
+    <span class="definition_thmtitle">実験室</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#def:laboratory">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory" class="lean_decl">OpThermo.Laboratory</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   準備手順の集まり \(\mathrm{Prep}\)、測定手順 (巨視的なもの) の集まり \(\mathrm{Meas}\)、読み \(\mathrm{outcome} : \mathrm{Prep} \times \mathrm{Meas} \to \mathbb {R}\) が与えられているとする。 </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:waiting">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">10</span>
+    <span class="definition_thmtitle">待ち手順</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#def:waiting">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:laboratory">定義 9</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.wait" class="lean_decl">OpThermo.Laboratory.wait</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    待ち手順の集まり \(\mathrm{Dur}\) と、準備手順に待ち手順 \(d\) を続ける写像 \(\mathrm{wait}_d : \mathrm{Prep} \to \mathrm{Prep}\) が与えられているとする。 </p>
+
+  </div>
+</div>
+<p>待ち手順とは、「砂時計の砂が落ち切るまで待つ」「振り子が 10 回振れるまで待つ」のように、基準となる過程が終わるまで待つ手順である。 数値の時間は使わない。 </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:state">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">11</span>
+    <span class="definition_thmtitle">状態</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#def:state">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:laboratory">定義 9</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.Indist" class="lean_decl">OpThermo.Laboratory.Indist</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.State" class="lean_decl">OpThermo.Laboratory.State</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.stateOf" class="lean_decl">OpThermo.Laboratory.stateOf</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    二つの準備手順がどの測定手順でも同じ読みを与えるとき、区別できないという。 状態とは、区別できない準備手順の類である。 測定手順の集まりを広げれば、状態はより細かく分かれる。 </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:stationary">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">12</span>
+    <span class="definition_thmtitle">定常な準備手順</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#def:stationary">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:waiting">定義 10</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.IsStationary" class="lean_decl">OpThermo.Laboratory.IsStationary</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    準備手順 \(p\) が定常であるとは、任意の待ち手順 \(d\) と測定手順 \(M\) で \(\mathrm{outcome}(\mathrm{wait}_d\,  p, M) = \mathrm{outcome}(p, M)\) となることをいう。 </p>
+
+  </div>
+</div>
+<p>どれだけ待っても変わらないと言えれば足りるので、平衡の定義に数値の時間は要らない。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:stationary-not-state">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">13</span>
+    <span class="theorem_thmtitle">定常性はそのままでは状態の性質でない</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#thm:stationary-not-state">#</a>
+    
+    <a class="icon proof" href="sect0003.html#a0000000055"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:state">定義 11</a></li>
+          
+          <li><a href="sect0003.html#def:stationary">定義 12</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.stationary_not_state_property" class="lean_decl">OpThermo.stationary_not_state_property</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    区別できない二つの準備手順で、一方は定常で他方は定常でない例がある。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000055">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>準備手順は \(0, 1, 2\)、測定手順は一つとする。 \(0\) と \(1\) の読みはどちらも \(0\) で、\(2\) の読みは \(1\) とする。 \(0\) はどの待ち手順を続けても変わらず、\(1\) は待ち手順を続けると \(2\) に変わるとすればよい。 </p>
+
+  </div>
+</div>
+<div class="empirical_thmwrapper theorem-style-definition" id="emp:state-determines">
+  <div class="empirical_thmheading">
+    <span class="empirical_thmcaption">
+    経験則
+    </span>
+    <span class="empirical_thmlabel">14</span>
+    <span class="empirical_thmtitle">状態が以後の変化を決める</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#emp:state-determines">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:state">定義 11</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.StateDeterminesEvolution" class="lean_decl">OpThermo.Laboratory.StateDeterminesEvolution</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="empirical_thmcontent">
+  <p>    区別できない準備手順は、待ち手順を続けた後も区別できない。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:stationary-congr">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">15</span>
+    <span class="theorem_thmtitle">定常性は状態の性質になる</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#thm:stationary-congr">#</a>
+    
+    <a class="icon proof" href="sect0003.html#a0000000056"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#emp:state-determines">経験則 14</a></li>
+          
+          <li><a href="sect0003.html#def:stationary">定義 12</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.stationary_congr" class="lean_decl">OpThermo.Laboratory.stationary_congr</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    この仮定の下で、区別できない準備手順の一方が定常なら他方も定常である。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000056">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(\mathrm{outcome}(\mathrm{wait}_d\,  q, M) = \mathrm{outcome}(\mathrm{wait}_d\,  p, M) = \mathrm{outcome}(p, M) = \mathrm{outcome}(q, M)\)。 </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:equilibrium">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">16</span>
+    <span class="definition_thmtitle">平衡状態</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#def:equilibrium">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#thm:stationary-congr">定理 15</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.IsEquilibrium" class="lean_decl">OpThermo.Laboratory.IsEquilibrium</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.EqState" class="lean_decl">OpThermo.Laboratory.EqState</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.isEquilibrium_stateOf" class="lean_decl">OpThermo.Laboratory.isEquilibrium_stateOf</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    平衡状態とは、定常な準備手順で作られる状態である。 平衡状態の集合を \(\Gamma \) と書く。 以下の章の状態は、この \(\Gamma \) を念頭に置いている。 </p>
+
+  </div>
+</div>
+<h1 id="a0000000011">3.1 時間の目盛り</h1>
+<p>数値の時間は、長さと同じ外延的構造から作る。 平衡の定義には使わないが、時計の読みが何を測っているかをここで明示する。 </p>
+<figure id="fig:clock">
+  <div class="centered"><img src="images/img-0004.svg" alt="\includegraphics{figures/clock.svg}" style="width: ; height: " />
+ <figcaption>
+  <span class="caption_title">図</span> 
+  <span class="caption_ref">3.2</span> 
+  <span class="caption_text">時間の比較と連結。(a) 二つの基準過程を同時に始め、どちらが先に終わるかを見る比較、(b) 続けて待つ連結。長さの図&#160;<a href="sect0002.html#fig:length">2.1</a> と同じ構造である。</span> 
+</figcaption>  </div>
+
+</figure>
+<div class="definition_thmwrapper theorem-style-definition" id="def:clock">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">17</span>
+    <span class="definition_thmtitle">時計</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#def:clock">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:waiting">定義 10</a></li>
+          
+          <li><a href="sect0002.html#def:extensive">定義 2</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.Clock" class="lean_decl">OpThermo.Laboratory.Clock</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    待ち手順の比較 \(d \preceq e\) は、二つの基準過程を同時に始めて \(d\) が \(e\) より遅れずに終わることである。 連結 \(d \circ e\) は、\(d\) が終わってから \(e\) を始めることである。 これらが外延的構造をなし、\(\mathrm{wait}_{d \circ e} = \mathrm{wait}_e \circ \mathrm{wait}_d\) を満たすとき、時計という。 </p>
+
+  </div>
+</div>
+<div class="empirical_thmwrapper theorem-style-definition" id="emp:clock">
+  <div class="empirical_thmheading">
+    <span class="empirical_thmcaption">
+    経験則
+    </span>
+    <span class="empirical_thmlabel">18</span>
+    <span class="empirical_thmtitle">時計がある</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#emp:clock">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:clock">定義 17</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.Clock.time_exists" class="lean_decl">OpThermo.Laboratory.Clock.time_exists</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="empirical_thmcontent">
+  <p>    振り子の振れや砂時計の砂の落下を基準過程とする待ち手順は、時計をなす。 </p>
+
+  </div>
+</div>
+<p>同時に始めることは、同じ場所で二つの出来事が一致することとして直接観測できるとする。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:time">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">19</span>
+    <span class="theorem_thmtitle">時間の目盛り</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#thm:time">#</a>
+    
+    <a class="icon proof" href="sect0003.html#a0000000057"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#emp:clock">経験則 18</a></li>
+          
+          <li><a href="sect0002.html#thm:length-exists">定理 5</a></li>
+          
+          <li><a href="sect0002.html#thm:length-unique">定理 6</a></li>
+          
+          <li><a href="sect0002.html#thm:compatible-represents">定理 8</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.Clock.time_exists" class="lean_decl">OpThermo.Laboratory.Clock.time_exists</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.Clock.time_unique" class="lean_decl">OpThermo.Laboratory.Clock.time_unique</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.Clock.compatible" class="lean_decl">OpThermo.Laboratory.Clock.compatible</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    単位の待ち手順 (振り子の一振りなど) を選ぶと、比較を大小に、連結を和に移す時間の目盛りが一意に存在する。 同じ比較と連結を与える二つの時計 (砂時計と振り子など) の読みは比例する。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000057">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>長さの目盛りの存在定理、一意性定理、比例の定理をそのまま適用する。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:stationary-wait">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">20</span>
+    <span class="theorem_thmtitle">待ち手順を続けても定常</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#thm:stationary-wait">#</a>
+    
+    <a class="icon proof" href="sect0003.html#a0000000058"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:clock">定義 17</a></li>
+          
+          <li><a href="sect0003.html#def:stationary">定義 12</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Laboratory.Clock.stationary_wait" class="lean_decl">OpThermo.Laboratory.Clock.stationary_wait</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    定常な準備手順を待ち手順を続けて得た準備手順も定常である。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000058">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(\mathrm{wait}_e(\mathrm{wait}_d\,  p) = \mathrm{wait}_{d \circ e}\,  p\) の読みは \(p\) の読みと同じで、\(\mathrm{wait}_d\,  p\) の読みも \(p\) の読みと同じ。 </p>
+
+  </div>
+</div>
+<h1 id="a0000000012">3.2 状態の空間</h1>
+<p>状態どうしを足すことと、状態を \(t\) 倍することを準備手順として定める。 長さの測定で棒の連結を決めたのと同じ役割を持つ。 後の章では、組成、内部エネルギー、エントロピーを、この空間の上の示量的な関数として作る。 </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:partition">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">21</span>
+    <span class="definition_thmtitle">仕切り</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#def:partition">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:equilibrium">定義 16</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   系に差し込んで二つの部分に分ける、物質を通さない薄い壁を仕切りという。 </p>
+
+  </div>
+</div>
+<div class="empirical_thmwrapper theorem-style-definition" id="emp:partition">
+  <div class="empirical_thmheading">
+    <span class="empirical_thmcaption">
+    経験則
+    </span>
+    <span class="empirical_thmlabel">22</span>
+    <span class="empirical_thmtitle">仕切りは状態を変えない</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#emp:partition">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:partition">定義 21</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="empirical_thmcontent">
+  <p>   平衡状態の系に仕切りを差し込んでも、状態は変わらない。 差し込んだその仕切りを抜いても、状態は変わらない。 </p>
+
+  </div>
+</div>
+<p>気体の容器に差し込む薄い板が例である。 仕切りが状態を変えないことは、仕切りの体積と、差し込むときの乱れを無視できるという理想化である。 </p>
+<p>この経験則は、一つの平衡状態を仕切りで分け、その仕切りを抜いて元に戻す場合だけについての主張である。 別々に用意した二つの状態 (例えば熱い水と冷たい水) を仕切りで隔てて並べ、その仕切りを抜く場合には使えない。 その場合は仕切りを抜くと熱や物質が流れ、別の平衡状態に移りうる。 この操作は内部の拘束を外す断熱操作であり、エントロピーの凹性 (定理&#160;<a href="sect0007.html#thm:entropy-concave">118</a>) や混合 (第&#160;<a href="sect0006.html#sec:accessibility-axioms">6.1</a> 節の例) で使う。 </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:composite">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">23</span>
+    <span class="definition_thmtitle">複合</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#def:composite">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:partition">定義 21</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   状態 \(X\) の系と状態 \(Y\) の系を、仕切りで隔てたまま並べて一つの系とみなしたものの状態を \(X + Y\) と書く。 </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:scaling">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">24</span>
+    <span class="definition_thmtitle">スケーリング</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#def:scaling">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:partition">定義 21</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   \(0 {\lt} t \le 1\) のとき、平衡状態 \(X\) の系に仕切りを入れて体積の割合 \(t : (1-t)\) に分け、\(t\) の側の部分の状態を \(tX\) と書く。 \(t {\gt} 1\) のときは、\((1/t)\) 倍が \(X\) になる状態を \(tX\) と書く。 </p>
+
+  </div>
+</div>
+<p>\(t {\gt} 1\) の \(tX\) は、同じ物質を多く用意して作る。 </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:state-space">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">25</span>
+    <span class="definition_thmtitle">状態の空間</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#def:state-space">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:composite">定義 23</a></li>
+          
+          <li><a href="sect0003.html#def:scaling">定義 24</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   複合とスケーリングで作った状態全体を \(\mathcal{S}\) と書く。 </p>
+
+  </div>
+</div>
+<div class="empirical_thmwrapper theorem-style-definition" id="emp:state-space">
+  <div class="empirical_thmheading">
+    <span class="empirical_thmcaption">
+    経験則
+    </span>
+    <span class="empirical_thmlabel">26</span>
+    <span class="empirical_thmtitle">複合とスケーリングの法則</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#emp:state-space">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:state-space">定義 25</a></li>
+          
+          <li><a href="sect0003.html#emp:partition">経験則 22</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/Module" class="lean_decl">Module</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="empirical_thmcontent">
+  <p>    \(\mathcal{S}\) では次の等式が成り立つ。 </p>
+<ul class="itemize">
+  <li><p>並べる順序と組み方によらない：\(X + Y = Y + X\)、\((X + Y) + Z = X + (Y + Z)\)。 </p>
+</li>
+  <li><p>分割したものを並べ直すと元に戻る：\(tX + (1-t)X = X\)。 </p>
+</li>
+  <li><p>分割を重ねてもよい：\(s(tX) = (st)X\)、\(t(X + Y) = tX + tY\)。 </p>
+</li>
+</ul>
+
+  </div>
+</div>
+<p>等号は状態 (定義&#160;<a href="sect0003.html#def:state">11</a>) として等しいことを表す。 これは \(\mathcal{S}\) が \(\mathbb {R}_{\ge 0}\) 加群であるということであり、Lean では Mathlib の加群の型クラスで書く。 \(t\) を実数全体に広げるのは理想化で、実際に作れるのは有理数の \(t\) である。 </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:extensive-fn">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">27</span>
+    <span class="definition_thmtitle">示量的な関数</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0003.html#def:extensive-fn">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:state-space">定義 25</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.IsExtensive" class="lean_decl">OpThermo.IsExtensive</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    関数 \(f : \mathcal{S} \to \mathbb {R}\) が示量的であるとは、\(f(X + Y) = f(X) + f(Y)\) と \(f(tX) = t\,  f(X)\) が成り立つことをいう。 </p>
+
+  </div>
+</div>
+<p>組成 (定義&#160;<a href="sect0004.html#def:mass">32</a>) の各成分、内部エネルギー (定理&#160;<a href="sect0006.html#thm:energy-extensive">69</a>)、エントロピー (定理&#160;<a href="sect0006.html#thm:additive">88</a>) はどれも示量的になる。 </p>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sect0002.html" title="長さの測定"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0004.html" title="仕事の力学的な基礎"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

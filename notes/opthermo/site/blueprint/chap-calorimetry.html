@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$'], ['\\(','\\)']] },
+  };
+  // MathJax 4 may re-render formulas after load, so tag the current containers at copy time.
+  function tagFormulas() {
+    for (const item of MathJax.startup.document.math) {
+      const root = item.typesetRoot;
+      if (!root) continue;
+      root.setAttribute('data-tex', item.math.trim());
+      if (item.display) root.setAttribute('data-display', 'true');
+    }
+  }
+  document.addEventListener('copy', (event) => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || !window.MathJax || !MathJax.startup) return;
+    tagFormulas();
+    const frag = sel.getRangeAt(0).cloneContents();
+    const boxes = frag.querySelectorAll('mjx-container[data-tex]');
+    if (boxes.length === 0) return;
+    for (const box of boxes) {
+      const tex = box.getAttribute('data-tex').replace(/\{\\gt\}/g, '>').replace(/\{\\lt\}/g, '<');
+      const text = box.hasAttribute('data-display') ? '\n$$' + tex + '$$\n' : '$' + tex + '$';
+      box.replaceWith(document.createTextNode(text));
+    }
+    const holder = document.createElement('div');
+    holder.style.position = 'fixed';
+    holder.style.left = '-10000px';
+    holder.appendChild(frag);
+    document.body.appendChild(holder);
+    const plain = holder.innerText;
+    holder.remove();
+    event.clipboardData.setData('text/plain', plain);
+    event.preventDefault();
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>実験室での熱測定</title>
+<link rel="next" href="chap-assumptions.html" title="残っている仮定" />
+<link rel="prev" href="chap-potentials.html" title="自由エネルギーとエンタルピー" />
+<link rel="up" href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">概要</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000010"><span class="toc_ref">1.1</span> <span class="toc_entry">用語</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">2</span> <span class="toc_entry">長さの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">3</span> <span class="toc_entry">状態と平衡状態</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0003.html#a0000000011"><span class="toc_ref">3.1</span> <span class="toc_entry">時間の目盛り</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000012"><span class="toc_ref">3.2</span> <span class="toc_entry">状態の空間</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">4</span> <span class="toc_entry">仕事の力学的な基礎</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">5</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html"><span class="toc_ref">6</span> <span class="toc_entry">断熱到達性とエントロピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html#sec:accessibility-axioms"><span class="toc_ref">6.1</span> <span class="toc_entry">断熱操作から断熱到達性へ</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000013"><span class="toc_ref">6.2</span> <span class="toc_entry">複合系の内部エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000014"><span class="toc_ref">6.3</span> <span class="toc_entry">相殺則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000015"><span class="toc_ref">6.4</span> <span class="toc_entry">基準状態と形式的な不等式</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000016"><span class="toc_ref">6.5</span> <span class="toc_entry">エントロピーの構成</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000017"><span class="toc_ref">6.6</span> <span class="toc_entry">エントロピーの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000018"><span class="toc_ref">6.7</span> <span class="toc_entry">エントロピー原理</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#sec:second-law"><span class="toc_ref">6.8</span> <span class="toc_entry">第二法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000019"><span class="toc_ref">6.9</span> <span class="toc_entry">無矛盾性</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">7</span> <span class="toc_entry">温度、圧力、化学ポテンシャル</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0007.html#a0000000020"><span class="toc_ref">7.1</span> <span class="toc_entry">温度の定義</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000021"><span class="toc_ref">7.2</span> <span class="toc_entry">熱接触と温度の比較</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000022"><span class="toc_ref">7.3</span> <span class="toc_entry">圧力と化学ポテンシャル</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:ideal-gas"><span class="toc_ref">7.4</span> <span class="toc_entry">理想気体</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:fundamental"><span class="toc_ref">7.5</span> <span class="toc_entry">基本関係式</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:concavity"><span class="toc_ref">7.6</span> <span class="toc_entry">エントロピーの凹性</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0007.html#a0000000023"><span class="toc_ref">7.6.1</span> <span class="toc_entry">凹性から出ること</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000024"><span class="toc_ref">7.6.2</span> <span class="toc_entry">安定性</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000025"><span class="toc_ref">7.6.3</span> <span class="toc_entry">相の共存</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000026"><span class="toc_ref">7.6.4</span> <span class="toc_entry">凹性と自由エネルギー</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:heat-capacity"><span class="toc_ref">7.7</span> <span class="toc_entry">熱容量</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:third-law"><span class="toc_ref">7.8</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html"><span class="toc_ref">8</span> <span class="toc_entry">自由エネルギーとエンタルピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-potentials.html#a0000000027"><span class="toc_ref">8.1</span> <span class="toc_entry">環境</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-potentials.html#sec:large-reservoir"><span class="toc_ref">8.1.1</span> <span class="toc_entry">大きな溜め</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000028"><span class="toc_ref">8.2</span> <span class="toc_entry">Helmholtz 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000029"><span class="toc_ref">8.3</span> <span class="toc_entry">エンタルピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000030"><span class="toc_ref">8.4</span> <span class="toc_entry">Gibbs 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000031"><span class="toc_ref">8.5</span> <span class="toc_entry">エネルギーとエンタルピーの最小原理</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000032"><span class="toc_ref">8.6</span> <span class="toc_entry">ポテンシャルの微分</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active current">
+  <a href="chap-calorimetry.html"><span class="toc_ref">9</span> <span class="toc_entry">実験室での熱測定</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="chap-calorimetry.html#sec:thermometry"><span class="toc_ref">9.1</span> <span class="toc_entry">温度の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000033"><span class="toc_ref">9.1.1</span> <span class="toc_entry">温度計が測っているもの</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000034"><span class="toc_ref">9.1.2</span> <span class="toc_entry">温度の比と単位</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000035"><span class="toc_ref">9.1.3</span> <span class="toc_entry">一次温度計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000036"><span class="toc_ref">9.1.4</span> <span class="toc_entry">国際温度目盛</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000037"><span class="toc_ref">9.1.5</span> <span class="toc_entry">一次温度計どうしの一致</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:measure-heat-capacity"><span class="toc_ref">9.2</span> <span class="toc_entry">熱容量の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000038"><span class="toc_ref">9.2.1</span> <span class="toc_entry">断熱型熱量計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000039"><span class="toc_ref">9.2.2</span> <span class="toc_entry">定圧と定積</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000040"><span class="toc_ref">9.2.3</span> <span class="toc_entry">相転移</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000041"><span class="toc_ref">9.2.4</span> <span class="toc_entry">ほかの熱量計</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000042"><span class="toc_ref">9.3</span> <span class="toc_entry">エントロピーの値</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000043"><span class="toc_ref">9.3.1</span> <span class="toc_entry">エントロピーは直接は測れない</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000044"><span class="toc_ref">9.3.2</span> <span class="toc_entry">第三法則と絶対エントロピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000045"><span class="toc_ref">9.3.3</span> <span class="toc_entry">ほかの方法</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:tests"><span class="toc_ref">9.4</span> <span class="toc_entry">熱力学は実験で確かめられているか</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000046"><span class="toc_ref">9.4.1</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000047"><span class="toc_ref">9.4.2</span> <span class="toc_entry">恒等式の検査</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000048"><span class="toc_ref">9.4.3</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000049"><span class="toc_ref">9.4.4</span> <span class="toc_entry">温度</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000050"><span class="toc_ref">9.4.5</span> <span class="toc_entry">小さな系</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000051"><span class="toc_ref">9.4.6</span> <span class="toc_entry">公理の検査</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-assumptions.html"><span class="toc_ref">10</span> <span class="toc_entry">残っている仮定</span></a>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref">11</span> <span class="toc_entry">参考文献</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="chap:calorimetry">9 実験室での熱測定</h1>
+
+<p>この章の大部分は形式化の外にある。 前章までの構成では、温度もエントロピーも、重りの高さと断熱操作だけから原理的に決まる。 実際の実験では、別の手順で同じ量を測っている。 この章では、その手順が前章までの定義のどれに対応し、どこで近似や追加の仮定が入るかを述べる。 最後に、熱力学そのものが実験でどう確かめられているかを述べる。 </p>
+<h1 id="sec:thermometry">9.1 温度の測定</h1>
+
+<h2 id="a0000000033">9.1.1 温度計が測っているもの</h2>
+<p>この blueprint の温度は \(T := 1/s'(u)\) で、エントロピーの微分である (定義&#160;<a href="sect0007.html#def:temperature">100</a>)。 これを一回の読みで与える装置はない。 温度計とは、読み \(\theta \) (電気抵抗、気体の圧力、液柱の長さなど) を持つ小さな単純系で、\(\theta \) が自分の温度の狭義単調な関数 \(\theta = f(T)\) になっているものである。 </p>
+<p>温度計を測りたい系と熱接触させ、平衡を待って \(\theta \) を読む。 平衡では両者の温度が等しい (定理&#160;<a href="sect0007.html#thm:exchange-eq">104</a>)。 第零法則 (定理&#160;<a href="sect0007.html#thm:zeroth-law">105</a>) から、同じ読みを与える二つの系は温度が等しい。 エントロピーの凹性から、温度の等しい二つの系を熱接触させても、切り離せば元の状態に戻せる (定理&#160;<a href="sect0007.html#thm:contact-reversible">122</a>)。 熱の流れる向き (定理&#160;<a href="sect0007.html#thm:exchange-dir">106</a>) から、読みが大きい方が温度が高いかどうかもわかる (\(f\) が増加なら)。 </p>
+<p>ここまでで得られるのは温度の順序だけである。 読み \(\theta \) を \(T\) の値に換算するには、関数 \(f\) を知らなければならない。 これを温度計の校正という。 校正の方法は、原理から \(f\) がわかる一次温度計を使うか、一次温度計で値を決めた定点と内挿の規則 (国際温度目盛) を使うかのどちらかである。 </p>
+<p>温度計は測る相手を乱す。 熱容量 \(C_{\mathrm{th}}\) の温度計を、熱容量 \(C\) の系に接触させると、系の温度は接触前の差のおよそ \(C_{\mathrm{th}}/(C + C_{\mathrm{th}})\) 倍だけずれる。 熱量計では、温度計を試料容器に固定し、その熱容量を空の容器の熱容量 (付加熱容量) に含めて差し引く。 </p>
+<h2 id="a0000000034">9.1.2 温度の比と単位</h2>
+<p>温度の比は、エネルギーの測定だけで原理的に決まる。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:kelvin-ratio">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">154</span>
+    <span class="theorem_thmtitle">Kelvin の温度比</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-calorimetry.html#thm:kelvin-ratio">#</a>
+    
+    <a class="icon proof" href="chap-calorimetry.html#a0000000140"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#def:reservoir">定義 129</a></li>
+          
+          <li><a href="sect0006.html#thm:entropy-principle">定理 86</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.kelvin_ratio" class="lean_decl">OpThermo.kelvin_ratio</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    温度 \(T_1\), \(T_2\) の理想的な熱浴が、全エントロピーを保つ操作でエネルギー \(Q_1\), \(Q_2\) を受け取るとする。 このとき \(T_1 / T_2 = -Q_1 / Q_2\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000140">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>熱浴のエントロピー変化は \(Q_i / T_i\) (定義&#160;<a href="chap-potentials.html#def:reservoir">129</a>)。全エントロピーが保たれるので \(Q_1/T_1 + Q_2/T_2 = 0\)。 </p>
+
+  </div>
+</div>
+<p>二つの熱浴の間で可逆な熱機関を動かし、出入りするエネルギーの比を測れば、温度の比が決まる。 これが Kelvin による熱力学温度の定義である。 実用にはならないが、温度の比がエネルギーの比だけで決まり、温度計の物質によらないことを示している。 </p>
+<p>温度の値そのものは、エントロピーの単位を選ぶまで決まらない。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:temperature-unit">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">155</span>
+    <span class="theorem_thmtitle">温度の単位はエントロピーの単位</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-calorimetry.html#thm:temperature-unit">#</a>
+    
+    <a class="icon proof" href="chap-calorimetry.html#a0000000141"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0007.html#def:temperature">定義 100</a></li>
+          
+          <li><a href="sect0006.html#thm:unique">定理 90</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.temperature_rescale" class="lean_decl">OpThermo.temperature_rescale</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    エントロピー \(s\) を \(a s + b\) (\(a {\gt} 0\)) に取り替えると、温度は \(T/a\) になる。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000141">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\((as + b)' = a s'\) の逆数をとる。 </p>
+
+  </div>
+</div>
+<p>エントロピーは単位と組成ごとの基準値を除いて一意なので (定理&#160;<a href="sect0006.html#thm:unique">90</a>)、温度は単位を除いて一意である。 単位の選び方は歴史的に二通りあった。 2019 年までは、水の三重点の温度を \(273.16\, \mathrm{K}\) と定めていた。 2019 年の SI 改定からは、Boltzmann 定数を \(k = 1.380\, 649 \times 10^{-23}\, \mathrm{J/K}\) と定め、温度をエネルギーの単位で測る&#160;<span class="cite">
+	[
+	<a href="sect0008.html#SI2019" >12</a>
+	]
+</span>。 この定義の下では、水の三重点の温度は測定値になる。 エントロピーの単位を \(k\) にとる (無次元にする) ことと、ケルビンの定義は同じことである。 </p>
+<h2 id="a0000000035">9.1.3 一次温度計</h2>
+<p>一次温度計とは、読みと温度の関係 \(f\) が、温度によって変わる未知の定数を含まずに理論から決まる温度計である。 どれも、測る量と温度を結ぶ式が熱力学 (と多くの場合は統計力学) から出ることを使う。 </p>
+<ul class="itemize">
+  <li><p><b class="bfseries">定積気体温度計</b>：薄い気体の \(pV = NkT\) (定理&#160;<a href="sect0007.html#thm:ideal-gas-law">112</a>) を使う。実在の気体は理想気体からずれるので、密度を変えて測り、密度 \(0\) に外挿する。 </p>
+</li>
+  <li><p><b class="bfseries">音響気体温度計</b>：薄い単原子気体の音速 \(c\) が \(c^2 = \gamma kT/m\) (\(\gamma = 5/3\)、\(m\) は原子の質量) を満たすことを使う。球形の共鳴器の共鳴周波数から音速を測る&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Moldover1988" >28</a>
+	, 
+	<a href="sect0008.html#Moldover2014" >29</a>
+	]
+</span>。 </p>
+</li>
+  <li><p><b class="bfseries">誘電率気体温度計</b>：気体の誘電率から密度を測り、圧力と合わせて \(pV = NkT\) を使う。 </p>
+</li>
+  <li><p><b class="bfseries">Johnson 雑音温度計</b>：抵抗の両端の電圧のゆらぎの二乗平均が \(4kTR\Delta f\) になることを使う。統計力学の揺動散逸定理による。 </p>
+</li>
+  <li><p><b class="bfseries">放射温度計</b>：熱放射のスペクトルが Planck の法則に従うことを使う。高温で使う。 </p>
+</li>
+</ul>
+<p>気体温度計が循環論法でないことは第&#160;<a href="sect0007.html#sec:ideal-gas">7.4</a> 節で述べた。 理想気体のエントロピーの形 (経験則&#160;<a href="sect0007.html#emp:dilute">109</a>) は、温度を使わずに確かめられる主張である。 例えば \(pV = U/c\) (定理&#160;<a href="sect0007.html#thm:ideal-gas-law">112</a> の証明) は、圧力をピストンの重りで、内部エネルギーを仕事で測れば、温度計なしで確かめられる。 理想気体以外の一次温度計は、この blueprint の外の統計力学を使う。 </p>
+<h2 id="a0000000036">9.1.4 国際温度目盛</h2>
+<p>一次温度計は手間がかかるので、日常の測定には国際温度目盛 ITS-90&#160;<span class="cite">
+	[
+	<a href="sect0008.html#ITS90" >11</a>
+	]
+</span> を使う。 ITS-90 は次の三つからなる。 </p>
+<ul class="itemize">
+  <li><p><b class="bfseries">定点</b>：純物質の三重点、融点、凝固点に温度の値を割り当てる。例えば水の三重点 \(273.16\, \mathrm{K}\)、ガリウムの融点 \(302.9146\, \mathrm{K}\)。値は、制定時までの一次温度計の測定から決めた。 </p>
+</li>
+  <li><p><b class="bfseries">内挿用の温度計</b>：\(0.65\, \mathrm{K}\) から \(5\, \mathrm{K}\) はヘリウムの蒸気圧、\(3\, \mathrm{K}\) から \(24.5561\, \mathrm{K}\) は内挿用の気体温度計、\(13.8033\, \mathrm{K}\) (水素の三重点) から \(961.78\, ^\circ \mathrm{C}\) (銀の凝固点) は白金抵抗温度計、それより上は放射温度計を使う。 </p>
+</li>
+  <li><p><b class="bfseries">内挿の式</b>：定点での読みから、間の温度を計算する規則。白金抵抗温度計では、抵抗比の基準関数とその補正の形が定められている。 </p>
+</li>
+</ul>
+<p> ITS-90 の温度 \(T_{90}\) は熱力学温度 \(T\) の近似であり、定義上は別の量である。 差 \(T - T_{90}\) は一次温度計で測られ、まとめられている&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Fischer2011" >27</a>
+	]
+</span>。 熱量計の温度計 (白金抵抗温度計、低温ではゲルマニウムや酸化ルテニウムの抵抗温度計) は、ITS-90 で校正したものを使う。 </p>
+<h2 id="a0000000037">9.1.5 一次温度計どうしの一致</h2>
+<p>違う原理の一次温度計が同じ温度を与えることは、自明ではない。 気体の音速、気体の誘電率、抵抗の雑音は、それぞれ違う物理に基づく。 2019 年の改定に先立ち、Boltzmann 定数がこれらの方法で独立に測られ、百万分の数の相対不確かさの範囲で一致した&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Fischer2018" >26</a>
+	, 
+	<a href="sect0008.html#dePodesta2013" >30</a>
+	]
+</span>。 この一致は、温度が測り方によらない一つの量であること (第零法則と温度の定義) の、精密な実験的裏付けと見なせる。 </p>
+<h1 id="sec:measure-heat-capacity">9.2 熱容量の測定</h1>
+
+<h2 id="a0000000038">9.2.1 断熱型熱量計</h2>
+<p>エントロピーの差を求める標準の方法は、断熱型熱量計で熱容量 \(C(T)\) を測り、\(\int C/T\,  dT\) を計算することである (定理&#160;<a href="sect0007.html#thm:dS-dT">126</a>)。 低温の断熱型熱量計の標準的な手順は次のとおり&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Westrum1968" >31</a>
+	]
+</span>。 </p>
+<ul class="itemize">
+  <li><p>試料を薄い金属の容器に入れ、熱を伝えるためにヘリウム気体を少し封じる。容器には温度計とヒーターを固定する。 </p>
+</li>
+  <li><p>容器を真空中に吊り、まわりを断熱シールドで囲む。シールドの温度を容器の温度に一致させるように制御し、熱の出入りをなくす。 </p>
+</li>
+  <li><p>ヒーターに既知の電力を一定時間流し、電気的な仕事 \(W\) を加える。加熱をやめて平衡を待ち、温度の上昇 \(\Delta T\) を読む。 </p>
+</li>
+  <li><p>\(C \approx W/\Delta T\) を、温度を少しずつ上げながら繰り返す。空の容器でも同じ測定をし、差し引く。 </p>
+</li>
+</ul>
+<p>前章までの構成との対応は次のとおりである。 </p>
+<ul class="itemize">
+  <li><p>断熱シールドは、断熱操作 (定義&#160;<a href="sect0005.html#def:adiabatic-op">44</a>) の条件を実現する装置である。熱の出入りは完全には \(0\) にならず、加熱の前後の温度の時間変化 (ドリフト) から補正する。 </p>
+</li>
+  <li><p>電気ヒーターは Joule の羽根車 (経験則&#160;<a href="sect0007.html#emp:stirring">98</a>) の代わりである。電気的な仕事は、電流と電圧の測定から計算する。電気の単位は SI で力学の単位とつながっているので、これは重りを下ろす仕事と同じ量である。 </p>
+</li>
+  <li><p>電気ヒーターによる加熱は不可逆な操作である。それでもエントロピーの差が \(\int C/T\,  dT\) で求まるのは、エントロピーが状態だけで決まるからである。加熱の各段の後で系が平衡に戻れば、途中の経路は結果に影響しない。定理&#160;<a href="sect0007.html#thm:calorimetry">116</a> が平衡状態の列 \(\gamma (u)\) だけを使っているのはこのためである。 </p>
+</li>
+  <li><p>\(W/\Delta T\) は微分 \(du/dT\) の差分近似である。\(\Delta T\) が小さいほど正確だが、温度の読みの相対誤差は大きくなる。曲率の補正をすることもある。 </p>
+</li>
+</ul>
+<p>精度の良い断熱型熱量計では、熱容量の不確かさは室温付近で \(0.1\% \) の程度とされる。 試料が数グラム必要で、一点に数十分かかる。 </p>
+<h2 id="a0000000039">9.2.2 定圧と定積</h2>
+<p>固体や液体の試料は、容器の中で大気圧か自分の蒸気圧の下にあり、体積は温度とともに変わる。 したがって測っているのは定圧熱容量 \(C_p\) に近く、得られる差はエンタルピーの差である (定理&#160;<a href="chap-potentials.html#thm:enthalpy-change">137</a>)。 エントロピーの差は \(C_p\) からも同じ形の積分で求まる。 圧力を一定に保つ経路でも \(dS = dH/T\) だからである (定理&#160;<a href="chap-potentials.html#thm:dH">152</a>)。 理論と比べるために \(C_V\) が要るときは、熱膨張率と圧縮率を別に測り、\(C_p - C_V = TV\alpha ^2/\kappa _T\) で換算する。 </p>
+<h2 id="a0000000040">9.2.3 相転移</h2>
+<p>一次相転移の温度では、熱を加えても温度が上がらない (第&#160;<a href="sect0007.html#sec:concavity">7.6</a> 節)。 熱容量の積分の代わりに、転移に要したエネルギー (潜熱) \(L\) を測り、エントロピーの増分 \(L/T_{\mathrm{tr}}\) を加える。 潜熱は、転移の前後で温度が同じなので、加えた電気的な仕事からそのまま読める。 </p>
+<h2 id="a0000000041">9.2.4 ほかの熱量計</h2>
+<ul class="itemize">
+  <li><p><b class="bfseries">緩和法</b>：小さな試料を、熱伝導の既知な細い線で熱浴につなぐ。ヒーターで少し温めて切り、温度が熱浴の温度に戻る時定数 \(\tau = C/K\) (\(K\) は線の熱伝導度) から \(C\) を求める&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Bachmann1972" >32</a>
+	]
+</span>。ミリグラムの試料で測れる。温度応答の全体を模型に当てはめる方法&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Hwang1997" >33</a>
+	]
+</span> が市販の装置で使われ、その精度は断熱型熱量計と比べて検証されている&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Lashley2003" >34</a>
+	]
+</span>。 </p>
+</li>
+  <li><p><b class="bfseries">示差走査熱量測定 (DSC)</b>：試料と参照試料を同じ速さで加熱し、両者に要る電力の差を測る&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Watson1964" >35</a>
+	]
+</span>。速く測れるが、平衡からのずれと較正のために精度は落ちる。 </p>
+</li>
+  <li><p><b class="bfseries">交流法、薄膜の熱量計</b>：温度を周期的に揺らし、応答の振幅から熱容量を求める。微小な試料や高圧下で使う。 </p>
+</li>
+</ul>
+<h1 id="a0000000042">9.3 エントロピーの値</h1>
+<h2 id="a0000000043">9.3.1 エントロピーは直接は測れない</h2>
+<p>長さや質量と違い、エントロピーを一回の読みで与える測定器はない。 二分法 (定理&#160;<a href="sect0006.html#thm:entropy-bisect">85</a>) は原理的な測定手順だが、毎回断熱操作を探すので実用にならない。 実際に測れるのはエントロピーの差で、熱容量と潜熱の積分から求める。 </p>
+<h2 id="a0000000044">9.3.2 第三法則と絶対エントロピー</h2>
+<p>定理&#160;<a href="sect0006.html#thm:unique">90</a> では、エントロピーは単位と、組成ごとの基準値を除いて一意だった。 化学反応を扱わなければ、基準値はどの結果にも影響しない。 反応を扱うと、組成の違う状態を比べるので、基準値の選び方が効いてくる。 </p>
+<p>実際には、第三法則 (第&#160;<a href="sect0007.html#sec:third-law">7.8</a> 節) で基準値を固定する。 完全な結晶のエントロピーは \(T \to 0\) で \(0\) とする。 最低温度の測定点 (多くは数ケルビン) より下は、Debye の \(C \propto T^3\) (金属では電子の項 \(C \propto T\) を加える) で外挿する。 こうして求めた値は標準モルエントロピーとして表にまとめられ、データ全体が互いに矛盾しないように調整されている&#160;<span class="cite">
+	[
+	<a href="sect0008.html#CODATA1989" >36</a>
+	]
+</span>。 </p>
+<p>第三法則には見かけの例外がある。 氷は水素の配置の乱れを \(0\, \mathrm{K}\) まで残し、熱量測定のエントロピーは分光学から計算した値より小さい&#160;<span class="cite">
+	[
+	<a href="sect0008.html#GiauqueStout1936" >13</a>
+	]
+</span>。 この差 (残余エントロピー) は Pauling が配置の数から \(R \log (3/2)\) と説明した&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Pauling1935" >14</a>
+	]
+</span>。 ガラスも乱れを凍結した状態である。 どちらも、低温で平衡に達していないことによる (経験則&#160;<a href="sect0007.html#emp:nernst">127</a> は平衡状態についての主張である)。 </p>
+<h2 id="a0000000045">9.3.3 ほかの方法</h2>
+<ul class="itemize">
+  <li><p>電池の起電力 \(E\) の温度変化から、反応のエントロピー変化 \(\Delta S = nF\,  dE/dT\) が求まる&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Gerke1922" >37</a>
+	]
+</span>。可逆な電池は、化学反応を可逆に進める装置である。 </p>
+</li>
+  <li><p>平衡定数の温度変化 (van ’t Hoff の式) から、反応のエンタルピー変化とエントロピー変化が求まる。 </p>
+</li>
+  <li><p>統計力学を使えば、分子の振動数や慣性モーメントなどの分光学の値から、気体のエントロピーを計算できる。 </p>
+</li>
+</ul>
+<p> どれもエントロピーの差か、理論を通した間接的な値である。 </p>
+<h1 id="sec:tests">9.4 熱力学は実験で確かめられているか</h1>
+
+<p>熱力学の法則は、一つの実験で白黒がつく形をしていない。 第二法則の内容は「ある種の変化が起こらない」ことと、「状態の関数が存在し、それらの間に恒等式が成り立つ」ことである。 したがって検証は、独立に測った量が熱力学の恒等式を満たすかどうか、という整合性の検査になる。 次のような検査が行われてきた。 </p>
+<h2 id="a0000000046">9.4.1 第一法則</h2>
+<p>Joule は、重りの降下による羽根車の仕事と、それによる水の温度上昇の関係を、いろいろな装置で測った&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Joule1850" >16</a>
+	]
+</span>。 仕事の量だけで温度上昇が決まり、装置によらないことが、経路独立性 (経験則&#160;<a href="sect0005.html#emp:path-indep">50</a>) の実験的な根拠である。 化学では、反応熱が経路によらないこと (Hess の法則) が同じ主張にあたる。 熱化学のデータは反応の網目をなし、閉じた経路での和が \(0\) になるように全体を調整して使われる&#160;<span class="cite">
+	[
+	<a href="sect0008.html#CODATA1989" >36</a>
+	]
+</span>。 調整の残差が測定誤差の範囲に収まることが、第一法則の大規模な検査になっている。 </p>
+<h2 id="a0000000047">9.4.2 恒等式の検査</h2>
+<p>第二法則からは、別々に測れる量の間の恒等式が出る。 </p>
+<ul class="itemize">
+  <li><p><b class="bfseries">Clapeyron の式</b>：蒸気圧曲線の傾き \(dp/dT\) は、潜熱 \(L\) と体積の変化 \(\Delta V\) で \(dp/dT = L/(T\Delta V)\) と書ける。左辺は圧力計で、右辺は熱量計で測る。 </p>
+</li>
+  <li><p><b class="bfseries">Maxwell の関係式</b>：例えば等温で圧力を変えたときのエントロピー変化 (圧縮のときに出る熱) は、熱膨張率と \((\partial S/\partial p)_T = -(\partial V/\partial T)_p\) で結ばれる。 </p>
+</li>
+  <li><p><b class="bfseries">\(C_p - C_V\)</b>：熱容量の差は、熱膨張率と圧縮率から計算できる。 </p>
+</li>
+  <li><p><b class="bfseries">Joule–Thomson 係数</b>：絞り膨張での温度変化 (定理&#160;<a href="chap-potentials.html#thm:joule-thomson">139</a>) は、状態方程式と熱容量から計算できる。ヘリウム、アルゴン、窒素などで直接測られている&#160;<span class="cite">
+	[
+	<a href="sect0008.html#RoebuckOsterberg1933" >38</a>
+	]
+</span>。 </p>
+</li>
+  <li><p><b class="bfseries">Gibbs–Duhem の式</b>：混合物の気液平衡では、各成分の化学ポテンシャルの変化が独立でない。この関係を使って、実測の気液平衡データが熱力学的に整合しているかを判定する検査 (面積検定など) が工業的に使われている&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Herington1947" >39</a>
+	, 
+	<a href="sect0008.html#RedlichKister1948" >40</a>
+	, 
+	<a href="sect0008.html#VanNess1973" >41</a>
+	]
+</span>。現在の熱物性データベースは、こうした整合性の検査を自動で行っている&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Frenkel2005" >42</a>
+	]
+</span>。 </p>
+</li>
+</ul>
+<p> これらの検査で系統的な破れが見つかったときは、熱力学ではなく測定や試料 (平衡に達していない、不純物がある) の問題とされてきた。 この扱いは、熱力学が十分に確かめられていると見なされていることの表れでもあり、検証の論理としては循環の危険もある。 </p>
+<h2 id="a0000000048">9.4.3 第三法則</h2>
+<p>第三法則は、反応や相転移の前後で \(T \to 0\) のエントロピーが等しいという主張なので、直接に検査できる。 </p>
+<ul class="itemize">
+  <li><p>同じ物質の二つの結晶形 (硫黄の斜方晶と単斜晶、ホスフィンの二つの結晶形など) について、それぞれ熱容量を \(0\, \mathrm{K}\) 近くまで測り、転移点での潜熱と合わせる。二つの経路で求めた転移点のエントロピーが一致すれば、\(T \to 0\) で両者のエントロピーが等しいことになる&#160;<span class="cite">
+	[
+	<a href="sect0008.html#EastmanMcGavock1937" >43</a>
+	, 
+	<a href="sect0008.html#StephensonGiauque1937" >44</a>
+	]
+</span>。 </p>
+</li>
+  <li><p>気体について、熱量測定で求めたエントロピー (第三法則のエントロピー) と、分光学のデータから統計力学で計算したエントロピーを比べる。多くの気体で一致し、一致しない場合 (氷、一酸化炭素など) は残余エントロピーとして説明された&#160;<span class="cite">
+	[
+	<a href="sect0008.html#GiauqueWiebe1928" >45</a>
+	, 
+	<a href="sect0008.html#GiauqueJohnston1929" >46</a>
+	, 
+	<a href="sect0008.html#GiauqueStout1936" >13</a>
+	]
+</span>。 </p>
+</li>
+</ul>
+<p> 総説として&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Wilks1961" >47</a>
+	]
+</span> がある。 </p>
+<h2 id="a0000000049">9.4.4 温度</h2>
+<p>前節で述べたとおり、原理の違う一次温度計による Boltzmann 定数の決定が百万分の数の範囲で一致している&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Fischer2018" >26</a>
+	]
+</span>。 温度がエントロピーの微分として一つに決まり、どの系で測っても同じ値になること (定理&#160;<a href="sect0007.html#thm:exchange-eq">104</a>) の精密な検査と見なせる。 </p>
+<h2 id="a0000000050">9.4.5 小さな系</h2>
+<p>分子一個や微粒子のような小さな系では、熱力学の量がゆらぐ。 この領域では、熱力学の不等式は平均についての主張になり、個々の試行では破れうる。 </p>
+<ul class="itemize">
+  <li><p>光ピンセットで捕えた微粒子を動かす実験で、短い時間ではエントロピー生成が負になる試行が、ゆらぎの定理の予言どおりの頻度で観測された&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Wang2002" >48</a>
+	]
+</span>。 </p>
+</li>
+  <li><p>RNA 分子を引き伸ばす実験で、非平衡の仕事の分布から平衡の自由エネルギー差を求める Jarzynski 等式と Crooks のゆらぎの定理が確かめられた&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Liphardt2002" >49</a>
+	, 
+	<a href="sect0008.html#Collin2005" >50</a>
+	]
+</span>。\(\langle W \rangle \ge \Delta F\) (最大仕事の原理、定理&#160;<a href="chap-potentials.html#thm:max-work">135</a>) は平均について成り立つ。 </p>
+</li>
+  <li><p>情報を消去するのに要する最小の熱 (\(kT \log 2\)、Landauer の原理)&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Berut2012" >51</a>
+	]
+</span> や、観測による情報を仕事に変える操作&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Toyabe2010" >52</a>
+	]
+</span> も測られている。 </p>
+</li>
+</ul>
+<p> これらは巨視的な熱力学の反例ではなく、その適用範囲の境界を示す。 この blueprint は、読みが実数で再現することを前提にしている (第&#160;<a href="chap-assumptions.html">10</a> 章)。 小さな系では、この前提が成り立たない。 </p>
+<h2 id="a0000000051">9.4.6 公理の検査</h2>
+<p>Lieb–Yngvason の公理や比較仮説のような、到達可能性の公理そのものを直接に検査した実験は、調べた範囲では見つからなかった。 公理は経験の要約として置かれ、個々の公理ではなく、そこから出る恒等式と不等式の全体が検査されてきた、というのが実情である。 </p>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="chap-potentials.html" title="自由エネルギーとエンタルピー"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="chap-assumptions.html" title="残っている仮定"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

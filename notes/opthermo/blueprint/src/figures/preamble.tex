@@ -1,0 +1,20 @@
+% Shared preamble of the standalone TikZ figures (compiled by scripts/build_figures.py).
+\usepackage{amsmath, amssymb}
+\usepackage{xeCJK}
+\setCJKmainfont[BoldFont={Hiragino Sans W6}]{Hiragino Sans W4}
+\usetikzlibrary{arrows.meta, positioning, decorations.pathreplacing, calc, patterns}
+\definecolor{rod}{RGB}{70,110,170}
+\definecolor{rodb}{RGB}{200,120,50}
+\definecolor{okc}{RGB}{60,140,80}
+\definecolor{ngc}{RGB}{190,70,60}
+\definecolor{boxc}{RGB}{235,240,248}
+\tikzset{
+  >={Stealth[length=2.4mm]},
+  every node/.style={font=\small},
+  box/.style={draw, rounded corners=2pt, fill=boxc, align=flush center, inner sep=4pt},
+  rodA/.style={draw, fill=rod!35},
+  rodB/.style={draw, fill=rodb!35},
+  note/.style={font=\footnotesize, align=flush center},
+  expl/.style={font=\small, align=flush left},
+  brace/.style={decorate, decoration={brace, amplitude=4pt}},
+}

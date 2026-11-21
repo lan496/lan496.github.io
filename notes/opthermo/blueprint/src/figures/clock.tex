@@ -1,0 +1,25 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}
+  % (a) comparison
+  \node[anchor=west, font=\bfseries] at (-0.6, 1.5) {(a) 比較 $d \preceq e$};
+  \draw[dashed, gray] (0,-1.0) -- (0,1.0);
+  \node[note, gray, anchor=north] at (0,-1.0) {同時に始める};
+  \draw[rodA] (0, 0.35) rectangle (2.6, 0.75) node[midway] {$d$：砂時計};
+  \draw[rodB] (0,-0.55) rectangle (4.0,-0.15) node[midway] {$e$：振り子 10 回};
+  \draw[dashed, gray] (2.6, 0.35) -- (2.6,-0.75);
+  \node[note, anchor=west] at (2.7, 0.55) {$d$ が先に終わる};
+
+  % (b) concatenation
+  \begin{scope}[xshift=7.6cm]
+    \node[anchor=west, font=\bfseries] at (-0.6, 1.5) {(b) 連結 $d \circ e$};
+    \draw[rodA] (0, 0) rectangle (2.6, 0.4) node[midway] {$d$};
+    \draw[rodB] (2.6, 0) rectangle (6.6, 0.4) node[midway] {$e$};
+    \node[note, above] at (2.6, 0.45) {$d$ が終わったら $e$ を始める};
+    \draw[brace, decoration={mirror}] (0,-0.1) -- (6.6,-0.1) node[midway, below=5pt] {$\mathrm{wait}_{d \circ e} = \mathrm{wait}_e \circ \mathrm{wait}_d$};
+  \end{scope}
+
+  \node[expl, anchor=west, text width=14cm] at (-0.6,-1.9) {比較と連結が長さと同じ法則を満たせば、長さの定理がそのまま時間の目盛りを与える。同じ比較の結果を与える二つの時計の読みは比例する。};
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,47 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}
+  % (a) states as classes of preparations
+  \node[anchor=west, font=\bfseries] at (-0.4, 2.3) {(a) 状態 = 測定手順で区別できない準備手順の類};
+  \node[note, font=\footnotesize\bfseries] at (1.2, 1.7) {準備手順};
+  \node[note, font=\footnotesize\bfseries] at (5.2, 1.7) {読み $(M_1, M_2)$};
+  \foreach \y/\n/\r in {1.0/$p_1$：固定して1時間置く/{(2.0, 1.3)}, 0.2/$p_2$：別の容器から移す/{(2.0, 1.3)}, -0.6/$p_3$：加熱した直後/{(2.0, 0.7)}} {
+    \node[box, text width=3.6cm, font=\footnotesize, align=flush left] at (1.4, \y) {\n};
+    \draw[->] (3.4, \y) -- (4.3, \y);
+    \node[font=\footnotesize] at (5.2, \y) {$\r$};
+  }
+  \draw[okc, thick, rounded corners] (-0.65, -0.2) rectangle (6.1, 1.4);
+  \node[okc, note, anchor=west] at (6.2, 0.6) {同じ状態};
+  \draw[rodb, thick, rounded corners] (-0.65, -1.0) rectangle (6.1, -0.25);
+  \node[rodb, note, anchor=west] at (6.2, -0.6) {別の状態};
+
+  % (b) stationary vs non-stationary
+  \begin{scope}[xshift=8.6cm, yshift=-0.8cm]
+    \node[anchor=west, font=\bfseries] at (-0.4, 3.1) {(b) 平衡 = どの待ち手順の後も読みが同じ};
+    \draw[->] (0,0) -- (5.2,0);
+    \node[note, anchor=north] at (2.6,-0.45) {待ち手順 $d$ (数値の時間は使わない)};
+    \draw[->] (0,0) -- (0,2.6) node[left, note] {読み};
+    \draw[okc, very thick] (0,1.8) -- (4.8,1.8) node[right, note] {定常};
+    \draw[ngc, very thick] (0,0.6) .. controls (1.2,0.7) and (1.8,1.4) .. (4.8,1.5) node[right, note] {変化する};
+    \foreach \x/\l in {0.9/$d_1$, 2.0/$d_2$, 3.4/$d_3$} {
+      \draw (\x, 0.05) -- (\x, -0.05) node[below, font=\footnotesize] {\l};
+      \fill[okc] (\x, 1.8) circle (1.5pt);
+    }
+  \end{scope}
+
+  % (c) counterexample
+  \begin{scope}[yshift=-4.4cm]
+    \node[anchor=west, font=\bfseries] at (-0.4, 1.4) {(c) 定常性はそのままでは状態の性質ではない};
+    \node[box, font=\footnotesize] (p0) at (0.6, 0.5) {$p_0$};
+    \node[box, font=\footnotesize] (p1) at (0.6,-0.5) {$p_1$};
+    \node[font=\footnotesize] (r0) at (2.4, 0.5) {読み $0$};
+    \node[font=\footnotesize] (r1) at (2.4,-0.5) {読み $0$};
+    \draw[->] (p0) -- (r0); \draw[->] (p1) -- (r1);
+    \draw[decorate, decoration={brace, amplitude=4pt}] (3.2, 0.7) -- (3.2,-0.7) node[midway, right=5pt, note] {区別できない\\(同じ状態)};
+    \draw[->] (5.0, 0.5) -- node[above, note] {待つ} (6.6, 0.5) node[right, font=\footnotesize] {$p_0$ のまま、読み $0$ (定常)};
+    \draw[->] (5.0,-0.5) -- node[above, note] {待つ} (6.6,-0.5) node[right, font=\footnotesize] {$p_2$ に変わり、読み $1$ (定常でない)};
+    \node[expl, anchor=west, text width=13cm] at (-0.4,-1.5) {そこで「区別できない準備手順は、待った後も区別できない」を仮定として置く。この仮定の下で平衡は状態の性質になる。};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

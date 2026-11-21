@@ -1,0 +1,3488 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc 3.10" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>OpThermo</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">
+body { max-width: 60rem; margin: auto; padding: 1rem; line-height: 1.6;
+font-family: -apple-system, "Hiragino Sans", sans-serif; }
+pre { background: #f6f8fa; padding: 0.8rem; overflow-x: auto; font-size: 0.85rem;
+line-height: 1.4; }
+code { font-family: "SF Mono", Menlo, monospace; }
+table { border-collapse: collapse; font-size: 0.9rem; }
+th, td { border: 1px solid #ccc; padding: 0.3rem 0.5rem; }
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">OpThermo</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a href="#opthermo操作主義による熱力学の-lean-4-形式化" id="toc-opthermo操作主義による熱力学の-lean-4-形式化">OpThermo：操作主義による熱力学の
+Lean 4 形式化</a>
+<ul>
+<li><a href="#ビルドと検査" id="toc-ビルドと検査">ビルドと検査</a></li>
+<li><a href="#blueprint" id="toc-blueprint">Blueprint</a></li>
+<li><a href="#論理の鎖" id="toc-論理の鎖">論理の鎖</a></li>
+<li><a href="#形式化して分かった元の文章の抜け" id="toc-形式化して分かった元の文章の抜け">形式化して分かった、元の文章の抜け</a></li>
+<li><a href="#測定から量へ移るときの仮定" id="toc-測定から量へ移るときの仮定">測定から量へ移るときの仮定</a></li>
+<li><a href="#形式化していない部分" id="toc-形式化していない部分">形式化していない部分</a></li>
+<li><a href="#参考文献" id="toc-参考文献">参考文献</a></li>
+</ul></li>
+<li><a href="#opthermomeasurement.lean" id="toc-opthermomeasurement.lean"><code>OpThermo/Measurement.lean</code></a></li>
+<li><a href="#opthermostatespace.lean" id="toc-opthermostatespace.lean"><code>OpThermo/StateSpace.lean</code></a></li>
+<li><a href="#opthermostates.lean" id="toc-opthermostates.lean"><code>OpThermo/States.lean</code></a></li>
+<li><a href="#opthermomechanics.lean" id="toc-opthermomechanics.lean"><code>OpThermo/Mechanics.lean</code></a></li>
+<li><a href="#opthermofirstlaw.lean" id="toc-opthermofirstlaw.lean"><code>OpThermo/FirstLaw.lean</code></a></li>
+<li><a href="#opthermoentropy.lean" id="toc-opthermoentropy.lean"><code>OpThermo/Entropy.lean</code></a></li>
+<li><a href="#opthermoaccessibility.lean" id="toc-opthermoaccessibility.lean"><code>OpThermo/Accessibility.lean</code></a></li>
+<li><a href="#opthermomodel.lean" id="toc-opthermomodel.lean"><code>OpThermo/Model.lean</code></a></li>
+<li><a href="#opthermotemperature.lean" id="toc-opthermotemperature.lean"><code>OpThermo/Temperature.lean</code></a></li>
+<li><a href="#opthermogibbs.lean" id="toc-opthermogibbs.lean"><code>OpThermo/Gibbs.lean</code></a></li>
+<li><a href="#opthermopotentials.lean" id="toc-opthermopotentials.lean"><code>OpThermo/Potentials.lean</code></a></li>
+<li><a href="#opthermoconcavity.lean" id="toc-opthermoconcavity.lean"><code>OpThermo/Concavity.lean</code></a></li>
+<li><a href="#opthermoheatcapacity.lean" id="toc-opthermoheatcapacity.lean"><code>OpThermo/HeatCapacity.lean</code></a></li>
+<li><a href="#axiomcheck.lean" id="toc-axiomcheck.lean"><code>AxiomCheck.lean</code></a></li>
+</ul>
+</nav>
+<h1 id="opthermo操作主義による熱力学の-lean-4-形式化">OpThermo：操作主義による熱力学の
+Lean 4 形式化</h1>
+<p>長さの測定から出発し、断熱到達性でエントロピーを定義し、Gibbs
+自由エネルギーの最小原理まで進む。 Lieb–Yngvason の公理化に沿う。
+定義と、実験に基づいて新しく置く仮定 (公理) を、Lean
+の型で区別する。</p>
+<h2 id="ビルドと検査">ビルドと検査</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lake</span> build                      <span class="co"># 全ファイルの型検査</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">lake</span> env lean AxiomCheck.lean   <span class="co"># 主定理が依存する公理を表示</span></span></code></pre></div>
+<p><code>AxiomCheck.lean</code> の出力は、どの主定理も
+<code>[propext, Classical.choice, Quot.sound]</code> だけである。
+これはLeanとMathlibの標準の公理で、<code>sorry</code>
+や追加の公理は使っていない。
+物理的な仮定は、すべて定理の仮定かクラスのフィールドとして明示してある。</p>
+<h2 id="blueprint">Blueprint</h2>
+<p>Leanのコードを読まなくても主張が分かるように、<code>blueprint/</code>
+に <a href="https://github.com/PatrickMassot/leanblueprint">leanblueprint</a>
+形式の解説を置いた。
+各定義と定理を数式と日本語で述べ、対応するLeanの宣言名と、定理どうしの依存グラフを示す。</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> scripts/build_figures.py               <span class="co"># blueprint/src/figures/ の図をPDFとSVGに変換</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">uvx</span> <span class="at">--from</span> leanblueprint leanblueprint web   <span class="co"># blueprint/web/ にHTMLを生成</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uvx</span> <span class="at">--from</span> leanblueprint leanblueprint pdf   <span class="co"># blueprint/print/print.pdf を生成 (xelatex)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> scripts/build_site.py                <span class="co"># site/ に閲覧用ページをまとめる</span></span></code></pre></div>
+<p><code>pygraphviz</code> のビルドにはHomebrewのgraphvizが要る。
+その場合は
+<code>CFLAGS=-I/opt/homebrew/include LDFLAGS=-L/opt/homebrew/lib</code>
+を付けて実行する。</p>
+<h2 id="論理の鎖">論理の鎖</h2>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>段階</th>
+<th>ファイル</th>
+<th>主定理</th>
+<th>物理的な仮定</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>長さ</td>
+<td><code>Measurement.lean</code></td>
+<td><code>length_exists</code>, <code>length_unique</code>,
+<code>compatible_of_represents</code></td>
+<td>棒の比較と連結が外延的構造をなす
+(全順序、結合性、可換性、単調性、正値性、アルキメデス性)</td>
+</tr>
+<tr>
+<td>状態、平衡状態、時間</td>
+<td><code>States.lean</code></td>
+<td><code>stationary_congr</code>,
+<code>stationary_not_state_property</code>,
+<code>Clock.time_exists</code>, <code>Clock.compatible</code></td>
+<td>読みが再現すること、状態が以後の変化を決めること、待ち手順の比較と連結が外延的構造をなすこと</td>
+</tr>
+<tr>
+<td>仕事の力学的基礎</td>
+<td><code>Mechanics.lean</code></td>
+<td><code>gravity_work_eq</code>,
+<code>compatible_of_mechanicalLaw</code>,
+<code>compatible_with_balance</code></td>
+<td>天秤が外延的構造をなすこと、仮想仕事の原理</td>
+</tr>
+<tr>
+<td>内部エネルギー、熱</td>
+<td><code>FirstLaw.lean</code></td>
+<td><code>internalEnergy_spec</code>,
+<code>internalEnergy_unique</code>,
+<code>pathIndependent_iff_of_mechanicalLaw</code></td>
+<td>断熱仕事の経路独立性、任意の二状態が一方向には断熱的に結べる</td>
+</tr>
+<tr>
+<td>相殺則</td>
+<td><code>Entropy.lean</code></td>
+<td><code>cancel</code></td>
+<td>A1–A4, A6</td>
+</tr>
+<tr>
+<td>状態の空間</td>
+<td><code>StateSpace.lean</code></td>
+<td><code>IsExtensive</code></td>
+<td>複合とスケーリングが加群をなすこと</td>
+</tr>
+<tr>
+<td>エントロピー</td>
+<td><code>Entropy.lean</code></td>
+<td><code>entropy_principle</code>, <code>strictPrec_iff</code>,
+<code>entropy_extensive</code>, <code>entropy_unique</code>,
+<code>entropy_bisect</code> (二分法による測定),
+<code>caratheodory</code> (少量の補助系を添えても不可逆。近傍の形の
+Carathéodory の原理は公理から出ない：<code>model_reach_all</code>)</td>
+<td>A1–A6, 比較仮説 CH (組成の等しい状態), 基準状態
+<code>X₀ ≺≺ X₁</code> と組成ごとの基準状態</td>
+</tr>
+<tr>
+<td>公理の無矛盾性</td>
+<td><code>Model.lean</code></td>
+<td><code>model_entropy</code>, <code>model_reach_all</code> (近傍の
+Carathéodory の原理の反例)</td>
+<td>なし (具体的なモデルを構成する)</td>
+</tr>
+<tr>
+<td>温度、圧力、化学ポテンシャル</td>
+<td><code>Temperature.lean</code></td>
+<td><code>exchange_equilibrium</code>, <code>exchange_direction</code>,
+<code>fundamental_relation</code>,
+<code>fundamental_relation_multi</code>, <code>clausius</code>,
+<code>euler_homogeneous</code>, <code>temperature</code>,
+<code>temperature_pos</code>, <code>exchange_temperature</code>,
+<code>heat_flows_to_colder</code>, <code>contact_maximizes</code>,
+<code>entropy_calorimetry</code>, <code>idealGas_temperature</code>,
+<code>idealGas_law</code>, <code>idealGas_unique</code>,
+<code>fundamental_relation_forms</code>,
+<code>unattainability</code></td>
+<td>微分可能性、平衡が全エントロピーの極大点であること</td>
+</tr>
+<tr>
+<td>断熱到達性と示量的な内部エネルギー</td>
+<td><code>Accessibility.lean</code></td>
+<td><code>CompositeOps.toAdiabatic</code>,
+<code>CompositeOps.energy_spec</code>,
+<code>CompositeOps.energy_extensive</code></td>
+<td>A6 安定性と比較仮説、複合系の経路独立性、組成の保存
+(化学反応なし)</td>
+</tr>
+<tr>
+<td>Gibbs 自由エネルギー</td>
+<td><code>Gibbs.lean</code></td>
+<td><code>gibbs_criterion</code>,
+<code>isolated_process_lowers_gibbs</code>,
+<code>reachable_of_gibbs_le</code>, <code>gibbs_euler</code>,
+<code>gibbs_large_reservoir</code>,
+<code>large_reservoir_criterion</code>,
+<code>gibbs_hasDerivAt</code></td>
+<td>エネルギーと体積の保存、溜めのエントロピーが一次式
+(または大きな溜めの極限)</td>
+</tr>
+<tr>
+<td>Helmholtz 自由エネルギーとエンタルピー</td>
+<td><code>Potentials.lean</code></td>
+<td><code>helmholtz_criterion</code>,
+<code>CompositeOps.max_work</code>,
+<code>CompositeOps.enthalpy_change</code>, <code>joule_thomson</code>,
+<code>helmholtz_hasDerivAt</code>, <code>enthalpy_hasDerivAt</code>,
+<code>idealGas_enthalpy</code></td>
+<td>理想的な熱浴、仕事をピストンの分とそれ以外に分けられること</td>
+</tr>
+<tr>
+<td>エントロピーの凹性</td>
+<td><code>Concavity.lean</code></td>
+<td><code>Adiabatic.concaveOn_of_partition</code>,
+<code>concave_continuousOn</code>,
+<code>superadditive_of_concave</code></td>
+<td>仕切りを抜いて座標の平均の状態に移れること</td>
+</tr>
+<tr>
+<td>熱容量</td>
+<td><code>HeatCapacity.lean</code></td>
+<td><code>heatCapacity_eq</code>, <code>heatCapacity_pos</code>,
+<code>entropy_hasDerivAt_temperature</code></td>
+<td>エントロピーの二階微分可能性</td>
+</tr>
+</tbody>
+</table>
+<p><code>gibbs_criterion</code> は <code>Entropy.lean</code>
+のエントロピー原理と加法性から直接証明している。
+系と溜めの複合状態について、<code>X + R ≺ Y + R&#39; ↔︎ G Y ≤ G X</code>
+が成り立つ。</p>
+<h2 id="形式化して分かった元の文章の抜け">形式化して分かった、元の文章の抜け</h2>
+<p>元の文章の流れは正しいが、Lean
+で証明を通すには次の点を補う必要があった。</p>
+<ol type="1">
+<li><p>比較仮説は複合系に対して要る。 §6.2 は単一の状態空間
+<code>Γ</code> 上の比較可能性しか置いていない。 しかし §7.4
+の「<code>S(X) ≤ S(Y)</code> なら <code>X ≺ Y</code>」は、基準状態の混合
+<code>((1-λ)X₀, λX₁)</code> と <code>X</code> の比較を使う。
+形式化では、組成の等しい任意の状態 (複合系を含む)
+の比較可能性を仮定した。 この形にすると、§7.5
+の加法性と示量性は追加の仮定なしに証明できる。</p></li>
+<li><p>上限が達成されるには A6 (安定性) が要る。 §7.3 の
+<code>Z_{S(X)} ∼ X</code> は「適切な条件の下で」とだけ書かれている。
+必要なのはA6とCHである (<code>below_entropy</code>,
+<code>above_entropy</code>)。 また <code>S(X)</code>
+が有限になること自体も、A6、CH、<code>X₁ ⊀ X₀</code> から示す必要がある
+(<code>exists_below</code>, <code>exists_above</code>)。</p></li>
+<li><p>相殺則 <code>(X, Z) ≺ (Y, Z) ⇒ X ≺ Y</code> が全体の要である。
+元の文章には現れないが、§7.2 の単調性の厳密な部分と、§7.4
+の逆向きの議論はこれに依存する。 相殺則はA6から導ける
+(<code>cancel</code>)。</p></li>
+<li><p>範囲 <code>X₀ ≺ X ≺ X₁</code> の外への拡張は不要だった。
+負の係数を右辺に移す形式的な不等式 <code>R</code>
+を使うと、すべての状態を一度に扱える。</p></li>
+<li><p>温度の導出には、平衡がエントロピー最大点であるという仮定が要る。
+§8.2 の「全エントロピーは減少しない、したがって平衡では
+<code>T_A = T_B</code>」は、そのままでは飛躍がある。
+エントロピー原理から出るのは、到達可能な変化で全エントロピーが減らないことだけである。
+平衡が最大点になるには、エネルギーの分配をどちら向きにも断熱的に変えられることを仮定する必要がある。</p></li>
+<li><p>「環境が十分大きいので <code>T₀, p₀</code>
+は変わらない」は極限の主張である。 §11 の <code>ΔS_全体 = -ΔG/T₀</code>
+が等式で成り立つのは、溜めのエントロピーが <code>U, V</code>
+の一次式のときに限る。
+有限の溜めでは、示量性と微分可能性から、溜めを大きくする極限で
+<code>-ΔG/T₀</code> に収束する (<code>gibbs_large_reservoir</code>)。
+そのため判定は狭義の不等式でしか言えない。 <code>ΔG &lt; 0</code>
+なら十分大きな溜めで到達可能、<code>ΔG &gt; 0</code>
+なら到達不可能で、<code>ΔG = 0</code>
+はこの議論では決まらない。</p></li>
+</ol>
+<h2 id="測定から量へ移るときの仮定">測定から量へ移るときの仮定</h2>
+<p>二つの目盛りが同じ量を測ることは、同じ数学的構造を持つことからは出ない。
+そこで、そうした主張を定理の仮定として取り出した。</p>
+<ul>
+<li>二つの目盛りが同じ量を測ることは、比例関係 <code>Compatible</code>
+として明示する。
+同じ比較と連結の構造を表現する目盛りどうしは、これを満たすことを証明した
+(<code>compatible_of_represents</code>)。</li>
+<li>仕事に必要な力学は静力学だけである。
+仮想仕事の原理を満たす重みづけは天秤の質量に比例するものに限られる
+(<code>compatible_of_mechanicalLaw</code>)。
+慣性質量は使わないので、衝突実験の質量と天秤の質量の関係は問題にならない。</li>
+<li>仕事は重りの質量と降下量の積の和 <code>Σ m h</code>
+で定め、重力加速度は使わない。
+重力が天秤の質量に比例するという仮定の下で、これは力学の仕事
+<code>F · Δx</code> に一致する (<code>gravity_work_eq</code>)。</li>
+<li>仕事の重みづけは、仮想仕事の原理を満たすものに限る。
+その範囲では、経路独立性 (第一法則) は重みづけの選び方によらない
+(<code>pathIndependent_iff_of_mechanicalLaw</code>)。</li>
+<li>時間は数値として与えない。待ち手順 (砂時計が落ち切るまで待つ、など)
+を原始概念とし、平衡は「どの待ち手順を続けても読みが変わらない」と定義する。
+数値の時間は、待ち手順の比較 (同時に始めてどちらが先に終わるか) と連結
+(続けて待つ) から、長さと同じ定理で作る
+(<code>Clock.time_exists</code>)。</li>
+<li>定常性は、そのままでは状態の性質ではない
+(<code>stationary_not_state_property</code>)。
+状態が以後の変化を決めるという仮定を置いて初めて、平衡状態が定義できる。</li>
+</ul>
+<p>型の選び方に隠れていて、まだ取り出していない仮定はblueprintの「残っている仮定」の章にまとめた。
+例えば、読みが実数で再現すること、平衡状態の集合から複合系の空間を作る部分などである。</p>
+<h2 id="形式化していない部分">形式化していない部分</h2>
+<ul>
+<li>Newton 力学 (慣性質量、力、運動方程式)。 仕事は静力学
+(天秤と仮想仕事の原理) だけから基礎づけた。</li>
+<li>体積の幾何学的な定義 (§1.1)。</li>
+<li>状態を <code>(U, V, N)</code>
+で座標づけできること、およびエントロピーの微分可能性 (§8.1)。
+Lieb–Yngvason
+はこれを単純系についての追加の公理から導くが、ここでは仮定として置いた。</li>
+<li>異なる物質の間でのエントロピーの基準合わせ (§7.5
+の末尾)、化学反応の平衡 (§12)。 <code>entropy_unique</code>
+は単一の物質についての一意性 <code>S ↦ aS + bN</code> までを示す。</li>
+</ul>
+<h2 id="参考文献">参考文献</h2>
+<p>全文の書誌情報はblueprintの参考文献の章にある。
+主なものを挙げる。</p>
+<ul>
+<li>E. H. Lieb and J. Yngvason, The physics and mathematics of the
+second law of thermodynamics, Phys. Rep. 310, 1-96 (1999).</li>
+<li>E. H. Lieb and J. Yngvason, A guide to entropy and the second law of
+thermodynamics, Notices AMS 45, 571-581 (1998).</li>
+<li>E. H. Lieb and J. Yngvason, A fresh look at entropy and the second
+law of thermodynamics, Physics Today 53(4), 32-37 (2000).</li>
+<li>C. Carathéodory, Untersuchungen über die Grundlagen der
+Thermodynamik, Math. Ann. 67, 355-386 (1909).</li>
+<li>R. Giles, Mathematical Foundations of Thermodynamics, Pergamon
+(1964).</li>
+<li>A. Thess, The Entropy Principle: Thermodynamics for the Unsatisfied,
+Springer (2011).</li>
+<li>田崎晴明『熱力学――現代的な視点から』培風館 (2000)。</li>
+<li>佐々真一『熱力学入門』共立出版 (2000)。</li>
+<li>H. B. Callen, Thermodynamics and an Introduction to
+Thermostatistics, 2nd ed., Wiley (1985).</li>
+<li>O. Hölder, Die Axiome der Quantität und die Lehre vom Mass, Ber.
+Verh. Sächs. Ges. Wiss. Leipzig, Math.-Phys. Cl. 53, 1-64 (1901).</li>
+<li>D. H. Krantz, R. D. Luce, P. Suppes, and A. Tversky, Foundations of
+Measurement, Vol. I, Academic Press (1971).</li>
+<li>P. W. Bridgman, The Logic of Modern Physics, Macmillan (1927).</li>
+<li>L. de Moura and S. Ullrich, The Lean 4 theorem prover and
+programming language, CADE-28, LNCS 12699, 625-635 (2021).</li>
+<li>The mathlib Community, The Lean mathematical library, CPP 2020,
+367-381 (2020).</li>
+</ul>
+<h1 id="opthermomeasurement.lean"><code>OpThermo/Measurement.lean</code></h1>
+<pre class="lean"><code>import Mathlib
+
+/-!
+# 長さは測れる：比較と連結から実数値の目盛りへ
+
+棒に対して行う手順は二つだけである。
+* 連結 `cat a b`：棒 `a` と `b` を端と端でつなぐ。
+* 比較 `le a b`：二本の棒の一端をそろえて並べ、`a` の他端が `b` の他端を越えない。
+
+棒そのものの集まり `A` と、この二つの手順を原始概念とする (`ExtensiveStructure`)。
+「長さ」という量は仮定せず、手順の結果についての経験法則だけを置く。
+同じ形の構造は、天秤の比較と皿への同時載せによる質量にも使える。
+
+## 経験的仮定 (外延的構造。Krantz–Luce–Suppes–Tversky の Definition 3.1 に相当)
+
+* 比較は全順序的で推移的 (`le_total`, `le_trans`)。
+* 連結は、比較で区別できない範囲で結合的・可換 (`cat_assoc`, `cat_comm`)。
+* 単調性：同じ棒を継ぎ足しても比較の結果は変わらない (`mono`)。
+* 正値性：棒を継ぎ足すと、元の棒より長くなる (`pos`)。
+* アルキメデス性：`a` が `b` より長ければ、十分多くつないだ `a` は、
+  どんな差も追い越す (`arch`)。
+
+## 主結果
+
+* `length_exists`：比較を大小に、連結を和に移す目盛り `ℓ : A → ℝ` で、
+  単位の棒 `u` に `1` を割り当てるものが存在する (Hölder の定理)。値は正。
+* `length_unique`：単位を固定すれば、そのような目盛りは一つしかない。
+* `compatible_of_represents`：同じ構造を表現する二つの目盛りは比例する (`Compatible`)。
+
+## 存在の証明の流れ
+
+比較で区別できない棒を同一視した商 `Q` は、全順序を持つ可換半群になる。
+`Q × Q` の形式的な差で群 `G` を作り、順序とアルキメデス性を移す。
+`G` は Mathlib の `Archimedean.embedReal` で `ℝ` に埋め込める。
+-/
+
+open Function
+
+namespace OpThermo
+
+/-- アルキメデス的な全順序アーベル群は、単位 `u &gt; 0` を `1` に移す順序加法準同型で
+`ℝ` に埋め込める (Hölder の定理。Mathlib の `Archimedean.embedReal`)。 -/
+theorem scale_exists_of_archimedean {L : Type*} [AddCommGroup L] [LinearOrder L]
+    [IsOrderedAddMonoid L] [Archimedean L] (u : L) (hu : 0 &lt; u) :
+    ∃ f : L →+o ℝ, f u = 1 ∧ Injective f := by
+  let _ : One L := ⟨u⟩
+  have : ZeroLEOneClass L := ⟨hu.le⟩
+  have : NeZero (1 : L) := ⟨hu.ne&#39;⟩
+  exact ⟨Archimedean.embedReal L, Archimedean.embedReal_one, Archimedean.embedReal_injective L⟩
+
+/-- 棒の集まり `A` 上の、連結と比較の経験構造。 -/
+structure ExtensiveStructure (A : Type*) where
+  /-- 比較：`a` を `b` と並べたとき、`a` の他端が `b` の他端を越えない -/
+  le : A → A → Prop
+  /-- 連結：`a` と `b` を端と端でつなぐ -/
+  cat : A → A → A
+  le_total : ∀ a b, le a b ∨ le b a
+  le_trans : ∀ {a b c}, le a b → le b c → le a c
+  /-- つなぎ方の組を変えても、比較では区別できない -/
+  cat_assoc : ∀ a b c, le (cat (cat a b) c) (cat a (cat b c)) ∧
+    le (cat a (cat b c)) (cat (cat a b) c)
+  /-- つなぐ順番を入れ替えても、比較では区別できない -/
+  cat_comm : ∀ a b, le (cat a b) (cat b a)
+  /-- 単調性：同じ棒 `c` を継ぎ足しても比較の結果は変わらない -/
+  mono : ∀ a b c, le a b ↔ le (cat a c) (cat b c)
+  /-- 正値性：継ぎ足した棒は元の棒より長い -/
+  pos : ∀ a b, ¬ le (cat a b) a
+  /-- アルキメデス性：`a` が `b` より長ければ、`a` と `b` をそれぞれ `n + 1` 本つないだものに
+  `c`, `d` を継ぎ足して比べると、十分大きな `n` で `a` の側が長くなる -/
+  arch : ∀ a b c d, ¬ le a b →
+    ∃ n : ℕ, le (cat ((fun x =&gt; cat x b)^[n] b) d) (cat ((fun x =&gt; cat x a)^[n] a) c)
+
+/-- 二つの目盛りが両立する：ある `c &gt; 0` で `mB = c * mA`。
+`c` は単位の違いに対応する。同じ数学的構造を持つことと同じ量を測ることは別なので、
+異なる手続きを同一視するときは、この命題を仮定か定理として明示する。 -/
+def Compatible {Body : Type*} (mA mB : Body → ℝ) : Prop :=
+  ∃ c : ℝ, 0 &lt; c ∧ ∀ b, mB b = c * mA b
+
+namespace ExtensiveStructure
+
+variable {A : Type*} (E : ExtensiveStructure A)
+
+/-- `n + 1` 本の `a` をつないだ棒 -/
+def copies (n : ℕ) (a : A) : A := (fun x =&gt; E.cat x a)^[n] a
+
+/-- 目盛り `ℓ` が構造を表現する：比較を大小に、連結を和に移す。 -/
+def Represents (ℓ : A → ℝ) : Prop :=
+  (∀ a b, E.le a b ↔ ℓ a ≤ ℓ b) ∧ ∀ a b, ℓ (E.cat a b) = ℓ a + ℓ b
+
+variable {E}
+
+theorem Represents.copies {ℓ : A → ℝ} (h : E.Represents ℓ) (n : ℕ) (a : A) :
+    ℓ (E.copies n a) = (n + 1) * ℓ a := by
+  induction n with
+  | zero =&gt; simp [ExtensiveStructure.copies]
+  | succ n ih =&gt;
+    rw [ExtensiveStructure.copies, iterate_succ_apply&#39;, ← ExtensiveStructure.copies, h.2, ih]
+    push_cast; ring
+
+theorem Represents.pos {ℓ : A → ℝ} (h : E.Represents ℓ) (a : A) : 0 &lt; ℓ a := by
+  have h1 := E.pos a a
+  rw [h.1, h.2] at h1
+  linarith
+
+variable (E)
+
+/-- **一意性**：単位の棒 `u` に `1` を割り当てる表現は一つしかない。 -/
+theorem length_unique (u : A) {ℓ ℓ&#39; : A → ℝ} (h : E.Represents ℓ) (h&#39; : E.Represents ℓ&#39;)
+    (hu : ℓ u = 1) (hu&#39; : ℓ&#39; u = 1) : ℓ = ℓ&#39; := by
+  -- `ℓ r &lt; ℓ&#39; r` なら、`N` 本の `r` と `M` 本の `u` (`ℓ r &lt; M/N &lt; ℓ&#39; r`) を比べて矛盾
+  have key : ∀ {ℓ ℓ&#39; : A → ℝ}, E.Represents ℓ → E.Represents ℓ&#39; → ℓ u = 1 → ℓ&#39; u = 1 →
+      ∀ r, ¬ ℓ r &lt; ℓ&#39; r := by
+    intro ℓ ℓ&#39; h h&#39; hu hu&#39; r hlt
+    obtain ⟨q, hq1, hq2⟩ := exists_rat_btwn hlt
+    have hq0 : (0 : ℝ) &lt; q := (h.pos r).trans hq1
+    have hN : (0 : ℝ) &lt; q.den := by exact_mod_cast q.den_pos
+    have hnum : (q.num : ℝ) = q * q.den := by exact_mod_cast (Rat.mul_den_eq_num q).symm
+    have hnum0 : 0 &lt; q.num := by
+      have : (0 : ℝ) &lt; q.num := by rw [hnum]; positivity
+      exact_mod_cast this
+    set M := q.num.toNat
+    set N := q.den
+    have hM : (M : ℝ) = q * N := by
+      rw [← hnum]; exact_mod_cast Int.toNat_of_nonneg hnum0.le
+    have hMpos : 0 &lt; M := by omega
+    have hNpos : 0 &lt; N := q.den_pos
+    have cN : ((N - 1 : ℕ) : ℝ) + 1 = N := by rw [Nat.cast_sub (by omega)]; push_cast; ring
+    have cM : ((M - 1 : ℕ) : ℝ) + 1 = M := by rw [Nat.cast_sub (by omega)]; push_cast; ring
+    have e1 := h.copies (N - 1) r
+    have e2 := h.copies (M - 1) u
+    have e1&#39; := h&#39;.copies (N - 1) r
+    have e2&#39; := h&#39;.copies (M - 1) u
+    rw [cN] at e1 e1&#39;
+    rw [cM, hu] at e2
+    rw [cM, hu&#39;] at e2&#39;
+    rcases E.le_total (E.copies (M - 1) u) (E.copies (N - 1) r) with hle | hle
+    · have := (h.1 _ _).1 hle
+      rw [e1, e2, hM] at this
+      nlinarith
+    · have := (h&#39;.1 _ _).1 hle
+      rw [e1&#39;, e2&#39;, hM] at this
+      nlinarith
+  funext r
+  exact le_antisymm (not_lt.1 (key h&#39; h hu&#39; hu r)) (not_lt.1 (key h h&#39; hu hu&#39; r))
+
+/-- 同じ連結と比較の構造を表現する二つの目盛りは比例する。経験的に確かめるべきなのは、
+二つの手続きが同じ構造 (同じ比較と連結の結果) を表現していることの方である。 -/
+theorem compatible_of_represents {ℓA ℓB : A → ℝ} (hA : E.Represents ℓA) (hB : E.Represents ℓB)
+    (u : A) : Compatible ℓA ℓB := by
+  have pA := hA.pos u
+  have pB := hB.pos u
+  have scale : ∀ {ℓ : A → ℝ} (k : ℝ), 0 &lt; k → E.Represents ℓ →
+      E.Represents (fun a =&gt; k * ℓ a) :=
+    fun k hk h =&gt; ⟨fun a b =&gt; by rw [h.1]; exact (mul_le_mul_iff_of_pos_left hk).symm,
+      fun a b =&gt; by simp only [h.2]; ring⟩
+  have hu := E.length_unique u (scale _ (inv_pos.2 pA) hA) (scale _ (inv_pos.2 pB) hB)
+    (inv_mul_cancel₀ pA.ne&#39;) (inv_mul_cancel₀ pB.ne&#39;)
+  refine ⟨ℓB u / ℓA u, div_pos pB pA, fun b =&gt; ?_⟩
+  have := congrFun hu b
+  field_simp at this ⊢
+  linarith
+
+/-! ### 存在の証明：商半群 `Q` と差の群 `G` -/
+
+/-- 比較で区別できないことによる同値関係 -/
+def setoid : Setoid A where
+  r a b := E.le a b ∧ E.le b a
+  iseqv :=
+    { refl := fun a =&gt; (E.le_total a a).elim (fun h =&gt; ⟨h, h⟩) (fun h =&gt; ⟨h, h⟩)
+      symm := fun h =&gt; ⟨h.2, h.1⟩
+      trans := fun h h&#39; =&gt; ⟨E.le_trans h.1 h&#39;.1, E.le_trans h&#39;.2 h.2⟩ }
+
+theorem cat_le_cat {a a&#39; b b&#39; : A} (ha : E.le a a&#39;) (hb : E.le b b&#39;) :
+    E.le (E.cat a b) (E.cat a&#39; b&#39;) := by
+  have h1 := (E.mono a a&#39; b).1 ha
+  have h2 : E.le (E.cat a&#39; b) (E.cat a&#39; b&#39;) :=
+    E.le_trans (E.cat_comm a&#39; b) (E.le_trans ((E.mono b b&#39; a&#39;).1 hb) (E.cat_comm b&#39; a&#39;))
+  exact E.le_trans h1 h2
+
+/-- 比較で区別できない棒を同一視した商 -/
+def Q := Quotient E.setoid
+
+namespace Q
+
+variable {E}
+
+/-- 棒の類 -/
+def mk (a : A) : E.Q := Quotient.mk E.setoid a
+
+instance : Add E.Q where
+  add := Quotient.map₂ E.cat fun _ _ ha _ _ hb =&gt;
+    ⟨E.cat_le_cat ha.1 hb.1, E.cat_le_cat ha.2 hb.2⟩
+
+instance : LE E.Q where
+  le := Quotient.lift₂ E.le fun _ _ _ _ ha hb =&gt;
+    propext ⟨fun h =&gt; E.le_trans ha.2 (E.le_trans h hb.1),
+      fun h =&gt; E.le_trans ha.1 (E.le_trans h hb.2)⟩
+
+theorem mk_add (a b : A) : mk (E.cat a b) = (mk a + mk b : E.Q) := rfl
+
+theorem ind {P : E.Q → Prop} (h : ∀ a, P (mk a)) (x : E.Q) : P x := Quotient.ind h x
+
+instance : AddCommSemigroup E.Q where
+  add_assoc := ind fun a =&gt; ind fun b =&gt; ind fun c =&gt; Quotient.sound (E.cat_assoc a b c)
+  add_comm := ind fun a =&gt; ind fun b =&gt; Quotient.sound ⟨E.cat_comm a b, E.cat_comm b a⟩
+
+theorem le_total (x y : E.Q) : x ≤ y ∨ y ≤ x := by
+  induction x using ind; induction y using ind; exact E.le_total _ _
+
+theorem le_refl (x : E.Q) : x ≤ x := (le_total x x).elim id id
+
+theorem le_trans {x y z : E.Q} : x ≤ y → y ≤ z → x ≤ z := by
+  induction x using ind; induction y using ind; induction z using ind; exact E.le_trans
+
+instance : @Trans E.Q E.Q E.Q LE.le LE.le LE.le := ⟨le_trans⟩
+
+theorem le_antisymm {x y : E.Q} : x ≤ y → y ≤ x → x = y := by
+  induction x using ind; induction y using ind; exact fun h h&#39; =&gt; Quotient.sound ⟨h, h&#39;⟩
+
+theorem add_le_add_iff_right (x y z : E.Q) : x + z ≤ y + z ↔ x ≤ y := by
+  induction x using ind; induction y using ind; induction z using ind
+  exact (E.mono _ _ _).symm
+
+theorem add_right_cancel {x y z : E.Q} (h : x + z = y + z) : x = y :=
+  le_antisymm ((add_le_add_iff_right x y z).1 (by rw [h]; exact le_refl _))
+    ((add_le_add_iff_right y x z).1 (by rw [h]; exact le_refl _))
+
+theorem not_add_le (x y : E.Q) : ¬ x + y ≤ x := by
+  induction x using ind; induction y using ind; exact E.pos _ _
+
+/-- `n + 1` 個の `x` の和 -/
+def copies (n : ℕ) (x : E.Q) : E.Q := (fun y =&gt; y + x)^[n] x
+
+theorem copies_succ (n : ℕ) (x : E.Q) : copies (n + 1) x = copies n x + x := by
+  rw [copies, iterate_succ_apply&#39;, ← copies]
+
+theorem mk_copies (n : ℕ) (a : A) : mk (E := E) (E.copies n a) = copies n (mk a) := by
+  induction n with
+  | zero =&gt; rfl
+  | succ n ih =&gt;
+    rw [ExtensiveStructure.copies, iterate_succ_apply&#39;, ← ExtensiveStructure.copies, mk_add, ih,
+      copies_succ]
+
+theorem arch (x y z w : E.Q) (h : ¬ x ≤ y) : ∃ n, copies n y + w ≤ copies n x + z := by
+  induction x using ind; induction y using ind; induction z using ind; induction w using ind
+  obtain ⟨n, hn⟩ := E.arch _ _ _ _ h
+  refine ⟨n, ?_⟩
+  rw [← mk_copies, ← mk_copies, ← mk_add, ← mk_add]
+  exact hn
+
+end Q
+
+/-- 形式的な差 `(x, y) ↦ x - y` の同値関係 -/
+def diffSetoid : Setoid (E.Q × E.Q) where
+  r p q := p.1 + q.2 = q.1 + p.2
+  iseqv :=
+    { refl := fun _ =&gt; rfl
+      symm := fun h =&gt; h.symm
+      trans := by
+        intro p q r h h&#39;
+        apply Q.add_right_cancel (z := q.2)
+        calc p.1 + r.2 + q.2 = (p.1 + q.2) + r.2 := by ac_rfl
+          _ = (q.1 + p.2) + r.2 := by rw [h]
+          _ = (q.1 + r.2) + p.2 := by ac_rfl
+          _ = (r.1 + q.2) + p.2 := by rw [h&#39;]
+          _ = r.1 + p.2 + q.2 := by ac_rfl }
+
+/-- 差の群 -/
+def G := Quotient E.diffSetoid
+
+namespace G
+
+variable {E}
+
+/-- 形式的な差 `x - y` -/
+def mk (x y : E.Q) : E.G := Quotient.mk E.diffSetoid (x, y)
+
+theorem ind {P : E.G → Prop} (h : ∀ x y, P (mk x y)) (z : E.G) : P z :=
+  Quotient.ind (fun p =&gt; h p.1 p.2) z
+
+theorem mk_eq {x y z w : E.Q} : mk x y = mk z w ↔ x + w = z + y := Quotient.eq
+
+variable [Nonempty A]
+
+/-- 基準に使う任意の類 -/
+noncomputable def q₀ : E.Q := Q.mk (Classical.arbitrary A)
+
+noncomputable instance : Zero E.G := ⟨mk q₀ q₀⟩
+
+instance : Add E.G where
+  add := Quotient.map₂ (fun p q =&gt; (p.1 + q.1, p.2 + q.2)) fun p p&#39; h q q&#39; h&#39; =&gt; by
+    change (p.1 + q.1) + (p&#39;.2 + q&#39;.2) = (p&#39;.1 + q&#39;.1) + (p.2 + q.2)
+    calc (p.1 + q.1) + (p&#39;.2 + q&#39;.2) = (p.1 + p&#39;.2) + (q.1 + q&#39;.2) := by ac_rfl
+      _ = (p&#39;.1 + p.2) + (q&#39;.1 + q.2) := by rw [show p.1 + p&#39;.2 = p&#39;.1 + p.2 from h,
+            show q.1 + q&#39;.2 = q&#39;.1 + q.2 from h&#39;]
+      _ = (p&#39;.1 + q&#39;.1) + (p.2 + q.2) := by ac_rfl
+
+instance : Neg E.G where
+  neg := Quotient.map Prod.swap fun p p&#39; h =&gt; by
+    change p.2 + p&#39;.1 = p&#39;.2 + p.1
+    rw [add_comm, ← show p.1 + p&#39;.2 = p&#39;.1 + p.2 from h, add_comm]
+
+omit [Nonempty A] in
+theorem mk_add (x y z w : E.Q) : mk x y + mk z w = mk (x + z) (y + w) := rfl
+
+omit [Nonempty A] in
+theorem neg_mk (x y : E.Q) : -mk x y = mk y x := rfl
+
+theorem zero_def : (0 : E.G) = mk q₀ q₀ := rfl
+
+noncomputable instance : AddCommGroup E.G where
+  add_assoc := ind fun a b =&gt; ind fun c d =&gt; ind fun e f =&gt; by
+    simp only [mk_add, add_assoc]
+  zero_add := ind fun a b =&gt; by
+    rw [zero_def, mk_add, mk_eq]; ac_rfl
+  add_zero := ind fun a b =&gt; by
+    rw [zero_def, mk_add, mk_eq]; ac_rfl
+  neg_add_cancel := ind fun a b =&gt; by
+    rw [neg_mk, mk_add, zero_def, mk_eq]; ac_rfl
+  add_comm := ind fun a b =&gt; ind fun c d =&gt; by
+    rw [mk_add, mk_add, mk_eq]; ac_rfl
+  nsmul := nsmulRec
+  zsmul := zsmulRec
+
+instance : LE E.G where
+  le := Quotient.lift₂ (fun p q =&gt; p.1 + q.2 ≤ q.1 + p.2) fun p q p&#39; q&#39; hp hq =&gt; by
+    have hp : p.1 + p&#39;.2 = p&#39;.1 + p.2 := hp
+    have hq : q.1 + q&#39;.2 = q&#39;.1 + q.2 := hq
+    apply propext
+    rw [← Q.add_le_add_iff_right (p.1 + q.2) (q.1 + p.2) (p&#39;.2 + q&#39;.2),
+      ← Q.add_le_add_iff_right (p&#39;.1 + q&#39;.2) (q&#39;.1 + p&#39;.2) (p.2 + q.2)]
+    have e1 : (p.1 + q.2) + (p&#39;.2 + q&#39;.2) = (p&#39;.1 + q&#39;.2) + (p.2 + q.2) :=
+      calc (p.1 + q.2) + (p&#39;.2 + q&#39;.2) = (p.1 + p&#39;.2) + (q.2 + q&#39;.2) := by ac_rfl
+        _ = (p&#39;.1 + p.2) + (q.2 + q&#39;.2) := by rw [hp]
+        _ = (p&#39;.1 + q&#39;.2) + (p.2 + q.2) := by ac_rfl
+    have e2 : (q.1 + p.2) + (p&#39;.2 + q&#39;.2) = (q&#39;.1 + p&#39;.2) + (p.2 + q.2) :=
+      calc (q.1 + p.2) + (p&#39;.2 + q&#39;.2) = (q.1 + q&#39;.2) + (p.2 + p&#39;.2) := by ac_rfl
+        _ = (q&#39;.1 + q.2) + (p.2 + p&#39;.2) := by rw [hq]
+        _ = (q&#39;.1 + p&#39;.2) + (p.2 + q.2) := by ac_rfl
+    rw [e1, e2]
+
+omit [Nonempty A] in
+theorem mk_le_mk (x y z w : E.Q) : mk x y ≤ mk z w ↔ x + w ≤ z + y := Iff.rfl
+
+noncomputable instance : LinearOrder E.G where
+  le_refl := ind fun a b =&gt; Q.le_refl _
+  le_trans := ind fun a b =&gt; ind fun c d =&gt; ind fun e f =&gt; by
+    simp only [mk_le_mk]
+    intro h1 h2
+    rw [← Q.add_le_add_iff_right (a + f) (e + b) d]
+    calc a + f + d = (a + d) + f := by ac_rfl
+      _ ≤ (c + b) + f := (Q.add_le_add_iff_right _ _ f).2 h1
+      _ = (c + f) + b := by ac_rfl
+      _ ≤ (e + d) + b := (Q.add_le_add_iff_right _ _ b).2 h2
+      _ = e + b + d := by ac_rfl
+  le_antisymm := ind fun a b =&gt; ind fun c d =&gt; fun h1 h2 =&gt;
+    mk_eq.2 (Q.le_antisymm h1 h2)
+  le_total := ind fun a b =&gt; ind fun c d =&gt; Q.le_total _ _
+  toDecidableLE := Classical.decRel _
+
+instance : IsOrderedAddMonoid E.G where
+  add_le_add_left := ind fun a b =&gt; ind fun c d =&gt; fun h =&gt; ind fun e f =&gt; by
+    rw [mk_add, mk_add, mk_le_mk]
+    rw [mk_le_mk] at h
+    calc a + e + (d + f) = (a + d) + (e + f) := by ac_rfl
+      _ ≤ (c + b) + (e + f) := (Q.add_le_add_iff_right _ _ _).2 h
+      _ = c + e + (b + f) := by ac_rfl
+
+theorem succ_nsmul_mk (n : ℕ) (x y : E.Q) :
+    (n + 1) • mk x y = mk (Q.copies n x) (Q.copies n y) := by
+  induction n with
+  | zero =&gt; rw [zero_add, one_nsmul]; rfl
+  | succ n ih =&gt; rw [succ_nsmul, ih, mk_add, ← Q.copies_succ, ← Q.copies_succ]
+
+theorem not_le_zero_iff (x y : E.Q) : ¬ mk x y ≤ 0 ↔ ¬ x ≤ y := by
+  rw [zero_def, mk_le_mk, add_comm q₀ y, Q.add_le_add_iff_right]
+
+instance : Archimedean E.G where
+  arch := ind fun a b =&gt; by
+    intro z
+    induction z using ind with
+    | h c d =&gt;
+      intro hpos
+      have hcd : ¬ c ≤ d := (not_le_zero_iff c d).1 (not_le.2 hpos)
+      obtain ⟨n, hn⟩ := Q.arch c d b a hcd
+      refine ⟨n + 1, ?_⟩
+      rw [succ_nsmul_mk, mk_le_mk, add_comm a]
+      exact hn
+
+/-- 棒の類 `x` を群の元 `(x + x) - x` として見る -/
+def ι (x : E.Q) : E.G := mk (x + x) x
+
+omit [Nonempty A] in
+theorem ι_add (x y : E.Q) : ι (x + y) = ι x + ι y := by
+  rw [ι, ι, ι, mk_add, mk_eq]; ac_rfl
+
+omit [Nonempty A] in
+theorem ι_le_iff (x y : E.Q) : ι x ≤ ι y ↔ x ≤ y := by
+  rw [ι, ι, mk_le_mk, show x + x + y = x + (x + y) by ac_rfl,
+    show y + y + x = y + (x + y) by ac_rfl, Q.add_le_add_iff_right]
+
+theorem ι_pos (x : E.Q) : 0 &lt; ι x := by
+  apply not_le.1
+  rw [ι, not_le_zero_iff]
+  exact Q.not_add_le x x
+
+end G
+
+/-- **存在** (Hölder)：単位の棒 `u` を選ぶと、構造を表現する目盛りで `ℓ u = 1` を満たすものが
+存在する。`Represents.pos` により値はすべて正である。 -/
+theorem length_exists (u : A) : ∃ ℓ : A → ℝ, E.Represents ℓ ∧ ℓ u = 1 := by
+  have : Nonempty A := ⟨u⟩
+  obtain ⟨f, hf1, hfinj⟩ := scale_exists_of_archimedean (G.ι (Q.mk (E := E) u)) (G.ι_pos _)
+  have hmono : StrictMono f := (OrderHomClass.mono f).strictMono_of_injective hfinj
+  refine ⟨fun a =&gt; f (G.ι (Q.mk a)), ⟨fun a b =&gt; ?_, fun a b =&gt; ?_⟩, hf1⟩
+  · rw [hmono.le_iff_le, G.ι_le_iff]; rfl
+  · change f (G.ι (Q.mk (E.cat a b))) = f (G.ι (Q.mk a)) + f (G.ι (Q.mk b))
+    rw [Q.mk_add, G.ι_add, map_add]
+
+end ExtensiveStructure
+
+end OpThermo</code></pre>
+<h1 id="opthermostatespace.lean"><code>OpThermo/StateSpace.lean</code></h1>
+<pre class="lean"><code>import Mathlib
+
+/-!
+# 状態の空間と示量的な関数
+
+状態の全体 `𝒮` は、複合 (`X + Y`) とスケーリング (`t • X`, `t : ℝ≥0`) を持つ `ℝ≥0` 加群とする。
+`X + Y` は二つの系を仕切りで隔てて並べた複合系、`t • X` は仕切りで分けた (または増やした) 系である。
+加群の等式は、両辺の準備手順が同じ状態を与えるという仮定である。
+
+`𝒮` 上の実数値関数が示量的であるとは、複合で足し合わされ、スケーリングで `t` 倍されることをいう。
+系の組成 (成分ごとの質量)、内部エネルギー、エントロピーはどれも示量的である。
+-/
+
+open NNReal
+
+namespace OpThermo
+
+/-- **示量的な関数**：`f (X + Y) = f X + f Y` かつ `f (t • X) = t * f X`。 -/
+def IsExtensive {𝒮 : Type*} [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] (f : 𝒮 → ℝ) : Prop :=
+  (∀ X Y, f (X + Y) = f X + f Y) ∧ ∀ (t : ℝ≥0) X, f (t • X) = t * f X
+
+theorem IsExtensive.map_zero {𝒮 : Type*} [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] {f : 𝒮 → ℝ}
+    (h : IsExtensive f) : f 0 = 0 := by
+  simpa using h.2 0 0
+
+end OpThermo</code></pre>
+<h1 id="opthermostates.lean"><code>OpThermo/States.lean</code></h1>
+<pre class="lean"><code>import OpThermo.Measurement
+
+/-!
+# 状態と平衡状態を実験の手順から定義する
+
+「状態」も「平衡」も「時間」も原始概念にしない。原始概念は次の五つである (`Laboratory`)。
+* `Prep`：準備手順。容器に物質を入れ、ピストンをある位置に固定する、といった具体的な手順。
+* `Meas`：測定手順 (巨視的なもの)。体積の目盛りを読む、壁にかかる力を読む、など。
+* `outcome p M`：準備手順 `p` の直後に測定手順 `M` を行ったときの読み。
+* `Dur`：待ち手順。「砂時計の砂が落ち切るまで待つ」「振り子が 10 回振れるまで待つ」のように、
+  基準となる過程が終わるまで待つという手順。数値の時間は使わない。
+* `wait d p`：準備手順 `p` に待ち手順 `d` を続けた準備手順。
+
+読みが実数で再現することは、ここで置く仮定である (測定誤差や確率的なばらつきは扱わない)。
+
+## 定義
+
+* `Indist p q`：どの測定手順でも、`p` と `q` の読みが一致する。
+* `State`：区別できない準備手順の類。状態とは「測定手順で区別できない準備手順の集まり」である。
+  測定手順の集まり `Meas` を広げれば、状態はより細かく分かれる。
+* `IsStationary p`：どの待ち手順を続けても、どの読みも変わらない。
+
+平衡の定義に数値の時間は要らない。どれだけ待っても変わらない、と言えれば足りる。
+
+## 時間の目盛り (`Clock`)
+
+数値の時間は、長さと同じ外延的構造から作る。
+* 比較：二つの基準過程を同時に始め、`d` が `e` より遅れずに終わる。
+* 連結：`d` が終わってから `e` を始める。待ちの言葉では `wait (d ∘ e) = wait e ∘ wait d`。
+
+この比較と連結が外延的構造の法則を満たすことが、時間についての経験的仮定である。
+そのとき時間の目盛りが単位を除いて一意に存在し (`Clock.time_exists`, `Clock.time_unique`)、
+同じ比較と連結を与える二つの時計 (砂時計と振り子) の読みは比例する (`Clock.compatible`)。
+「同時に始める」は、同じ場所で二つの出来事が一致することとして直接観測できるとする。
+
+## 平衡状態を状態の性質にするための仮定
+
+`IsStationary` は準備手順の性質であり、そのままでは状態の性質ではない。
+同じ読みを与える二つの準備手順が、待ち手順を続けたあと別の読みを与えるかもしれないからである
+(`stationary_not_state_property` がその例)。
+そこで次の経験的仮定を明示する。
+* `StateDeterminesEvolution`：区別できない準備手順は、待ち手順を続けた後も区別できない。
+
+この仮定の下で、定常性は状態の性質になり (`stationary_congr`)、平衡状態
+`IsEquilibrium` と平衡状態の集合 `EqState` が定義できる。
+`FirstLaw.lean` と `Entropy.lean` の状態は、この `EqState` を念頭に置いている。
+-/
+
+namespace OpThermo
+
+/-- 実験室で行える準備手順、測定手順、待ち手順。 -/
+structure Laboratory where
+  /-- 準備手順 -/
+  Prep : Type*
+  /-- 巨視的な測定手順 -/
+  Meas : Type*
+  /-- 準備手順 `p` の直後に測定手順 `M` を行ったときの読み -/
+  outcome : Prep → Meas → ℝ
+  /-- 待ち手順：基準となる過程 (砂時計、振り子の振動など) が終わるまで待つ -/
+  Dur : Type*
+  /-- 準備手順 `p` に待ち手順 `d` を続けた準備手順 -/
+  wait : Dur → Prep → Prep
+
+namespace Laboratory
+
+variable (L : Laboratory)
+
+/-- どの測定手順でも読みが一致する -/
+def Indist (p q : L.Prep) : Prop := ∀ M, L.outcome p M = L.outcome q M
+
+/-- 区別できないことによる同値関係 -/
+def setoid : Setoid L.Prep where
+  r := L.Indist
+  iseqv :=
+    { refl := fun _ _ =&gt; rfl
+      symm := fun h M =&gt; (h M).symm
+      trans := fun h h&#39; M =&gt; (h M).trans (h&#39; M) }
+
+/-- **状態**：測定手順で区別できない準備手順の類 -/
+def State : Type _ := Quotient L.setoid
+
+/-- 準備手順 `p` が作る状態 -/
+def stateOf (p : L.Prep) : L.State := Quotient.mk L.setoid p
+
+/-- どの待ち手順を続けても、どの読みも変わらない -/
+def IsStationary (p : L.Prep) : Prop := ∀ d M, L.outcome (L.wait d p) M = L.outcome p M
+
+/-- 経験的仮定：区別できない準備手順は、待ち手順を続けた後も区別できない。
+「現在の状態が、何もしないときの以後の変化を決める」という主張である。 -/
+def StateDeterminesEvolution : Prop :=
+  ∀ p q d, L.Indist p q → L.Indist (L.wait d p) (L.wait d q)
+
+variable {L}
+
+/-- 仮定の下では、区別できない準備手順の一方が定常なら他方も定常。 -/
+theorem stationary_congr (h : L.StateDeterminesEvolution) {p q : L.Prep} (hpq : L.Indist p q)
+    (hp : L.IsStationary p) : L.IsStationary q := by
+  intro d M
+  rw [← h p q d hpq M, hp d M, hpq M]
+
+variable (L)
+
+/-- **平衡状態**：定常な準備手順で作られる状態。`StateDeterminesEvolution` の下で well-defined。 -/
+def IsEquilibrium (h : L.StateDeterminesEvolution) : L.State → Prop :=
+  Quotient.lift L.IsStationary fun _ _ hpq =&gt;
+    propext ⟨stationary_congr h hpq, stationary_congr h (L.setoid.iseqv.symm hpq)⟩
+
+theorem isEquilibrium_stateOf (h : L.StateDeterminesEvolution) (p : L.Prep) :
+    L.IsEquilibrium h (L.stateOf p) ↔ L.IsStationary p := Iff.rfl
+
+/-- 平衡状態の集合 `Γ` -/
+def EqState (h : L.StateDeterminesEvolution) : Type _ := {s : L.State // L.IsEquilibrium h s}
+
+/-- **時計**：待ち手順の比較と連結が外延的構造をなす。
+比較 `duration.le d e` は「二つの基準過程を同時に始めて、`d` が `e` より遅れずに終わる」、
+連結 `duration.cat d e` は「`d` が終わってから `e` を始める」。 -/
+structure Clock where
+  /-- 待ち手順の比較と連結 -/
+  duration : ExtensiveStructure L.Dur
+  /-- 連結した待ちは、続けて待つことと同じ手順である -/
+  wait_cat : ∀ d e p, L.wait (duration.cat d e) p = L.wait e (L.wait d p)
+
+namespace Clock
+
+variable {L} (C : L.Clock)
+
+/-- 時間の目盛りの存在：単位の待ち手順 `u` (例えば振り子の一振り) に `1` を割り当てる
+目盛り `τ` があり、比較を大小に、連結を和に移す。 -/
+theorem time_exists (u : L.Dur) : ∃ τ : L.Dur → ℝ, C.duration.Represents τ ∧ τ u = 1 :=
+  C.duration.length_exists u
+
+/-- 時間の目盛りの一意性 -/
+theorem time_unique (u : L.Dur) {τ τ&#39; : L.Dur → ℝ} (h : C.duration.Represents τ)
+    (h&#39; : C.duration.Represents τ&#39;) (hu : τ u = 1) (hu&#39; : τ&#39; u = 1) : τ = τ&#39; :=
+  C.duration.length_unique u h h&#39; hu hu&#39;
+
+/-- 同じ比較と連結を与える二つの時計の読みは比例する。 -/
+theorem compatible {τA τB : L.Dur → ℝ} (hA : C.duration.Represents τA)
+    (hB : C.duration.Represents τB) (u : L.Dur) : Compatible τA τB :=
+  C.duration.compatible_of_represents hA hB u
+
+include C in
+/-- 定常な準備手順を待ち手順を続けて得た準備手順も定常である。 -/
+theorem stationary_wait {p : L.Prep} (hp : L.IsStationary p) (d : L.Dur) :
+    L.IsStationary (L.wait d p) := by
+  intro e M
+  rw [← C.wait_cat, hp, hp]
+
+end Clock
+
+end Laboratory
+
+/-- 仮定 `StateDeterminesEvolution` を外すと、定常性は状態の性質でなくなる例。
+
+準備手順は `0, 1, 2` の三つ、測定手順は一つ。`0` と `1` は直後の読みがどちらも `0` で区別できない。
+`0` はどの待ち手順を続けても変わらないが、`1` は待ち手順を続けると `2` (読み `1`) に変わる。 -/
+theorem stationary_not_state_property :
+    ∃ (L : Laboratory.{0, 0, 0}) (p q : L.Prep),
+      L.Indist p q ∧ L.IsStationary p ∧ ¬ L.IsStationary q := by
+  let L : Laboratory.{0, 0, 0} :=
+    { Prep := Fin 3
+      Meas := Unit
+      outcome := fun p _ =&gt; if p = 2 then 1 else 0
+      Dur := Unit
+      wait := fun _ p =&gt; if p = 1 then 2 else p }
+  refine ⟨L, (0 : Fin 3), (1 : Fin 3), fun _ =&gt; by simp [L], fun d M =&gt; by simp [L], ?_⟩
+  intro hq
+  have := hq () ()
+  simp [L] at this
+
+end OpThermo</code></pre>
+<h1 id="opthermomechanics.lean"><code>OpThermo/Mechanics.lean</code></h1>
+<pre class="lean"><code>import OpThermo.Measurement
+
+/-!
+# 仕事の力学的な基礎：天秤とてこから「質量 × 降下量」へ
+
+熱力学の仕事は、重りの上げ下げで測る。
+ここで必要な力学は静力学だけであり、Newton の運動方程式や慣性質量は使わない。
+原始概念は次のとおり。
+
+* **重り**：系の外に置く固い物体で、天秤に載せられ、ひもで吊るせるもの。
+  形や温度は変わらないものとし、状態は高さだけで指定される。
+  仕事を受け渡すための道具であり、熱力学の系とは区別する。
+* 重りの集まり `W` と天秤 (`balance : ExtensiveStructure W`)。
+  比較は「天秤に載せてどちらに傾くか」、連結は「同じ皿に一緒に載せる」。
+  `Measurement.lean` の定理により、天秤の質量目盛り `m` が単位を除いて一意に定まる。
+* 降下の記録 `WeightDrops W`：どの重りが、どれだけ下がったか (上がれば負)。
+  降下量は長さの目盛りで測る。
+* `Feasible r`：てこや滑車などの純粋に力学的な装置 (手順の終わりには元の配置に戻る) で、
+  降下の記録 `r` のとおりに重りを動かせる。
+
+## 経験法則 (`MechanicalLaw m`)
+
+重みづけ (重りの集まりの上の目盛り) `m : W → ℝ` を使った `Σ m(b) h` について、
+* 力学的な装置だけで実現できる降下の記録では、`Σ m(b) h ≥ 0`
+  (重りを全体として持ち上げる永久機関はない)。
+* `Σ m(b) h = 0` となる降下の記録は、理想的な (摩擦のない) てこと滑車で実現できる。
+
+これは仮想仕事の原理 (てこの原理) を操作の言葉で述べたものである。
+
+## 主結果
+
+* `mechanicalWork_zero_of_law`：法則を満たす重みづけは、`Σ m h = 0` となる記録の集まりで決まる。
+* `compatible_of_mechanicalLaw`：法則を満たす正の重みづけは、互いに比例する
+  (`Compatible`)。したがって、天秤の質量が法則を満たすなら (`hbal`)、
+  力学的に意味のある仕事の重みづけは天秤の質量の定数倍に限られる。
+  その定数は単位の選び方にあたる。
+
+天秤の質量が法則を満たすこと自体は経験的な主張であり、仮定として明示する。
+慣性質量 (衝突実験) と天秤の質量が比例するかは、ここでは使わない。
+-/
+
+namespace OpThermo
+
+/-- **降下の記録**：どの重りが、どれだけ下がったかの一覧 `[(b₁, h₁), (b₂, h₂), …]`。
+降下量 `h` は長さの目盛りで測り、上がった重りは負の降下量で表す。
+例えば、Joule の実験で重り `b` が 0.5 m 下がったなら `[(b, 0.5)]`、
+てこで `b` を `h_b` 下げて `u` を `h_u` 持ち上げたなら `[(b, h_b), (u, -h_u)]`。 -/
+abbrev WeightDrops (W : Type*) : Type _ := List (W × ℝ)
+
+/-- 重りの静力学。 -/
+structure WeightStatics (W : Type*) where
+  /-- 天秤：比較は傾きの向き、連結は同じ皿に載せること -/
+  balance : ExtensiveStructure W
+  /-- 純粋に力学的な装置で、降下の記録 `r` のとおりに重りを動かせる -/
+  Feasible : WeightDrops W → Prop
+
+/-- 降下の記録 `r` に対する `Σ m(b) h` (重みづけ `m`)。`g` 倍すると仕事になる。 -/
+def mechanicalWork {W : Type*} (m : W → ℝ) (r : WeightDrops W) : ℝ :=
+  (r.map fun bh =&gt; m bh.1 * bh.2).sum
+
+/-! ### 力学の仕事 `F · Δx` との対応
+
+力学では、一定の力 `F` の下で物体が変位 `Δx` だけ動くとき、力がした仕事を内積 `⟪F, Δx⟫` と定める。
+重り `b` に働く重力は鉛直下向きで大きさ `m(b) g` なので、重力がした仕事は `m(b) g` と
+鉛直下向きの変位 (降下量) の積になる。水平方向の動きは寄与しない。 -/
+
+/-- 三次元の空間 -/
+abbrev Space : Type := EuclideanSpace ℝ (Fin 3)
+
+/-- 鉛直下向きの単位ベクトル：吊るした重りが静止したときにひもが指す向き (第三座標を上向きにとる) -/
+noncomputable def down : Space := EuclideanSpace.single 2 (-1)
+
+/-- 力学の仕事：一定の力 `F` の下で変位 `Δx` だけ動くときの仕事 `⟪F, Δx⟫` -/
+noncomputable def forceWork (F Δx : Space) : ℝ := inner ℝ F Δx
+
+/-- 重り (天秤の目盛り `m`) に働く重力 `m g ↓`：吊るした重りがひもを引く力。
+天秤は重りがひもを引く強さを比べる手順なので、大きさは天秤の目盛りに比例する。
+`g` は、力を天秤とは別の単位で表すときの換算係数。 -/
+noncomputable def gravity (m g : ℝ) : Space := (m * g) • down
+
+/-- 変位 `Δx` の鉛直下向きの成分 (降下量) -/
+noncomputable def descent (Δx : Space) : ℝ := inner ℝ down Δx
+
+/-- 重力がした仕事は `m g × 降下量`。水平方向の変位は寄与しない。 -/
+theorem forceWork_gravity (m g : ℝ) (Δx : Space) :
+    forceWork (gravity m g) Δx = m * g * descent Δx := by
+  simp [forceWork, gravity, descent, real_inner_smul_left]
+
+/-- 重りの変位の一覧から降下の記録を作る -/
+noncomputable def dropsOf {W : Type*} (l : List (W × Space)) : WeightDrops W :=
+  l.map fun bx =&gt; (bx.1, descent bx.2)
+
+/-- **力学の仕事との一致**：重りたちに重力がした仕事の和 `Σ ⟪m(b) g ↓, Δx_b⟫` は、
+降下の記録から計算した `g Σ m(b) h` に等しい。 -/
+theorem gravity_work_eq {W : Type*} (m : W → ℝ) (g : ℝ) (l : List (W × Space)) :
+    (l.map fun bx =&gt; forceWork (gravity (m bx.1) g) bx.2).sum =
+      g * mechanicalWork m (dropsOf l) := by
+  induction l with
+  | nil =&gt; simp [mechanicalWork, dropsOf]
+  | cons x l ih =&gt;
+    simp only [List.map_cons, List.sum_cons, forceWork_gravity] at ih ⊢
+    simp only [mechanicalWork, dropsOf, List.map_cons, List.sum_cons] at ih ⊢
+    rw [ih]; ring
+
+namespace WeightStatics
+
+variable {W : Type*} (S : WeightStatics W)
+
+/-- 重みづけ `m` についての力学の経験法則 (仮想仕事の原理)。 -/
+def MechanicalLaw (m : W → ℝ) : Prop :=
+  (∀ r, S.Feasible r → 0 ≤ mechanicalWork m r) ∧ (∀ r, mechanicalWork m r = 0 → S.Feasible r)
+
+/-- 記録の向きを逆にする (下がった重りを上げ、上がった重りを下げる)。 -/
+def reverse (r : WeightDrops W) : WeightDrops W := r.map fun bh =&gt; (bh.1, -bh.2)
+
+theorem mechanicalWork_reverse (m : W → ℝ) (r : WeightDrops W) :
+    mechanicalWork m (reverse r) = -mechanicalWork m r := by
+  induction r with
+  | nil =&gt; simp [mechanicalWork, reverse]
+  | cons x r ih =&gt;
+    simp only [mechanicalWork, reverse, List.map_cons, List.sum_cons] at ih ⊢
+    rw [ih]; ring
+
+variable {S}
+
+/-- 法則を満たす二つの重みづけは、釣り合う降下の記録 (`Σ m h = 0`) の集まりが一致する。 -/
+theorem mechanicalWork_zero_of_law {m m&#39; : W → ℝ} (h : S.MechanicalLaw m)
+    (h&#39; : S.MechanicalLaw m&#39;) {r : WeightDrops W} (hr : mechanicalWork m r = 0) :
+    mechanicalWork m&#39; r = 0 := by
+  have f1 := h&#39;.1 r (h.2 r hr)
+  have hrev : mechanicalWork m (reverse r) = 0 := by rw [mechanicalWork_reverse, hr, neg_zero]
+  have f2 := h&#39;.1 _ (h.2 _ hrev)
+  rw [mechanicalWork_reverse] at f2
+  linarith
+
+/-- **仕事の重みづけの一意性**：力学の法則を満たす正の重みづけは互いに比例する。 -/
+theorem compatible_of_mechanicalLaw {m m&#39; : W → ℝ} (h : S.MechanicalLaw m)
+    (h&#39; : S.MechanicalLaw m&#39;) (hpos : ∀ b, 0 &lt; m b) (hpos&#39; : ∀ b, 0 &lt; m&#39; b) (u : W) :
+    Compatible m m&#39; := by
+  refine ⟨m&#39; u / m u, div_pos (hpos&#39; u) (hpos u), fun b =&gt; ?_⟩
+  -- 重り `b` を `m u` だけ下げ、`u` を `m b` だけ上げる降下の記録は `m` で釣り合う
+  have hr : mechanicalWork m [(b, m u), (u, -m b)] = 0 := by
+    simp [mechanicalWork]; ring
+  have := mechanicalWork_zero_of_law h h&#39; hr
+  simp [mechanicalWork] at this
+  have hu := hpos u
+  field_simp
+  linarith
+
+/-- 天秤の質量目盛りが力学の法則を満たすなら (経験的仮定 `hbal`)、法則を満たす任意の正の
+重みづけは天秤の質量に比例する。仕事 `Σ m h` の `m` は天秤で測った質量でよく、
+比例定数は単位の選び方にあたる。 -/
+theorem compatible_with_balance {mbal m : W → ℝ} (hrep : S.balance.Represents mbal)
+    (hbal : S.MechanicalLaw mbal) (h : S.MechanicalLaw m) (hpos : ∀ b, 0 &lt; m b) (u : W) :
+    Compatible mbal m :=
+  compatible_of_mechanicalLaw hbal h hrep.pos hpos u
+
+end WeightStatics
+
+end OpThermo</code></pre>
+<h1 id="opthermofirstlaw.lean"><code>OpThermo/FirstLaw.lean</code></h1>
+<pre class="lean"><code>import OpThermo.Mechanics
+
+/-!
+# 第一法則：断熱仕事から内部エネルギーを構成する
+
+断熱操作とは、外界に残る正味の変化が重りの高さの変化だけである操作をいう。
+その断熱操作で重りが失った力学的エネルギー (`m h` の減少) を、系になされた仕事 `work p`
+として測る。
+
+## 経験的仮定 (`AdiabaticProcesses`)
+
+* 断熱操作は続けて実行でき、仕事は足し合わされる (`comp`, `work_comp`)。
+* **経路独立性** (Joule)：同じ始状態・終状態を結ぶ断熱操作の仕事は等しい (`path_indep`)。
+* **連結性**：任意の二状態は、少なくとも一方向に断熱操作で結べる (`connected`)。
+
+## 主結果
+
+* `exists_internalEnergy`：`U Y - U X = work p` (`p : X → Y` は任意の断熱操作) を満たす
+  状態関数 `U` が存在する。
+* `internalEnergy_unique`：そのような `U` は定数の差を除いて一意。
+* `heat` と `first_law`：断熱とは限らない手順の熱を `Q := ΔU - W` と定義すると `ΔU = Q + W`。
+  `heat_adiabatic`：断熱操作の熱は `0` である (定義の整合性)。
+
+## 仕事の計算に使う重みづけを明示する (`AdiabaticOps`)
+
+仕事の力学的な意味は `Mechanics.lean` で与える。
+ここでの仕事は降下の記録に対する `Σ m h` であり (`Mechanics.gravity_work_eq` により、重力がした力学の仕事を `g` で割ったもの)、
+`pathIndependent_iff_of_mechanicalLaw` により、力学の法則を満たす重みづけのどれを選んでも
+経路独立性 (第一法則) の内容は変わらない。
+
+
+`AdiabaticProcesses` は仕事を一つの実数として受け取るので、仕事をどう測ったかが隠れる。
+`AdiabaticOps` では、各断熱操作に降下の記録 (どの重りがどれだけ下がったか) だけを持たせ、
+仕事 `Σ m(b) h` は重みづけ `m` を与えて初めて計算する。
+
+* `AdiabaticOps.PathIndependent m`：経路独立性は `m` を明示した経験的仮定になる。
+* `pathIndependent_iff_of_compatible`：両立する (比例する) 重みづけの間では、
+  経路独立性は同時に成り立つか同時に成り立たない。
+* `internalEnergy_of_compatible`：そのとき内部エネルギーは `U_B = c U_A + d`。
+* `pathIndependent_depends_on_mass`：両立しない重みづけでは、片方で経路独立性が成り立ち
+  もう片方で破れる例がある。どの重みづけで第一法則を検証したかは、省略できない情報である。
+-/
+
+namespace OpThermo
+
+/-- 平衡状態の集合 `Γ` 上の断熱操作と、その仕事。
+`Γ` には `States.lean` の `Laboratory.EqState` (定常な準備手順で作られる状態) を想定する。 -/
+structure AdiabaticProcesses (Γ : Type*) where
+  /-- `Operation X Y` は、平衡状態 `X` から平衡状態 `Y` へ移す断熱操作の集まり (型) である。
+  その一つ一つの要素 `p : Operation X Y` が、装置と手順を指定した一つの断熱操作である。
+  空なら `X` から `Y` へ断熱的には移せない。 -/
+  Operation : Γ → Γ → Type*
+  /-- 断熱操作の間に外界の重りが失った力学的エネルギー (系になされた仕事) -/
+  work : ∀ {X Y}, Operation X Y → ℝ
+  /-- 二つの断熱操作を続けて行う -/
+  comp : ∀ {X Y Z}, Operation X Y → Operation Y Z → Operation X Z
+  work_comp : ∀ {X Y Z} (p : Operation X Y) (q : Operation Y Z), work (comp p q) = work p + work q
+  /-- 経路独立性 -/
+  path_indep : ∀ {X Y} (p q : Operation X Y), work p = work q
+  /-- 連結性 -/
+  connected : ∀ X Y, Nonempty (Operation X Y) ∨ Nonempty (Operation Y X)
+
+namespace AdiabaticProcesses
+
+variable {Γ : Type*} (A : AdiabaticProcesses Γ)
+
+/-- 閉じた断熱操作の仕事は `0`。 -/
+theorem work_loop {X : Γ} (p : A.Operation X X) : A.work p = 0 := by
+  have := A.work_comp p p
+  rw [A.path_indep (A.comp p p) p] at this
+  linarith
+
+/-- 基準状態 `X₀` に対する内部エネルギー。`X₀ → X` の断熱操作があればその仕事、
+なければ `X → X₀` の断熱操作の仕事の符号を変えたもの。 -/
+noncomputable def internalEnergy (X₀ : Γ) (X : Γ) : ℝ := by
+  classical
+  exact if h : Nonempty (A.Operation X₀ X) then A.work h.some
+    else -A.work ((A.connected X₀ X).resolve_left h).some
+
+/-- **内部エネルギーの存在**：任意の断熱操作 `p : X → Y` で `U Y - U X = work p`。 -/
+theorem internalEnergy_spec (X₀ : Γ) {X Y : Γ} (p : A.Operation X Y) :
+    A.internalEnergy X₀ Y - A.internalEnergy X₀ X = A.work p := by
+  classical
+  unfold internalEnergy
+  split_ifs with hY hX hX
+  · -- X₀ → X → Y と X₀ → Y
+    have := A.work_comp hX.some p
+    rw [A.path_indep (A.comp hX.some p) hY.some] at this
+    linarith
+  · -- X → X₀ → Y
+    set a := ((A.connected X₀ X).resolve_left hX).some
+    have := A.work_comp a hY.some
+    rw [A.path_indep (A.comp a hY.some) p] at this
+    linarith
+  · -- X₀ → X → Y → X₀ は閉じた断熱操作
+    set b := ((A.connected X₀ Y).resolve_left hY).some
+    have h1 := A.work_loop (A.comp (A.comp hX.some p) b)
+    rw [A.work_comp, A.work_comp] at h1
+    linarith
+  · -- X → Y → X₀ と X → X₀
+    set a := ((A.connected X₀ X).resolve_left hX).some
+    set b := ((A.connected X₀ Y).resolve_left hY).some
+    have := A.work_comp p b
+    rw [A.path_indep (A.comp p b) a] at this
+    linarith
+
+theorem exists_internalEnergy [Nonempty Γ] :
+    ∃ U : Γ → ℝ, ∀ {X Y : Γ} (p : A.Operation X Y), U Y - U X = A.work p :=
+  ⟨A.internalEnergy (Classical.arbitrary Γ), fun p =&gt; A.internalEnergy_spec _ p⟩
+
+/-- **一意性**：断熱仕事を再現する状態関数は、定数の差を除いて一意。 -/
+theorem internalEnergy_unique (U U&#39; : Γ → ℝ)
+    (hU : ∀ {X Y : Γ} (p : A.Operation X Y), U Y - U X = A.work p)
+    (hU&#39; : ∀ {X Y : Γ} (p : A.Operation X Y), U&#39; Y - U&#39; X = A.work p) (X₀ : Γ) :
+    ∀ X, U&#39; X = U X + (U&#39; X₀ - U X₀) := by
+  intro X
+  rcases A.connected X₀ X with h | h
+  · obtain ⟨p⟩ := h
+    have := hU p; have := hU&#39; p; linarith
+  · obtain ⟨p⟩ := h
+    have := hU p; have := hU&#39; p; linarith
+
+/-- 断熱とは限らない手順で入った熱：`Q := ΔU - W`。 -/
+def heat (U : Γ → ℝ) (X Y : Γ) (W : ℝ) : ℝ := U Y - U X - W
+
+/-- **第一法則** `ΔU = Q + W` (熱の定義そのもの)。 -/
+theorem first_law (U : Γ → ℝ) (X Y : Γ) (W : ℝ) : U Y - U X = heat U X Y W + W := by
+  unfold heat; ring
+
+/-- 断熱操作で入る熱は `0`。熱の定義が断熱操作の定義と矛盾しないことを示す。 -/
+theorem heat_adiabatic (U : Γ → ℝ) (hU : ∀ {X Y : Γ} (p : A.Operation X Y), U Y - U X = A.work p)
+    {X Y : Γ} (p : A.Operation X Y) : heat U X Y (A.work p) = 0 := by
+  unfold heat; rw [hU p]; ring
+
+end AdiabaticProcesses
+
+/-- 断熱操作と、その降下の記録。仕事はまだ数として持たせない。
+断熱操作とは、系を平衡状態 `X` から `Y` へ移す手順で、終わったとき使った装置がすべて元の状態に戻り、
+系の外に残る変化が重りの高さだけであるもの。熱という語は使わない。
+どの手順がこの条件を満たすかの判定は形式化しておらず、`Operation X Y` を与えられたものとする。
+仕事は、降下の記録に重みづけを当てはめて計算する (`work`)。 -/
+structure AdiabaticOps (Γ : Type*) (Weight : Type*) where
+  /-- `Operation X Y`：平衡状態 `X` から `Y` へ移す断熱操作の集まり。要素一つが、装置と手順を指定した一つの断熱操作。 -/
+  Operation : Γ → Γ → Type*
+  /-- 二つの断熱操作を続けて行う -/
+  comp : ∀ {X Y Z}, Operation X Y → Operation Y Z → Operation X Z
+  /-- 断熱操作 `p` の降下の記録：`p` の間に、どの重りがどれだけ下がったか -/
+  drops : ∀ {X Y}, Operation X Y → WeightDrops Weight
+  /-- 続けて行った断熱操作の降下の記録は、それぞれの記録をつなげたもの -/
+  drops_comp : ∀ {X Y Z} (p : Operation X Y) (q : Operation Y Z),
+    drops (comp p q) = drops p ++ drops q
+  /-- 連結性 -/
+  connected : ∀ X Y, Nonempty (Operation X Y) ∨ Nonempty (Operation Y X)
+
+namespace AdiabaticOps
+
+variable {Γ Weight : Type*} (O : AdiabaticOps Γ Weight)
+
+/-- **断熱到達性** `X ≺ Y`：`X` から `Y` への断熱操作が存在する。 -/
+def Prec (X Y : Γ) : Prop := Nonempty (O.Operation X Y)
+
+/-- 連結性は、断熱到達性で任意の二状態が比べられることと同じ。 -/
+theorem prec_total (X Y : Γ) : O.Prec X Y ∨ O.Prec Y X := O.connected X Y
+
+/-- **仕事**：断熱操作 `p` の降下の記録から計算した `Σ m(b) h`。
+単位は「重みづけの単位の重りを単位の長さだけ下げる仕事」であり、重力加速度は使わない。
+ジュールに換算するときだけ、重力加速度 `g` を掛ける。
+仕事は断熱操作の関数であり、平衡状態の関数ではない。 -/
+def work (m : Weight → ℝ) {X Y : Γ} (p : O.Operation X Y) : ℝ :=
+  mechanicalWork m (O.drops p)
+
+theorem work_comp (m : Weight → ℝ) {X Y Z : Γ} (p : O.Operation X Y) (q : O.Operation Y Z) :
+    O.work m (O.comp p q) = O.work m p + O.work m q := by
+  simp [work, mechanicalWork, O.drops_comp]
+
+/-- 経路独立性 (Joule)。どの重みづけ `m` で仕事を計算したかを明示する。 -/
+abbrev PathIndependent (m : Weight → ℝ) : Prop :=
+  ∀ {X Y : Γ} (p q : O.Operation X Y), O.work m p = O.work m q
+
+/-- 経路独立性が成り立つ重みづけを選べば、仕事を一つの実数として扱える。 -/
+def toProcesses (m : Weight → ℝ) (h : O.PathIndependent m) :
+    AdiabaticProcesses Γ where
+  Operation := O.Operation
+  work := O.work m
+  comp := O.comp
+  work_comp := O.work_comp m
+  path_indep := h
+  connected := O.connected
+
+/-- 重みづけ `m` で測った断熱仕事から構成した内部エネルギー (基準状態 `X₀`)。 -/
+noncomputable def energy (m : Weight → ℝ) (h : O.PathIndependent m) (X₀ : Γ) :
+    Γ → ℝ :=
+  (O.toProcesses m h).internalEnergy X₀
+
+theorem energy_spec (m : Weight → ℝ) (h : O.PathIndependent m) (X₀ : Γ) {X Y : Γ}
+    (p : O.Operation X Y) : O.energy m h X₀ Y - O.energy m h X₀ X = O.work m p :=
+  (O.toProcesses m h).internalEnergy_spec X₀ p
+
+theorem work_of_compatible {mA mB : Weight → ℝ} {c : ℝ} (hc : ∀ b, mB b = c * mA b)
+    {X Y : Γ} (p : O.Operation X Y) : O.work mB p = c * O.work mA p := by
+  unfold work mechanicalWork
+  rw [← List.sum_map_mul_left]
+  congr 1
+  apply List.map_congr_left
+  intro bh _
+  rw [hc]; ring
+
+/-- 両立する重みづけの間では、経路独立性は同値。 -/
+theorem pathIndependent_iff_of_compatible {mA mB : Weight → ℝ} (h : Compatible mA mB) :
+    O.PathIndependent mA ↔ O.PathIndependent mB := by
+  obtain ⟨c, hc0, hc⟩ := h
+  constructor
+  · intro hA X Y p q
+    rw [O.work_of_compatible hc, O.work_of_compatible hc, hA p q]
+  · intro hB X Y p q
+    have := hB p q
+    rw [O.work_of_compatible hc, O.work_of_compatible hc] at this
+    exact mul_left_cancel₀ hc0.ne&#39; this
+
+/-- 力学の法則 (`Mechanics.lean`) を満たす二つの正の重みづけの間では、経路独立性は同値。
+第一法則は、力学的に意味のある仕事の測り方のどれを選んでも同じ内容になる。 -/
+theorem pathIndependent_iff_of_mechanicalLaw (S : WeightStatics Weight) {mA mB : Weight → ℝ}
+    (hA : S.MechanicalLaw mA) (hB : S.MechanicalLaw mB) (posA : ∀ b, 0 &lt; mA b)
+    (posB : ∀ b, 0 &lt; mB b) (u : Weight) :
+    O.PathIndependent mA ↔ O.PathIndependent mB :=
+  O.pathIndependent_iff_of_compatible
+    (WeightStatics.compatible_of_mechanicalLaw hA hB posA posB u)
+
+/-- 両立する重みづけから作った内部エネルギーは、`U_B = c U_A + d` の関係にある。 -/
+theorem internalEnergy_of_compatible {mA mB : Weight → ℝ} {c : ℝ} (hc : ∀ b, mB b = c * mA b)
+    (hA : O.PathIndependent mA) (hB : O.PathIndependent mB) (X₀ : Γ) :
+    ∃ d : ℝ, ∀ X, (O.toProcesses mB hB).internalEnergy X₀ X =
+      c * (O.toProcesses mA hA).internalEnergy X₀ X + d := by
+  refine ⟨_, (O.toProcesses mB hB).internalEnergy_unique
+    (fun X =&gt; c * (O.toProcesses mA hA).internalEnergy X₀ X) _ ?_ ?_ X₀⟩
+  · intro X Y p
+    have := (O.toProcesses mA hA).internalEnergy_spec X₀ p
+    have h2 : O.work mB (X := X) (Y := Y) p = c * O.work mA p := O.work_of_compatible hc p
+    change c * _ - c * _ = O.work mB p
+    rw [h2, ← mul_sub]
+    exact congrArg (c * ·) this
+  · intro X Y p
+    exact (O.toProcesses mB hB).internalEnergy_spec X₀ p
+
+end AdiabaticOps
+
+/-- 重みづけが両立しないと、経路独立性は手続きに依存しうる。
+
+状態は一つだけで、断熱操作は「重り A を 1 下げ、重り B を 1 上げる」を何回か繰り返すもの。
+両方の重りに質量 `1` を割り当てる測定では仕事は常に `0` で、経路独立性が成り立つ。
+重り B に質量 `2` を割り当てる測定では、1 回の断熱操作の仕事が `-1` になり、
+何もしない断熱操作 (仕事 `0`) と食い違う。 -/
+theorem pathIndependent_depends_on_mass :
+    ∃ (O : AdiabaticOps.{0, 0, 0} Unit Bool) (mA mB : Bool → ℝ),
+      O.PathIndependent mA ∧ ¬ O.PathIndependent mB := by
+  let O : AdiabaticOps Unit Bool :=
+    { Operation := fun _ _ =&gt; List Unit
+      comp := fun p q =&gt; p ++ q
+      drops := fun p =&gt; p.flatMap fun _ =&gt; [(true, 1), (false, -1)]
+      drops_comp := fun p q =&gt; List.flatMap_append
+      connected := fun _ _ =&gt; Or.inl ⟨[]⟩ }
+  have hwork : ∀ (m : Bool → ℝ) (p : List Unit),
+      O.work m (X := ()) (Y := ()) p = p.length * (m true - m false) := by
+    intro m p
+    induction p with
+    | nil =&gt; simp [AdiabaticOps.work, mechanicalWork, O]
+    | cons a p ih =&gt;
+      simp only [AdiabaticOps.work, mechanicalWork, O, List.flatMap_cons, List.map_append,
+        List.sum_append, List.length_cons] at ih ⊢
+      rw [ih]; push_cast; simp; ring
+  refine ⟨O, fun _ =&gt; 1, fun b =&gt; if b then 1 else 2, ?_, ?_⟩
+  · intro X Y p q
+    rw [hwork, hwork]; simp
+  · intro h
+    have := h (X := ()) (Y := ()) [()] []
+    rw [hwork, hwork] at this
+    norm_num at this
+
+end OpThermo</code></pre>
+<h1 id="opthermoentropy.lean"><code>OpThermo/Entropy.lean</code></h1>
+<pre class="lean"><code>import OpThermo.StateSpace
+
+/-!
+# 断熱到達性からエントロピーを構成する (Lieb–Yngvason)
+
+## 設定
+
+状態の全体 `𝒮` は、複合 (`+`) とスケーリング (`t • X`, `t : ℝ≥0`) を持つ
+`ℝ≥0` 加群とする (`StateSpace.lean`)。`0` は「何もない系」を表す。
+系は成分 (物質の種類) の集まり `C` からなり、組成 `comp X : C → ℝ≥0` は成分ごとの質量である。
+
+加群の公理を等式として課すことは、Lieb–Yngvason の A5 (分割・再結合) を `∼` ではなく `=`
+で置いたものにあたる。
+
+## 公理 (`Adiabatic` クラス)
+
+* A1 `refl`、A2 `trans`：`≺` は前順序
+* A3 `add_right`：別の系を添えても到達できる
+* A4 `smul`：系の量を変えても到達できる
+* A5：加群構造に組み込み済み (`split_recombine` として定理の形で示す)
+* A6 `stability`：無限小の補助系で到達性は変わらない
+* CH `comparison`：組成が等しい二状態は、少なくとも一方向に到達できる
+
+## 主結果
+
+基準状態 `X₀ ≺≺ X₁` (組成は等しい) と、組成ごとの基準状態 `ref` (`Calibration`) を固定すると、
+* `entropy_principle`：組成が等しければ `X ≺ Y ↔ S X ≤ S Y`
+* `entropy_extensive`：`S` は示量的
+* `entropy_X₀`、`entropy_X₁`：`S X₀ = 0`、`S X₁ = 1`
+* `entropy_unique`：以上の性質を持つ関数は `a * S + S&#39; ∘ ref ∘ comp` (`a &gt; 0`) に限る
+
+途中で、A6 から相殺則 `cancel` (Lieb–Yngvason の Theorem 2.1) を導く。
+-/
+
+open NNReal Set Filter Topology
+
+namespace OpThermo
+
+/-- 断熱到達性の公理系。`prec X Y` は「平衡状態 `X` から `Y` へ断熱操作で到達できる」。 -/
+class Adiabatic (𝒮 : Type*) (C : outParam Type*) [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] where
+  /-- 断熱到達性 `X ≺ Y` -/
+  prec : 𝒮 → 𝒮 → Prop
+  /-- A1 反射律：何もしなければ同じ状態にとどまる -/
+  refl : ∀ X, prec X X
+  /-- A2 推移律：操作を続けて実行できる -/
+  trans : ∀ {X Y Z}, prec X Y → prec Y Z → prec X Z
+  /-- A3 結合との整合性：別の系 `Z` を添えたまま操作できる -/
+  add_right : ∀ {X Y} (Z : 𝒮), prec X Y → prec (X + Z) (Y + Z)
+  /-- A4 スケーリング：系の量を `t` 倍しても操作できる -/
+  smul : ∀ {X Y} (t : ℝ≥0), prec X Y → prec (t • X) (t • Y)
+  /-- A6 安定性：大きさ `1/(n+1)` の補助系を使えば到達できる、が全ての `n` で成り立つなら、
+  補助系なしで到達できる -/
+  stability : ∀ {X Y Z₀ Z₁ : 𝒮},
+    (∀ n : ℕ, prec (X + ((n : ℝ≥0) + 1)⁻¹ • Z₀) (Y + ((n : ℝ≥0) + 1)⁻¹ • Z₁)) → prec X Y
+  /-- 組成：成分ごとの質量。複合で足し合わされ、スケーリングで `t` 倍される。 -/
+  comp : 𝒮 →ₗ[ℝ≥0] (C → ℝ≥0)
+  /-- 比較仮説 CH：組成が等しい二状態は少なくとも一方向に断熱到達できる -/
+  comparison : ∀ {X Y}, comp X = comp Y → prec X Y ∨ prec Y X
+
+namespace Adiabatic
+
+variable {𝒮 C : Type*} [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] [Adiabatic 𝒮 C]
+
+@[inherit_doc] scoped infix:50 &quot; ≺ &quot; =&gt; Adiabatic.prec
+
+/-- 断熱的同値 `X ∼ₐ Y` -/
+def Equiv (X Y : 𝒮) : Prop := X ≺ Y ∧ Y ≺ X
+
+@[inherit_doc] scoped infix:50 &quot; ∼ₐ &quot; =&gt; Adiabatic.Equiv
+
+/-- 強い到達性 `X ≺≺ Y`：`X ≺ Y` だが `Y ≺ X` ではない (不可逆) -/
+def StrictPrec (X Y : 𝒮) : Prop := X ≺ Y ∧ ¬ Y ≺ X
+
+@[inherit_doc] scoped infix:50 &quot; ≺≺ &quot; =&gt; Adiabatic.StrictPrec
+
+theorem prec_congr {X Y X&#39; Y&#39; : 𝒮} (h : X ≺ Y) (hX : X = X&#39;) (hY : Y = Y&#39;) : X&#39; ≺ Y&#39; :=
+  hX ▸ hY ▸ h
+
+theorem add_left (Z : 𝒮) {X Y : 𝒮} (h : X ≺ Y) : Z + X ≺ Z + Y := by
+  simpa only [add_comm Z] using add_right Z h
+
+theorem add_both {X Y X&#39; Y&#39; : 𝒮} (h : X ≺ Y) (h&#39; : X&#39; ≺ Y&#39;) : X + X&#39; ≺ Y + Y&#39; :=
+  trans (add_right X&#39; h) (add_left Y h&#39;)
+
+omit [Adiabatic 𝒮 C] in
+/-- A5 分割・再結合：`X` を `t : (1 - t)` に分けて並べた系は `X` と同値 (ここでは等しい)。 -/
+theorem split_recombine (X : 𝒮) {t : ℝ≥0} (ht : t ≤ 1) : X = t • X + (1 - t) • X := by
+  rw [← add_smul, add_tsub_cancel_of_le ht, one_smul]
+
+/-- 相殺則 (Lieb–Yngvason Theorem 2.1)：共通の系 `Z` は取り除ける。A6 から従う。 -/
+theorem cancel {X Y Z : 𝒮} (h : X + Z ≺ Y + Z) : X ≺ Y := by
+  apply stability (Z₀ := Z) (Z₁ := Z)
+  intro n
+  set e : ℝ≥0 := ((n : ℝ≥0) + 1)⁻¹ with he
+  have hs : e • X + e • Z ≺ e • Y + e • Z := by simpa only [smul_add] using smul e h
+  -- `X/(n+1)` を一つずつ `Y/(n+1)` に置き換えていく
+  have key : ∀ j : ℕ, j • (e • X) + e • Z ≺ j • (e • Y) + e • Z := by
+    intro j
+    induction j with
+    | zero =&gt; simpa using refl (e • Z)
+    | succ j ih =&gt;
+      have h1 : (j + 1) • (e • X) + e • Z ≺ j • (e • X) + (e • Y + e • Z) := by
+        rw [succ_nsmul, add_assoc]
+        exact add_left _ hs
+      have h2 : j • (e • X) + e • Z + e • Y ≺ j • (e • Y) + e • Z + e • Y := add_right _ ih
+      refine trans h1 (prec_congr h2 (by abel) (by rw [succ_nsmul]; abel))
+  have hn : ∀ W : 𝒮, (n + 1) • (e • W) = W := by
+    intro W
+    rw [← Nat.cast_smul_eq_nsmul ℝ≥0, smul_smul]
+    have : ((n + 1 : ℕ) : ℝ≥0) * e = 1 := by
+      rw [he]; push_cast; exact mul_inv_cancel₀ (by positivity)
+    rw [this, one_smul]
+  simpa only [hn] using key (n + 1)
+
+/-- 基準状態。組成の等しい `X₀ ≺≺ X₁` と、組成 `k` ごとの基準状態 `ref k` (エントロピー `0`)。
+`ref` は成分ごとに基準状態を一つ選び、組成に応じて並べたものにあたる。 -/
+structure Calibration (𝒮 C : Type*) [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] [Adiabatic 𝒮 C] where
+  /-- 組成ごとの基準状態 -/
+  ref : (C → ℝ≥0) →ₗ[ℝ≥0] 𝒮
+  comp_ref : ∀ k, comp (ref k) = k
+  /-- エントロピー `0` の基準状態 -/
+  X₀ : 𝒮
+  /-- エントロピー `1` の基準状態 -/
+  X₁ : 𝒮
+  ref_X₀ : ref (comp X₀) = X₀
+  comp_X₁ : comp X₁ = comp X₀
+  strict : X₀ ≺≺ X₁
+
+namespace Calibration
+
+variable (c : Calibration 𝒮 C)
+
+/-- 基準状態を混ぜた複合系 `(a X₀, b X₁)` -/
+def Z (a b : ℝ≥0) : 𝒮 := a • c.X₀ + b • c.X₁
+
+theorem Z_add (a b a&#39; b&#39; : ℝ≥0) : c.Z a b + c.Z a&#39; b&#39; = c.Z (a + a&#39;) (b + b&#39;) := by
+  simp only [Z, add_smul]; abel
+
+@[simp] theorem Z_zero : c.Z 0 0 = 0 := by simp [Z]
+
+theorem smul_Z (t a b : ℝ≥0) : t • c.Z a b = c.Z (t * a) (t * b) := by
+  simp [Z, smul_add, smul_smul]
+
+theorem comp_Z (a b : ℝ≥0) : comp (c.Z a b) = (a + b) • comp c.X₀ := by
+  simp [Z, c.comp_X₁, add_smul]
+
+/-- `X` と同じ組成の基準状態 -/
+def base (X : 𝒮) : 𝒮 := c.ref (comp X)
+
+theorem base_add (X Y : 𝒮) : c.base (X + Y) = c.base X + c.base Y := by
+  simp [base]
+
+theorem base_smul (t : ℝ≥0) (X : 𝒮) : c.base (t • X) = t • c.base X := by
+  simp [base]
+
+theorem comp_base (X : 𝒮) : comp (c.base X) = comp X := c.comp_ref _
+
+/-- 形式的な不等式 `P + α X₀ + β X₁ ≺ Q`。係数 `α, β` は負でもよく、負の部分は右辺に移して
+読む。具体的には `P + a X₀ + b X₁ ≺ Q + a&#39; X₀ + b&#39; X₁` (`a - a&#39; = α`, `b - b&#39; = β`)
+を満たす表示が存在することをいう。相殺則により表示の選び方によらない (`R.rep`)。 -/
+def R (P Q : 𝒮) (α β : ℝ) : Prop :=
+  ∃ a b a&#39; b&#39; : ℝ≥0, (a : ℝ) - a&#39; = α ∧ (b : ℝ) - b&#39; = β ∧ P + c.Z a b ≺ Q + c.Z a&#39; b&#39;
+
+variable {c}
+
+theorem exists_rep (α β : ℝ) :
+    ∃ a b a&#39; b&#39; : ℝ≥0, (a : ℝ) - a&#39; = α ∧ (b : ℝ) - b&#39; = β :=
+  ⟨α.toNNReal, β.toNNReal, (-α).toNNReal, (-β).toNNReal,
+    by simp [Real.coe_toNNReal&#39;],
+    by simp [Real.coe_toNNReal&#39;]⟩
+
+theorem R_congr {P Q : 𝒮} {α β α&#39; β&#39; : ℝ} (h : c.R P Q α β) (hα : α = α&#39;) (hβ : β = β&#39;) :
+    c.R P Q α&#39; β&#39; := hα ▸ hβ ▸ h
+
+/-- 表示の取り方によらない。 -/
+theorem R.rep {P Q : 𝒮} {α β : ℝ} (h : c.R P Q α β) {a b a&#39; b&#39; : ℝ≥0}
+    (ha : (a : ℝ) - a&#39; = α) (hb : (b : ℝ) - b&#39; = β) : P + c.Z a b ≺ Q + c.Z a&#39; b&#39; := by
+  obtain ⟨a₀, b₀, a₀&#39;, b₀&#39;, ha₀, hb₀, h⟩ := h
+  have e1 : a₀ + a&#39; = a + a₀&#39; := NNReal.eq (by push_cast; linarith)
+  have e2 : b₀ + b&#39; = b + b₀&#39; := NNReal.eq (by push_cast; linarith)
+  apply cancel (Z := c.Z a₀&#39; b₀&#39;)
+  refine prec_congr (add_right (c.Z a&#39; b&#39;) h) ?_ (add_right_comm _ _ _)
+  rw [add_assoc, add_assoc, c.Z_add, c.Z_add, e1, e2]
+
+theorem R_of_rep {P Q : 𝒮} {a b a&#39; b&#39; : ℝ≥0} (h : P + c.Z a b ≺ Q + c.Z a&#39; b&#39;) :
+    c.R P Q ((a : ℝ) - a&#39;) ((b : ℝ) - b&#39;) := ⟨a, b, a&#39;, b&#39;, rfl, rfl, h⟩
+
+theorem R_refl (P : 𝒮) : c.R P P 0 0 :=
+  ⟨0, 0, 0, 0, by simp, by simp, refl _⟩
+
+theorem prec_R_zero_add {P Q : 𝒮} {α β : ℝ} (h : c.R (0 + P) (0 + Q) α β) : c.R P Q α β := by
+  simpa only [zero_add] using h
+
+theorem R_of_prec {P Q : 𝒮} (h : P ≺ Q) : c.R P Q 0 0 :=
+  ⟨0, 0, 0, 0, by simp, by simp, by simpa using h⟩
+
+theorem R.to_prec {P Q : 𝒮} (h : c.R P Q 0 0) : P ≺ Q := by
+  simpa using h.rep (a := 0) (b := 0) (a&#39; := 0) (b&#39; := 0) (by simp) (by simp)
+
+theorem R.trans {P Q W : 𝒮} {α β α&#39; β&#39; : ℝ} (h : c.R P Q α β) (h&#39; : c.R Q W α&#39; β&#39;) :
+    c.R P W (α + α&#39;) (β + β&#39;) := by
+  obtain ⟨a, b, a&#39;, b&#39;, ha, hb, h⟩ := h
+  obtain ⟨x, y, x&#39;, y&#39;, hx, hy, h&#39;⟩ := h&#39;
+  refine ⟨a + x, b + y, a&#39; + x&#39;, b&#39; + y&#39;, by push_cast; linarith, by push_cast; linarith, ?_⟩
+  have h1 := add_right (c.Z x y) h
+  have h2 := add_right (c.Z a&#39; b&#39;) h&#39;
+  refine prec_congr (Adiabatic.trans h1 (prec_congr h2 (add_right_comm _ _ _) rfl)) ?_ ?_
+  · rw [add_assoc, c.Z_add]
+  · rw [add_assoc, c.Z_add, add_comm x&#39; a&#39;, add_comm y&#39; b&#39;]
+
+theorem R.add {P Q P&#39; Q&#39; : 𝒮} {α β α&#39; β&#39; : ℝ} (h : c.R P Q α β) (h&#39; : c.R P&#39; Q&#39; α&#39; β&#39;) :
+    c.R (P + P&#39;) (Q + Q&#39;) (α + α&#39;) (β + β&#39;) := by
+  obtain ⟨a, b, a&#39;, b&#39;, ha, hb, h⟩ := h
+  obtain ⟨x, y, x&#39;, y&#39;, hx, hy, h&#39;⟩ := h&#39;
+  refine ⟨a + x, b + y, a&#39; + x&#39;, b&#39; + y&#39;, by push_cast; linarith, by push_cast; linarith, ?_⟩
+  refine prec_congr (add_both h h&#39;) ?_ ?_
+  · rw [← c.Z_add]; abel
+  · rw [← c.Z_add]; abel
+
+theorem R.smul {P Q : 𝒮} {α β : ℝ} (h : c.R P Q α β) (t : ℝ≥0) :
+    c.R (t • P) (t • Q) (t * α) (t * β) := by
+  obtain ⟨a, b, a&#39;, b&#39;, ha, hb, h⟩ := h
+  refine ⟨t * a, t * b, t * a&#39;, t * b&#39;, by push_cast; rw [← ha]; ring,
+    by push_cast; rw [← hb]; ring, ?_⟩
+  simpa only [smul_add, smul_Z] using Adiabatic.smul t h
+
+/-- `γ ≥ 0` なら `γ X₀ ≺ γ X₁`。 -/
+theorem R_base {γ : ℝ} (hγ : 0 ≤ γ) : c.R 0 0 γ (-γ) := by
+  refine ⟨⟨γ, hγ⟩, 0, 0, ⟨γ, hγ⟩, by rw [NNReal.coe_zero, sub_zero]; rfl,
+    by rw [NNReal.coe_zero, zero_sub]; rfl, ?_⟩
+  simpa [Z] using Adiabatic.smul ⟨γ, hγ⟩ c.strict.1
+
+/-- `R_base` に共通の系 `P` を添えたもの。 -/
+theorem R_base&#39; (P : 𝒮) {γ : ℝ} (hγ : 0 ≤ γ) : c.R P P γ (-γ) :=
+  R_congr (prec_R_zero_add ((R_base hγ).add (R_refl P))) (by ring) (by ring)
+
+/-- `γ &lt; 0` だと `|γ| X₁ ≺ |γ| X₀` となり、`X₁ ≺ X₀` が出て矛盾する。 -/
+theorem R_base_nonneg {P : 𝒮} {γ : ℝ} (h : c.R P P γ (-γ)) : 0 ≤ γ := by
+  by_contra hγ&#39;
+  have hγ : γ &lt; 0 := not_le.mp hγ&#39;
+  set g : ℝ≥0 := ⟨-γ, by linarith⟩
+  have hg : (g : ℝ) = -γ := rfl
+  have hg0 : g ≠ 0 := by
+    intro h0; rw [h0] at hg; simp at hg; linarith
+  have h1 := h.rep (a := 0) (b := g) (a&#39; := g) (b&#39; := 0) (by rw [hg]; simp) (by rw [hg]; simp)
+  have h2 : g • c.X₁ ≺ g • c.X₀ := by
+    apply cancel (Z := P)
+    simpa [Z, add_comm] using h1
+  have h3 := Adiabatic.smul g⁻¹ h2
+  rw [inv_smul_smul₀ hg0, inv_smul_smul₀ hg0] at h3
+  exact c.strict.2 h3
+
+/-- 補助の小さな量 `1/(n+1)` -/
+noncomputable def ε (n : ℕ) : ℝ := ((n : ℝ) + 1)⁻¹
+
+theorem ε_pos (n : ℕ) : 0 &lt; ε n := by unfold ε; positivity
+
+/-- A6 の形式的な不等式への翻訳 (`X₀` を足し、`X₁` を引く方向)。 -/
+theorem R.stability_up {P Q : 𝒮} {α β : ℝ} (h : ∀ n, c.R P Q (α + ε n) (β - ε n)) :
+    c.R P Q α β := by
+  obtain ⟨a, b, a&#39;, b&#39;, ha, hb⟩ := exists_rep α β
+  refine ⟨a, b, a&#39;, b&#39;, ha, hb, ?_⟩
+  apply stability (Z₀ := c.X₀) (Z₁ := c.X₁)
+  intro n
+  set e : ℝ≥0 := ((n : ℝ≥0) + 1)⁻¹ with he
+  have hee : (e : ℝ) = ε n := by rw [he, ε]; push_cast; rfl
+  have := (h n).rep (a := a + e) (b := b) (a&#39; := a&#39;) (b&#39; := b&#39; + e)
+    (by push_cast; rw [hee]; linarith) (by push_cast; rw [hee]; linarith)
+  refine prec_congr this ?_ ?_
+  · simp only [Z, add_smul]; abel
+  · simp only [Z, add_smul]; abel
+
+/-- A6 の形式的な不等式への翻訳 (`X₁` を足し、`X₀` を引く方向)。 -/
+theorem R.stability_down {P Q : 𝒮} {α β : ℝ} (h : ∀ n, c.R P Q (α - ε n) (β + ε n)) :
+    c.R P Q α β := by
+  obtain ⟨a, b, a&#39;, b&#39;, ha, hb⟩ := exists_rep α β
+  refine ⟨a, b, a&#39;, b&#39;, ha, hb, ?_⟩
+  apply stability (Z₀ := c.X₁) (Z₁ := c.X₀)
+  intro n
+  set e : ℝ≥0 := ((n : ℝ≥0) + 1)⁻¹ with he
+  have hee : (e : ℝ) = ε n := by rw [he, ε]; push_cast; rfl
+  have := (h n).rep (a := a) (b := b + e) (a&#39; := a&#39; + e) (b&#39; := b&#39;)
+    (by push_cast; rw [hee]; linarith) (by push_cast; rw [hee]; linarith)
+  refine prec_congr this ?_ ?_
+  · simp only [Z, add_smul]; abel
+  · simp only [Z, add_smul]; abel
+
+variable (c)
+
+/-- `Below X s`：形式的に `base X - s X₀ + s X₁ ≺ X`。 -/
+def Below (X : 𝒮) (s : ℝ) : Prop := c.R (c.base X) X (-s) s
+
+/-- `Above X s`：形式的に `X ≺ base X - s X₀ + s X₁`。 -/
+def Above (X : 𝒮) (s : ℝ) : Prop := c.R X (c.base X) s (-s)
+
+/-- エントロピー：同じ組成の基準状態から、`X₀` を `s` だけ `X₁` に置き換えた状態を
+出発点にして `X` へ断熱到達できる `s` の上限。 -/
+noncomputable def entropy (X : 𝒮) : ℝ := sSup {s | c.Below X s}
+
+variable {c}
+
+theorem below_le_above {X : 𝒮} {s s&#39; : ℝ} (h : c.Below X s) (h&#39; : c.Above X s&#39;) : s ≤ s&#39; := by
+  have := R_base_nonneg (R_congr (R.trans h h&#39;) (by ring) (by ring) :
+    c.R (c.base X) (c.base X) (s&#39; - s) (-(s&#39; - s)))
+  linarith
+
+theorem Below.mono {X : 𝒮} {s s&#39; : ℝ} (h : c.Below X s) (hs : s&#39; ≤ s) : c.Below X s&#39; :=
+  R_congr ((R_base&#39; (c.base X) (sub_nonneg.2 hs)).trans h) (by ring) (by ring)
+
+theorem below_or_above (X : 𝒮) (s : ℝ) : c.Below X s ∨ c.Above X s := by
+  obtain ⟨a, b, a&#39;, b&#39;, ha, hb⟩ := exists_rep (-s) s
+  have hab : a + b = a&#39; + b&#39; := NNReal.eq (by push_cast; linarith)
+  have hm : comp (c.base X + c.Z a b) = comp (X + c.Z a&#39; b&#39;) := by
+    simp only [map_add, comp_Z, comp_base, hab]
+  rcases comparison hm with h | h
+  · exact Or.inl ⟨a, b, a&#39;, b&#39;, ha, hb, h⟩
+  · exact Or.inr ⟨a&#39;, b&#39;, a, b, by linarith, by linarith, h⟩
+
+/-- 補助：`k = n + 1` 倍した関係を `1/k` 倍に戻すための計算 -/
+theorem inv_mul_succ (n : ℕ) : ((n : ℝ≥0) + 1)⁻¹ * ((n : ℝ≥0) + 1) = 1 :=
+  inv_mul_cancel₀ (by positivity)
+
+/-- `X` より上の基準混合は必ず存在する (A6 と CH と `X₁ ⊀ X₀` から)。 -/
+theorem exists_above (X : 𝒮) : ∃ s, c.Above X s := by
+  by_contra hne
+  simp only [not_exists] at hne
+  have hb : ∀ s, c.Below X s := fun s =&gt; (below_or_above X s).resolve_right (hne s)
+  apply c.strict.2
+  apply stability (Z₀ := c.base X) (Z₁ := X)
+  intro n
+  set k : ℝ≥0 := (n : ℝ≥0) + 1
+  have hk : k⁻¹ * k = 1 := inv_mul_succ n
+  have h1 := (hb k).rep (a := 0) (b := k) (a&#39; := k) (b&#39; := 0) (by simp) (by simp)
+  have h2 := Adiabatic.smul k⁻¹ h1
+  refine prec_congr h2 ?_ ?_
+  · rw [Z, zero_smul, zero_add, smul_add, smul_smul k⁻¹ k, hk, one_smul, add_comm]
+  · rw [Z, zero_smul, add_zero, smul_add, smul_smul k⁻¹ k, hk, one_smul, add_comm]
+
+/-- `X` より下の基準混合は必ず存在する。 -/
+theorem exists_below (X : 𝒮) : ∃ s, c.Below X s := by
+  by_contra hne
+  simp only [not_exists] at hne
+  have ha : ∀ s, c.Above X s := fun s =&gt; (below_or_above X s).resolve_left (hne s)
+  apply c.strict.2
+  apply stability (Z₀ := X) (Z₁ := c.base X)
+  intro n
+  set k : ℝ≥0 := (n : ℝ≥0) + 1
+  have hk : k⁻¹ * k = 1 := inv_mul_succ n
+  have h1 := (ha (-(k : ℝ))).rep (a := 0) (b := k) (a&#39; := k) (b&#39; := 0) (by simp) (by simp)
+  have h2 := Adiabatic.smul k⁻¹ h1
+  refine prec_congr h2 ?_ ?_
+  · rw [Z, zero_smul, zero_add, smul_add, smul_smul k⁻¹ k, hk, one_smul, add_comm]
+  · rw [Z, zero_smul, add_zero, smul_add, smul_smul k⁻¹ k, hk, one_smul, add_comm]
+
+theorem bddAbove_below (X : 𝒮) : BddAbove {s | c.Below X s} := by
+  obtain ⟨s&#39;, h&#39;⟩ := exists_above (c := c) X
+  exact ⟨s&#39;, fun s hs =&gt; below_le_above hs h&#39;⟩
+
+theorem nonempty_below (X : 𝒮) : {s | c.Below X s}.Nonempty := exists_below X
+
+/-- 上限は達成される (A6)。 -/
+theorem below_entropy (X : 𝒮) : c.Below X (c.entropy X) := by
+  apply R.stability_up
+  intro n
+  have hlt : c.entropy X - ε n &lt; sSup {s | c.Below X s} := by
+    have := ε_pos n; unfold entropy; linarith
+  obtain ⟨s, hs, hlt&#39;⟩ := exists_lt_of_lt_csSup (nonempty_below X) hlt
+  exact R_congr (Below.mono hs hlt&#39;.le) (by ring) (by ring)
+
+/-- `X ≺ (m - S) X₀ + S X₁` も成り立つ (CH と A6)。 -/
+theorem above_entropy (X : 𝒮) : c.Above X (c.entropy X) := by
+  apply R.stability_up
+  intro n
+  have hnb : ¬ c.Below X (c.entropy X + ε n) := by
+    intro h
+    have := le_csSup (bddAbove_below X) h
+    have := ε_pos n
+    unfold entropy at *; linarith
+  exact R_congr ((below_or_above X _).resolve_left hnb) (by ring) (by ring)
+
+/-- `X ∼ₐ (m - S) X₀ + S X₁` を満たす値はエントロピーに限る。 -/
+theorem entropy_eq_of {X : 𝒮} {s : ℝ} (h : c.Below X s) (h&#39; : c.Above X s) :
+    c.entropy X = s :=
+  le_antisymm (below_le_above (below_entropy X) h&#39;) (le_csSup (bddAbove_below X) h)
+
+/-! ### エントロピーの測定：二分法
+
+`S X` は上限として定義したが、実験の繰り返しで任意の精度で求められる。
+一回の実験は、`base X` に基準状態の混合を添えた系から `X` へ断熱操作で移れるかを試すことである
+(`Below X s`)。移れなければ CH により逆向きに移れる (`Above X s`)。
+`test s = true` を「移れた」とすると、区間を半分にしていく二分法で、`n` 回の実験後に
+`S X` を幅 `(b - a) / 2ⁿ` の区間に閉じ込められる (`entropy_bisect`)。 -/
+
+theorem le_entropy {X : 𝒮} {s : ℝ} (h : c.Below X s) : s ≤ c.entropy X :=
+  le_csSup (bddAbove_below X) h
+
+theorem entropy_le {X : 𝒮} {s : ℝ} (h : c.Above X s) : c.entropy X ≤ s :=
+  below_le_above (below_entropy X) h
+
+/-- 二分法の一段：中点 `m` で実験し、結果に応じて区間の端を `m` に動かす。 -/
+noncomputable def bisectStep (test : ℝ → Bool) (I : ℝ × ℝ) : ℝ × ℝ :=
+  if test ((I.1 + I.2) / 2) then ((I.1 + I.2) / 2, I.2) else (I.1, (I.1 + I.2) / 2)
+
+/-- **エントロピーの測定**：実験 `test` が、移れたとき `Below`、移れなかったとき `Above` を
+与えるとする。`Below X a` と `Above X b` から始めた二分法の `n` 段目の区間 `[aₙ, bₙ]` は
+`aₙ ≤ S X ≤ bₙ` かつ `bₙ - aₙ = (b - a) / 2ⁿ` を満たす。 -/
+theorem entropy_bisect (X : 𝒮) (test : ℝ → Bool)
+    (htrue : ∀ s, test s = true → c.Below X s) (hfalse : ∀ s, test s = false → c.Above X s)
+    {a b : ℝ} (ha : c.Below X a) (hb : c.Above X b) (n : ℕ) :
+    let J := (bisectStep test)^[n] (a, b)
+    J.1 ≤ c.entropy X ∧ c.entropy X ≤ J.2 ∧ J.2 - J.1 = (b - a) / 2 ^ n := by
+  suffices h : ∀ n, c.Below X ((bisectStep test)^[n] (a, b)).1 ∧
+      c.Above X ((bisectStep test)^[n] (a, b)).2 ∧
+      ((bisectStep test)^[n] (a, b)).2 - ((bisectStep test)^[n] (a, b)).1 = (b - a) / 2 ^ n by
+    obtain ⟨h1, h2, h3⟩ := h n
+    exact ⟨le_entropy h1, entropy_le h2, h3⟩
+  intro n
+  induction n with
+  | zero =&gt; simpa using ⟨ha, hb⟩
+  | succ n ih =&gt;
+    obtain ⟨h1, h2, h3⟩ := ih
+    rw [Function.iterate_succ_apply&#39;]
+    set J := (bisectStep test)^[n] (a, b)
+    unfold bisectStep
+    cases ht : test ((J.1 + J.2) / 2)
+    · simp only [Bool.false_eq_true, ite_false]
+      refine ⟨h1, hfalse _ ht, ?_⟩
+      rw [pow_succ, ← div_div, ← h3]; ring
+    · simp only [ite_true]
+      refine ⟨htrue _ ht, h2, ?_⟩
+      rw [pow_succ, ← div_div, ← h3]; ring
+
+/-- **エントロピー原理**：組成の等しい状態について `X ≺ Y ↔ S X ≤ S Y`。 -/
+theorem entropy_principle {X Y : 𝒮} (h : comp X = comp Y) :
+    X ≺ Y ↔ c.entropy X ≤ c.entropy Y := by
+  have hb : c.base X = c.base Y := by rw [base, base, h]
+  constructor
+  · intro hXY
+    have : c.Below Y (c.entropy X) := by
+      have := (below_entropy (c := c) X).trans (R_of_prec hXY)
+      rw [hb] at this
+      exact R_congr this (by ring) (by ring)
+    exact below_le_above this (above_entropy Y)
+  · intro hle
+    have h1 := (above_entropy (c := c) X).trans (R_base&#39; (c.base X) (sub_nonneg.2 hle))
+    rw [hb] at h1
+    exact (R_congr (h1.trans (below_entropy Y)) (by ring) (by ring)).to_prec
+
+/-- 不可逆性：`X ≺≺ Y ↔ S X &lt; S Y`。 -/
+theorem strictPrec_iff {X Y : 𝒮} (h : comp X = comp Y) :
+    X ≺≺ Y ↔ c.entropy X &lt; c.entropy Y := by
+  rw [StrictPrec, entropy_principle h, entropy_principle h.symm, not_le]
+  exact ⟨fun h =&gt; h.2, fun h&#39; =&gt; ⟨h&#39;.le, h&#39;⟩⟩
+
+/-- **加法性** -/
+theorem entropy_add (X Y : 𝒮) : c.entropy (X + Y) = c.entropy X + c.entropy Y := by
+  apply entropy_eq_of
+  · have := (below_entropy (c := c) X).add (below_entropy Y)
+    rw [← base_add] at this
+    exact R_congr this (by ring) rfl
+  · have := (above_entropy (c := c) X).add (above_entropy Y)
+    rw [← base_add] at this
+    exact R_congr this rfl (by ring)
+
+/-- **示量性** -/
+theorem entropy_smul (t : ℝ≥0) (X : 𝒮) : c.entropy (t • X) = t * c.entropy X := by
+  apply entropy_eq_of
+  · have := (below_entropy (c := c) X).smul t
+    rw [← base_smul] at this
+    exact R_congr this (by ring) rfl
+  · have := (above_entropy (c := c) X).smul t
+    rw [← base_smul] at this
+    exact R_congr this rfl (by ring)
+
+/-- エントロピーは示量的な関数である。 -/
+theorem entropy_extensive : IsExtensive c.entropy :=
+  ⟨entropy_add, entropy_smul⟩
+
+theorem base_X₀ : c.base c.X₀ = c.X₀ := c.ref_X₀
+
+theorem base_X₁ : c.base c.X₁ = c.X₀ := by rw [base, c.comp_X₁, c.ref_X₀]
+
+/-- 較正：`S X₀ = 0` -/
+theorem entropy_X₀ : c.entropy c.X₀ = 0 := by
+  apply entropy_eq_of
+  · rw [Below, base_X₀]; exact R_congr (R_refl _) (by ring) rfl
+  · rw [Above, base_X₀]; exact R_congr (R_refl _) rfl (by ring)
+
+/-- 較正：`S X₁ = 1` -/
+theorem entropy_X₁ : c.entropy c.X₁ = 1 := by
+  apply entropy_eq_of
+  · rw [Below, base_X₁]
+    refine R_congr (R_of_rep (a := 0) (b := 1) (a&#39; := 1) (b&#39; := 0) ?_) (by simp) (by simp)
+    simpa [Z, add_comm] using refl (c.X₀ + c.X₁)
+  · rw [Above, base_X₁]
+    refine R_congr (R_of_rep (a := 1) (b := 0) (a&#39; := 0) (b&#39; := 1) ?_) (by simp) (by simp)
+    simpa [Z, add_comm] using refl (c.X₁ + c.X₀)
+
+/-- **少量の補助系を添えても不可逆性は保たれる**：どの状態 `X` についても、`X` に `t X₁` を
+添えた状態から、`t X₁` を `t X₀` に置き換えた状態へは断熱的に移れない (`t &gt; 0` はいくら小さくてもよい)。
+始状態 `X + t X₁` も `t` とともに動くので、これは「固定した状態の任意の近傍に到達できない状態がある」
+という Carathéodory の原理そのものではない。その原理は公理から出ない (`model_reach_all`)。 -/
+theorem caratheodory (X : 𝒮) {t : ℝ≥0} (ht : 0 &lt; t) : ¬ (X + t • c.X₁ ≺ X + t • c.X₀) := by
+  intro h
+  have hc : comp (X + t • c.X₁) = comp (X + t • c.X₀) := by
+    rw [map_add, map_add, map_smul, map_smul, c.comp_X₁]
+  have := (c.entropy_principle hc).1 h
+  rw [c.entropy_add, c.entropy_add, c.entropy_smul, c.entropy_smul, c.entropy_X₀,
+    c.entropy_X₁] at this
+  have : (0 : ℝ) &lt; t := ht
+  linarith
+
+/-- **一意性**：示量的で、組成の等しい状態について `≺` を表現する関数 `S&#39;` は、`a &gt; 0` を使って
+`a * S + S&#39; ∘ base` と書ける。エントロピーの自由度は単位と、組成ごとの基準状態の値だけである。 -/
+theorem entropy_unique (S&#39; : 𝒮 → ℝ) (hS&#39; : IsExtensive S&#39;)
+    (hmono : ∀ X Y, comp X = comp Y → (X ≺ Y ↔ S&#39; X ≤ S&#39; Y)) :
+    0 &lt; S&#39; c.X₁ - S&#39; c.X₀ ∧
+      ∀ X, S&#39; X = (S&#39; c.X₁ - S&#39; c.X₀) * c.entropy X + S&#39; (c.base X) := by
+  have hZ : ∀ a b, S&#39; (c.Z a b) = a * S&#39; c.X₀ + b * S&#39; c.X₁ := by
+    intro a b; simp only [Z, hS&#39;.1, hS&#39;.2]
+  refine ⟨?_, fun X =&gt; ?_⟩
+  · have hm : comp c.X₀ = comp c.X₁ := c.comp_X₁.symm
+    have h1 := (hmono _ _ hm).1 c.strict.1
+    have h2 : ¬ S&#39; c.X₁ ≤ S&#39; c.X₀ := fun h =&gt; c.strict.2 ((hmono _ _ hm.symm).2 h)
+    linarith [not_le.1 h2]
+  · obtain ⟨a, b, a&#39;, b&#39;, ha, hb⟩ := exists_rep (-c.entropy X) (c.entropy X)
+    have h1 := (below_entropy (c := c) X).rep ha hb
+    have h2 := (above_entropy (c := c) X).rep (a := a&#39;) (b := b&#39;) (a&#39; := a) (b&#39; := b)
+      (by linarith) (by linarith)
+    have hab : a + b = a&#39; + b&#39; := NNReal.eq (by push_cast; linarith)
+    have hm : comp (c.base X + c.Z a b) = comp (X + c.Z a&#39; b&#39;) := by
+      simp only [map_add, comp_Z, comp_base, hab]
+    have heq := le_antisymm ((hmono _ _ hm).1 h1) ((hmono _ _ hm.symm).1 h2)
+    rw [hS&#39;.1, hS&#39;.1, hZ, hZ] at heq
+    have e1 : c.entropy X = (b : ℝ) - b&#39; := hb.symm
+    have e2 : -c.entropy X = (a : ℝ) - a&#39; := ha.symm
+    have e3 : (a : ℝ) - a&#39; = -((b : ℝ) - b&#39;) := by linarith
+    rw [e1]
+    linear_combination (-1 : ℝ) * heq + S&#39; c.X₀ * e3
+
+end Calibration
+
+end Adiabatic
+
+end OpThermo</code></pre>
+<h1 id="opthermoaccessibility.lean"><code>OpThermo/Accessibility.lean</code></h1>
+<pre class="lean"><code>import OpThermo.Entropy
+import OpThermo.FirstLaw
+
+/-!
+# 複合系の断熱操作：断熱到達性と示量的な内部エネルギー
+
+`FirstLaw.lean` の断熱操作を、状態の空間 `𝒮` (`StateSpace.lean`) の上に広げる。
+
+## 断熱到達性
+
+断熱到達性 `X ≺ Y` は原始概念にせず、`X` から `Y` への断熱操作が存在することと定義する
+(`CompositeOps.toAdiabatic`)。Lieb–Yngvason の公理のうち、
+* A1 反射律は「何もしない」断熱操作 (`idle`) から、
+* A2 推移律は断熱操作を続けて行えること (`seq`) から、
+* A3 は別の系を脇に置いたまま断熱操作できること (`alongside`) から、
+* A4 は量を `t` 倍した系にも同じ断熱操作を行えること (`scale`) から
+
+それぞれ従う。A6 安定性と比較仮説 CH は、断熱操作の存在についての経験的仮定として置く。
+
+## 内部エネルギー
+
+組成ごとの基準状態 `ref` を固定し、`ref (comp X)` と `X` を結ぶ断熱操作の仕事で `U X` を定める
+(`energy`)。経路独立性の下で
+* `energy_spec`：任意の断熱操作 `p : X → Y` で `U Y - U X = W(p)`、
+* `energy_extensive`：`U` は示量的 (複合で足し合わされ、`t` 倍で `t` 倍になる)。
+-/
+
+open NNReal
+
+namespace OpThermo
+
+/-- 複合系と量を変えた系の上の断熱操作。`C` は成分の集まり。 -/
+structure CompositeOps (𝒮 : Type*) [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] (C : Type*)
+    (Weight : Type*) where
+  /-- `Operation X Y`：`X` から `Y` へ移す断熱操作の集まり -/
+  Operation : 𝒮 → 𝒮 → Type*
+  /-- 二つの断熱操作を続けて行う -/
+  seq : ∀ {X Y Z}, Operation X Y → Operation Y Z → Operation X Z
+  /-- 断熱操作 `p` の降下の記録 -/
+  drops : ∀ {X Y}, Operation X Y → WeightDrops Weight
+  /-- 続けて行った断熱操作の降下の記録は、それぞれの記録をつなげたもの -/
+  drops_seq : ∀ {X Y Z} (p : Operation X Y) (q : Operation Y Z),
+    drops (seq p q) = drops p ++ drops q
+  /-- 何もしない断熱操作 -/
+  idle : ∀ X, Operation X X
+  /-- 何もしなければ重りは動かない -/
+  drops_idle : ∀ X, drops (idle X) = []
+  /-- 別の系 `Z` を脇に置いたまま、`X` に断熱操作を行う -/
+  alongside : ∀ {X Y} (Z : 𝒮), Operation X Y → Operation (X + Z) (Y + Z)
+  /-- 脇に置いた系は重りの動きを変えない -/
+  drops_alongside : ∀ {X Y} (Z : 𝒮) (p : Operation X Y), drops (alongside Z p) = drops p
+  /-- 量を `t` 倍した系に、同じ断熱操作を行う -/
+  scale : ∀ {X Y} (t : ℝ≥0), Operation X Y → Operation (t • X) (t • Y)
+  /-- 量を `t` 倍すると、重りの降下量も `t` 倍になる -/
+  drops_scale : ∀ {X Y} (t : ℝ≥0) (p : Operation X Y),
+    drops (scale t p) = (drops p).map fun bh =&gt; (bh.1, (t : ℝ) * bh.2)
+  /-- 経験的仮定 A6 (安定性)：大きさ `1/(n+1)` の補助系を使えば断熱操作で移れる、が
+  全ての `n` で成り立つなら、補助系なしで移れる -/
+  stability : ∀ {X Y Z₀ Z₁ : 𝒮},
+    (∀ n : ℕ, Nonempty (Operation (X + ((n : ℝ≥0) + 1)⁻¹ • Z₀) (Y + ((n : ℝ≥0) + 1)⁻¹ • Z₁))) →
+      Nonempty (Operation X Y)
+  /-- 組成：成分ごとの質量 (天秤で測る)。複合で足し合わされ、量の変更で `t` 倍される -/
+  comp : 𝒮 →ₗ[ℝ≥0] (C → ℝ≥0)
+  /-- 断熱操作では物質は出入りしないので、組成は変わらない -/
+  comp_eq : ∀ {X Y}, Operation X Y → comp X = comp Y
+  /-- 経験的仮定 CH (比較仮説)：組成の等しい二状態は、少なくとも一方向に断熱操作で結べる -/
+  comparison : ∀ {X Y}, comp X = comp Y → Nonempty (Operation X Y) ∨ Nonempty (Operation Y X)
+
+namespace CompositeOps
+
+variable {𝒮 : Type*} [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] {C Weight : Type*}
+variable (O : CompositeOps 𝒮 C Weight)
+
+/-- **断熱到達性**：`X` から `Y` への断熱操作が存在する。この関係は A1--A6 と CH を満たす。 -/
+def toAdiabatic : Adiabatic 𝒮 C where
+  prec X Y := Nonempty (O.Operation X Y)
+  refl X := ⟨O.idle X⟩
+  trans := fun ⟨p⟩ ⟨q⟩ =&gt; ⟨O.seq p q⟩
+  add_right Z := fun ⟨p⟩ =&gt; ⟨O.alongside Z p⟩
+  smul t := fun ⟨p⟩ =&gt; ⟨O.scale t p⟩
+  stability h := O.stability h
+  comp := O.comp
+  comparison h := O.comparison h
+
+/-- 断熱操作から定めた断熱到達性に対する較正 (`Entropy.lean`) -/
+abbrev Calibration := @Adiabatic.Calibration 𝒮 C _ _ O.toAdiabatic
+
+/-- 較正 `c` によるエントロピー -/
+noncomputable abbrev entropy (c : O.Calibration) : 𝒮 → ℝ :=
+  @Adiabatic.Calibration.entropy 𝒮 C _ _ O.toAdiabatic c
+
+theorem prec_iff {X Y : 𝒮} : O.toAdiabatic.prec X Y ↔ Nonempty (O.Operation X Y) := Iff.rfl
+
+/-! ### 仕事 -/
+
+/-- 仕事：降下の記録から計算した `Σ m(b) h` -/
+def work (m : Weight → ℝ) {X Y : 𝒮} (p : O.Operation X Y) : ℝ :=
+  mechanicalWork m (O.drops p)
+
+variable (m : Weight → ℝ)
+
+theorem work_seq {X Y Z : 𝒮} (p : O.Operation X Y) (q : O.Operation Y Z) :
+    O.work m (O.seq p q) = O.work m p + O.work m q := by
+  simp [work, mechanicalWork, O.drops_seq]
+
+theorem work_idle (X : 𝒮) : O.work m (O.idle X) = 0 := by
+  simp [work, mechanicalWork, O.drops_idle]
+
+theorem work_alongside {X Y : 𝒮} (Z : 𝒮) (p : O.Operation X Y) :
+    O.work m (O.alongside Z p) = O.work m p := by
+  simp [work, O.drops_alongside]
+
+theorem work_scale {X Y : 𝒮} (t : ℝ≥0) (p : O.Operation X Y) :
+    O.work m (O.scale t p) = t * O.work m p := by
+  simp only [work, mechanicalWork, O.drops_scale, List.map_map]
+  induction O.drops p with
+  | nil =&gt; simp
+  | cons x l ih =&gt;
+    simp only [List.map_cons, List.sum_cons, Function.comp_apply] at ih ⊢
+    rw [ih]; ring
+
+/-- 経路独立性 (Joule)：同じ始状態と終状態を結ぶ断熱操作の仕事は等しい。 -/
+abbrev PathIndependent : Prop :=
+  ∀ {X Y : 𝒮} (p q : O.Operation X Y), O.work m p = O.work m q
+
+/-! ### 示量的な内部エネルギー -/
+
+variable {m} (ref : (C → ℝ≥0) →ₗ[ℝ≥0] 𝒮) (href : ∀ k, O.comp (ref k) = k)
+
+open scoped Classical in
+/-- 内部エネルギー：同じ組成の基準状態 `ref (comp X)` から `X` への断熱操作の仕事。
+その向きの断熱操作がなければ、逆向きの断熱操作の仕事の符号を変えたもの (CH から存在する)。 -/
+noncomputable def energy (m : Weight → ℝ) (X : 𝒮) : ℝ :=
+  if h : Nonempty (O.Operation (ref (O.comp X)) X) then O.work m h.some
+  else -O.work m (((O.comparison (href (O.comp X))).resolve_left h).some)
+
+variable (hpi : O.PathIndependent m)
+include hpi
+
+theorem energy_eq_of_to {R X : 𝒮} (hR : R = ref (O.comp X)) (a : O.Operation R X) :
+    O.energy ref href m X = O.work m a := by
+  subst hR
+  have h : Nonempty (O.Operation (ref (O.comp X)) X) := ⟨a⟩
+  rw [energy, dif_pos h]
+  exact hpi _ _
+
+theorem energy_eq_of_from {R X : 𝒮} (hR : R = ref (O.comp X)) (a : O.Operation X R) :
+    O.energy ref href m X = -O.work m a := by
+  subst hR
+  unfold energy
+  split_ifs with h
+  · have := hpi (O.seq h.some a) (O.idle _)
+    rw [work_seq, work_idle] at this
+    linarith
+  · rw [hpi _ a]
+
+/-- **内部エネルギーの存在**：任意の断熱操作 `p : X → Y` で `U Y - U X = W(p)`。 -/
+theorem energy_spec {X Y : 𝒮} (p : O.Operation X Y) :
+    O.energy ref href m Y - O.energy ref href m X = O.work m p := by
+  have hRY : ref (O.comp X) = ref (O.comp Y) := by rw [O.comp_eq p]
+  rcases O.comparison (href (O.comp X)) with ha | ha
+  · obtain ⟨a⟩ := ha
+    rw [O.energy_eq_of_to ref href hpi rfl a, O.energy_eq_of_to ref href hpi hRY (O.seq a p),
+      work_seq]
+    ring
+  · obtain ⟨a⟩ := ha
+    rw [O.energy_eq_of_from ref href hpi rfl a]
+    have hcY : O.comp (ref (O.comp X)) = O.comp Y := by rw [href, O.comp_eq p]
+    rcases O.comparison hcY with hb | hb
+    · obtain ⟨b⟩ := hb
+      rw [O.energy_eq_of_to ref href hpi hRY b, hpi p (O.seq a b), work_seq]
+      ring
+    · obtain ⟨b⟩ := hb
+      rw [O.energy_eq_of_from ref href hpi hRY b]
+      have := hpi (O.seq p b) a
+      rw [work_seq] at this
+      linarith
+
+/-- 基準状態の内部エネルギーは `0`。 -/
+theorem energy_ref (k : C → ℝ≥0) : O.energy ref href m (ref k) = 0 := by
+  rw [O.energy_eq_of_to ref href hpi (by rw [href]) (O.idle (ref k)), work_idle]
+
+/-- 組成の等しい状態の差は、脇に別の系を置いても変わらない。 -/
+theorem energy_add_sub {X Y : 𝒮} (h : O.comp X = O.comp Y) (Z : 𝒮) :
+    O.energy ref href m (X + Z) - O.energy ref href m (Y + Z) =
+      O.energy ref href m X - O.energy ref href m Y := by
+  rcases O.comparison h with hp | hp
+  · obtain ⟨p⟩ := hp
+    have h1 := O.energy_spec ref href hpi p
+    have h2 := O.energy_spec ref href hpi (O.alongside Z p)
+    rw [work_alongside] at h2
+    linarith
+  · obtain ⟨p⟩ := hp
+    have h1 := O.energy_spec ref href hpi p
+    have h2 := O.energy_spec ref href hpi (O.alongside Z p)
+    rw [work_alongside] at h2
+    linarith
+
+/-- **加法性**：`U (X + Y) = U X + U Y`。 -/
+theorem energy_add (X Y : 𝒮) :
+    O.energy ref href m (X + Y) = O.energy ref href m X + O.energy ref href m Y := by
+  have h1 := O.energy_add_sub ref href hpi (X := X) (Y := ref (O.comp X)) (href _).symm Y
+  have h2 := O.energy_add_sub ref href hpi (X := Y) (Y := ref (O.comp Y)) (href _).symm
+    (ref (O.comp X))
+  rw [add_comm Y, add_comm (ref (O.comp Y))] at h2
+  have h3 : ref (O.comp X) + ref (O.comp Y) = ref (O.comp (X + Y)) := by simp
+  rw [h3, O.energy_ref ref href hpi, O.energy_ref ref href hpi] at h2
+  rw [O.energy_ref ref href hpi] at h1
+  linarith
+
+/-- **示量性**：`U (t • X) = t * U X`。 -/
+theorem energy_smul (t : ℝ≥0) (X : 𝒮) :
+    O.energy ref href m (t • X) = t * O.energy ref href m X := by
+  have hR : t • ref (O.comp X) = ref (O.comp (t • X)) := by simp
+  have h0 := O.energy_ref ref href hpi (O.comp X)
+  have ht0 := O.energy_ref ref href hpi (O.comp (t • X))
+  rcases O.comparison (href (O.comp X)) with hp | hp
+  · obtain ⟨p⟩ := hp
+    have h1 := O.energy_spec ref href hpi p
+    have h2 := O.energy_spec ref href hpi (O.scale t p)
+    rw [work_scale, hR] at h2
+    rw [ht0] at h2
+    rw [h0] at h1
+    rw [← h1] at h2
+    linarith
+  · obtain ⟨p⟩ := hp
+    have h1 := O.energy_spec ref href hpi p
+    have h2 := O.energy_spec ref href hpi (O.scale t p)
+    rw [work_scale, hR] at h2
+    rw [ht0] at h2
+    rw [h0] at h1
+    linarith [show (t : ℝ) * O.work m p = -(t * O.energy ref href m X) by rw [← h1]; ring]
+
+/-- 内部エネルギーは示量的な関数である。 -/
+theorem energy_extensive : IsExtensive (O.energy ref href m) :=
+  ⟨O.energy_add ref href hpi, O.energy_smul ref href hpi⟩
+
+end CompositeOps
+
+end OpThermo</code></pre>
+<h1 id="opthermomodel.lean"><code>OpThermo/Model.lean</code></h1>
+<pre class="lean"><code>import OpThermo.Entropy
+
+/-!
+# 公理系の無矛盾性：具体的なモデル
+
+`Adiabatic` の公理と基準状態 `X₀ ≺≺ X₁` が同時に満たされる例を作る。
+公理系が矛盾していれば、どんな定理も証明できてしまう。モデルがあれば、
+`Entropy.lean` の定理が空虚でないことが保証される。
+
+成分は一つ (`Unit`)、状態は (質量, エントロピー) の組 `ℝ≥0 × ℝ≥0`、到達性は
+「質量が等しく、第二成分が減らない」とする。組成の違う状態の間はどちら向きにも移れない。
+このモデルでは、構成したエントロピーが第二成分と一致する (`model_entropy`)。
+
+同じモデルは、近傍を使う Carathéodory の原理 (どの状態のどの近くにも断熱的に到達できない
+状態がある) が公理から出ないことも示す。`X₀ = (1, 0)` からは、質量が同じすべての状態に
+断熱的に移れる (`model_reach_all`)。
+-/
+
+open NNReal Filter Topology
+
+namespace OpThermo
+
+/-- モデルの状態：(質量, エントロピー) -/
+abbrev ModelState := ℝ≥0 × ℝ≥0
+
+noncomputable instance : Adiabatic ModelState Unit where
+  prec X Y := X.1 = Y.1 ∧ (X.2 : ℝ) ≤ Y.2
+  refl X := ⟨rfl, le_refl _⟩
+  trans h h&#39; := ⟨h.1.trans h&#39;.1, le_trans h.2 h&#39;.2⟩
+  add_right Z h := ⟨by simp only [Prod.fst_add, h.1], by
+    simp only [Prod.snd_add, NNReal.coe_add]; linarith [h.2]⟩
+  smul t h := ⟨by simp only [Prod.smul_fst, h.1], by
+    simp only [Prod.smul_snd, smul_eq_mul, NNReal.coe_mul]
+    exact mul_le_mul_of_nonneg_left h.2 t.2⟩
+  stability {X Y Z₀ Z₁} h := by
+    have hm : ∀ n : ℕ, (X.1 : ℝ) + ((n : ℝ) + 1)⁻¹ * Z₀.1 = Y.1 + ((n : ℝ) + 1)⁻¹ * Z₁.1 := by
+      intro n
+      have := congrArg NNReal.toReal (h n).1
+      simp only [Prod.fst_add, Prod.smul_fst, smul_eq_mul, NNReal.coe_add,
+        NNReal.coe_mul] at this
+      push_cast at this
+      exact this
+    have h0 := hm 0
+    have h1 := hm 1
+    norm_num at h0 h1
+    refine ⟨NNReal.coe_injective (by linarith), ?_⟩
+    have h&#39; : ∀ n : ℕ, (X.2 : ℝ) ≤ Y.2 + ((n : ℝ) + 1)⁻¹ * (Z₁.2 - Z₀.2) := by
+      intro n
+      have := (h n).2
+      simp only [Prod.snd_add, Prod.smul_snd, smul_eq_mul, NNReal.coe_add,
+        NNReal.coe_mul] at this
+      push_cast at this
+      linarith
+    have hlim : Tendsto (fun n : ℕ =&gt; (Y.2 : ℝ) + ((n : ℝ) + 1)⁻¹ * (Z₁.2 - Z₀.2)) atTop
+        (𝓝 (Y.2 + 0 * (Z₁.2 - Z₀.2))) := by
+      refine tendsto_const_nhds.add (Tendsto.mul_const _ ?_)
+      simpa [one_div] using tendsto_one_div_add_atTop_nhds_zero_nat (𝕜 := ℝ)
+    rw [zero_mul, add_zero] at hlim
+    exact ge_of_tendsto&#39; hlim h&#39;
+  comp := LinearMap.pi fun _ =&gt; LinearMap.fst ℝ≥0 ℝ≥0 ℝ≥0
+  comparison {X Y} h := by
+    have hm : X.1 = Y.1 := congrFun h ()
+    rcases le_total (X.2 : ℝ) Y.2 with h&#39; | h&#39;
+    · exact Or.inl ⟨hm, h&#39;⟩
+    · exact Or.inr ⟨hm.symm, h&#39;⟩
+
+/-- 基準状態 `X₀ = (1, 0) ≺≺ X₁ = (1, 1)`。 -/
+noncomputable def modelCalibration : Adiabatic.Calibration ModelState Unit where
+  ref := LinearMap.inl ℝ≥0 ℝ≥0 ℝ≥0 ∘ₗ LinearMap.proj ()
+  comp_ref k := by funext u; rfl
+  X₀ := (1, 0)
+  X₁ := (1, 1)
+  ref_X₀ := rfl
+  comp_X₁ := rfl
+  strict := ⟨⟨rfl, by norm_num⟩, fun h =&gt; absurd h.2 (by norm_num)⟩
+
+/-- モデルでは、到達性から構成したエントロピーが第二成分そのものになる。 -/
+theorem model_entropy (X : ModelState) : modelCalibration.entropy X = X.2 := by
+  obtain ⟨-, h⟩ := modelCalibration.entropy_unique (fun X : ModelState =&gt; (X.2 : ℝ))
+    ⟨fun X Y =&gt; by simp, fun t X =&gt; by simp⟩
+    (fun X Y hc =&gt; ⟨fun h =&gt; h.2, fun h =&gt; ⟨congrFun hc (), h⟩⟩)
+  have := h X
+  rw [show (modelCalibration.X₁.2 : ℝ) = 1 from by simp [modelCalibration],
+    show (modelCalibration.X₀.2 : ℝ) = 0 from by simp [modelCalibration],
+    show ((modelCalibration.base X).2 : ℝ) = 0 from rfl] at this
+  linarith
+
+/-- **近傍の Carathéodory の原理は公理から出ない**：このモデルの `X₀ = (1, 0)` からは、
+組成 (質量) の等しいすべての状態に断熱的に移れる。したがって `X₀` のどの近くにも、
+`X₀` から断熱的に到達できない同じ組成の状態はない。 -/
+theorem model_reach_all (Y : ModelState)
+    (hY : Adiabatic.comp Y = Adiabatic.comp modelCalibration.X₀) :
+    Adiabatic.prec modelCalibration.X₀ Y :=
+  ⟨(congrFun hY ()).symm, Y.2.2⟩
+
+end OpThermo</code></pre>
+<h1 id="opthermotemperature.lean"><code>OpThermo/Temperature.lean</code></h1>
+<pre class="lean"><code>import OpThermo.Entropy
+
+/-!
+# 温度・圧力・化学ポテンシャル：保存量の交換平衡
+
+二つの系 A, B が保存量 `q` (エネルギー、体積、成分 `i` の量 `N_i` のいずれか) を交換でき、
+合計 `Q` は一定とする。A の取り分を `x` とすると全エントロピーは
+`f x + g (Q - x)` である (`f`, `g` は各系のエントロピーを `q` の関数として見たもの)。
+
+## 仮定
+
+* `f`, `g` が微分可能であること (`HasDerivAt`)。
+* 接触後の平衡では、取り分 `x` が全エントロピーを (局所的に) 最大にすること
+  (`IsLocalMax`)。エントロピー原理からは「到達可能な変化で全エントロピーは減らない」
+  ことまでしか出ない。平衡が最大点になるには、取り分を変える断熱操作がどちら向きにも
+  断熱操作として実行できることを仮定する必要がある。
+
+## 主結果
+
+* `exchange_equilibrium`：平衡では `∂S_A/∂q = ∂S_B/∂q`。
+  `q = U` なら `1/T_A = 1/T_B`、`q = V` なら `p_A/T_A = p_B/T_B`、
+  `q = N_i` なら成分ごとに `μ_{A,i}/T_A = μ_{B,i}/T_B`。
+* `exchange_direction`：`∂S_A/∂q &gt; ∂S_B/∂q` なら、`q` を A に移す向きで全エントロピーが
+  増える。`q = U` では、温度の低い系 (`1/T` が大きい系) にエネルギーが流れる。
+* `fundamental_relation`、`clausius`：`dS = (1/T) dU + (p/T) dV` から
+  `dU = T dS - p dV` と `dS = δQ_rev / T` を得る。
+* `fundamental_relation_multi`：多成分系では `dU = T dS - p dV + Σ μ_i dN_i`
+  (`μ_i := -T ∂S/∂N_i`)。
+* `euler_homogeneous`：示量的な (一次同次な) 微分可能関数は `S x = S&#39;(x) x` を満たす。
+* `gibbs_euler`：これを `S(U, V, N)` に使うと `U + p V - T S = Σ μ_i N_i`。
+
+## 温度の定義
+
+単純系では、平衡状態は内部エネルギー、体積、組成で決まる (経験則)。
+体積と組成を固定すると、実現できる内部エネルギーは区間 `I` をなし、`u ∈ I` の状態 `γ u` が一つに決まる。
+エントロピーをエネルギーの関数 `s u := S (γ u)` として見たとき、
+逆温度を `β := s&#39;(u)`、温度を `T := 1/β` と定義する (`invTemp`, `temperature`)。
+
+* `entropy_monotone_of_stirring`：かき混ぜで `γ u ≺ γ v` (`u ≤ v`) なら `s` は `I` 上で単調。
+* `invTemp_nonneg`、`temperature_pos`：したがって `I` の内点で `β ≥ 0` であり、`β ≠ 0` なら `T &gt; 0`。
+* `contact_maximizes`、`contact_isLocalMax`：結合系の平衡状態がエネルギーの合計で決まるなら、
+  熱接触の平衡の分配は全エントロピーを最大にする (エントロピー原理から導く)。
+* `exchange_temperature`：熱接触の平衡では温度が等しい。
+* `zeroth_law`：温度が等しいことは推移的 (熱力学第零法則)。
+* `heat_flows_to_colder`：エネルギーを温度の低い系に移す向きで全エントロピーが増える。
+* `ideal_gas`：`s u = a log u + b` なら `T = u / a`。`ideal_gas_law`：さらに `∂S/∂V = N / V` なら `p V = N T`。
+* `entropy_calorimetry`：`S(v) - S(u) = ∫ β du = ∫ du / T`。かき混ぜの仕事と温度計の読みからエントロピー差を測る。
+-/
+
+open Filter Topology Set NNReal
+
+namespace OpThermo
+
+/-- 全エントロピー `x ↦ f x + g (Q - x)` の微分。 -/
+theorem hasDerivAt_exchange {f g : ℝ → ℝ} {Q u f&#39; g&#39; : ℝ}
+    (hf : HasDerivAt f f&#39; u) (hg : HasDerivAt g g&#39; (Q - u)) :
+    HasDerivAt (fun x =&gt; f x + g (Q - x)) (f&#39; - g&#39;) u := by
+  have hg&#39; : HasDerivAt (fun x =&gt; g (Q - x)) (-g&#39;) u := hg.comp_const_sub Q u
+  convert hf.add hg&#39; using 1
+
+/-- **交換平衡**：全エントロピーが極大となる分配では、両系の `∂S/∂q` が等しい。 -/
+theorem exchange_equilibrium {f g : ℝ → ℝ} {Q u f&#39; g&#39; : ℝ}
+    (hf : HasDerivAt f f&#39; u) (hg : HasDerivAt g g&#39; (Q - u))
+    (hmax : IsLocalMax (fun x =&gt; f x + g (Q - x)) u) : f&#39; = g&#39; := by
+  have := hmax.hasDerivAt_eq_zero (hasDerivAt_exchange hf hg)
+  linarith
+
+/-- **交換の向き**：`∂S_A/∂q &gt; ∂S_B/∂q` なら、A に `q` を少し移すと全エントロピーが増える。 -/
+theorem exchange_direction {f g : ℝ → ℝ} {Q u f&#39; g&#39; : ℝ}
+    (hf : HasDerivAt f f&#39; u) (hg : HasDerivAt g g&#39; (Q - u)) (h : g&#39; &lt; f&#39;) :
+    ∀ᶠ x in 𝓝[&gt;] u, f u + g (Q - u) &lt; f x + g (Q - x) := by
+  set F := fun x =&gt; f x + g (Q - x)
+  have hF := hasDerivAt_iff_tendsto_slope.1 (hasDerivAt_exchange hf hg)
+  have hF&#39; : Tendsto (slope F u) (𝓝[&gt;] u) (𝓝 (f&#39; - g&#39;)) :=
+    hF.mono_left (nhdsWithin_mono _ (fun x hx =&gt; ne_of_gt (mem_Ioi.1 hx)))
+  filter_upwards [hF&#39;.eventually (lt_mem_nhds (sub_pos.2 h)), self_mem_nhdsWithin] with x hx hux
+  rw [slope_def_field] at hx
+  have := (div_pos_iff_of_pos_right (sub_pos.2 (mem_Ioi.1 hux))).1 hx
+  simp only [F] at this
+  linarith
+
+/-- **基本関係式**：経路に沿って `dS = β dU + π dV` (`β = ∂S/∂U`, `π = ∂S/∂V`) のとき、
+`T := 1/β`, `p := π/β` と定義すれば `dU = T dS - p dV`。 -/
+theorem fundamental_relation {dU dV dS β π : ℝ} (hβ : β ≠ 0) (h : dS = β * dU + π * dV) :
+    dU = β⁻¹ * dS - (π / β) * dV := by
+  rw [h]; field_simp; ring
+
+/-- **基本関係式を全微分の等式として**：座標 `(U, V)` の上で、`dU`, `dV` を座標関数の微分
+(`fst`, `snd`)、`dS` を `S` の微分 (線形写像) とする。`dS = β dU + π dV` なら、線形写像として
+`dU = β⁻¹ dS - (π/β) dV`。`fundamental_relation` はこれを一つの変位に代入した形である。 -/
+theorem fundamental_relation_forms {β π : ℝ} (hβ : β ≠ 0) {S : ℝ × ℝ → ℝ} {x : ℝ × ℝ}
+    (h : fderiv ℝ S x = β • ContinuousLinearMap.fst ℝ ℝ ℝ + π • ContinuousLinearMap.snd ℝ ℝ ℝ) :
+    ContinuousLinearMap.fst ℝ ℝ ℝ =
+      β⁻¹ • fderiv ℝ S x - (π / β) • ContinuousLinearMap.snd ℝ ℝ ℝ := by
+  ext
+  · simp [h]; field_simp
+  · simp [h]; field_simp; ring
+
+/-- **Clausius の関係**：準静的過程で仕事が `-p dV` なら、熱は `δQ = dU + p dV` であり、
+`dS = δQ / T`。熱をエントロピーの定義に使わず、結果として得る。 -/
+theorem clausius {dU dV dS T p : ℝ} (hT : T ≠ 0) (h : dU = T * dS - p * dV) :
+    dS = (dU + p * dV) / T := by
+  rw [h]; field_simp; ring
+
+/-- **多成分系の基本関係式**：`dS = β dU + π dV + Σ κ_i dN_i` (`κ_i = ∂S/∂N_i`) のとき、
+`T := 1/β`, `p := π/β`, `μ_i := -κ_i/β` とおけば `dU = T dS - p dV + Σ μ_i dN_i`。 -/
+theorem fundamental_relation_multi {ι : Type*} (s : Finset ι) {dU dV dS β π : ℝ}
+    (κ dN : ι → ℝ) (hβ : β ≠ 0)
+    (h : dS = β * dU + π * dV + ∑ i ∈ s, κ i * dN i) :
+    dU = β⁻¹ * dS - (π / β) * dV + ∑ i ∈ s, (-κ i / β) * dN i := by
+  have hsum : ∑ i ∈ s, (-κ i / β) * dN i = -β⁻¹ * ∑ i ∈ s, κ i * dN i := by
+    rw [Finset.mul_sum]; refine Finset.sum_congr rfl fun i _ =&gt; ?_; field_simp
+  rw [hsum, h]; field_simp; ring
+
+/-- **Euler の関係**：`S (t • x) = t * S x` (`t &gt; 0`) を満たす関数が `x` で微分可能なら、
+`S&#39; x = S x`。示量的な関数の微分を、その点での値と結びつける。 -/
+theorem euler_homogeneous {E : Type*} [NormedAddCommGroup E] [NormedSpace ℝ E]
+    {S : E → ℝ} {S&#39; : E →L[ℝ] ℝ} {x : E} (hS : HasFDerivAt S S&#39; x)
+    (hom : ∀ t : ℝ, 0 &lt; t → S (t • x) = t * S x) : S&#39; x = S x := by
+  have h1 : HasDerivAt (fun t : ℝ =&gt; t • x) x 1 := by
+    simpa using (hasDerivAt_id (1 : ℝ)).smul_const x
+  have h2 : HasDerivAt (fun t : ℝ =&gt; S (t • x)) (S&#39; x) 1 := by
+    have hS1 : HasFDerivAt S S&#39; ((1 : ℝ) • x) := by simpa using hS
+    exact hS1.comp_hasDerivAt (1 : ℝ) h1
+  have h3 : HasDerivAt (fun t : ℝ =&gt; t * S x) (S x) 1 := by
+    simpa using (hasDerivAt_id (1 : ℝ)).mul_const (S x)
+  have heq : (fun t : ℝ =&gt; S (t • x)) =ᶠ[𝓝 1] fun t =&gt; t * S x := by
+    filter_upwards [lt_mem_nhds (show (0 : ℝ) &lt; 1 from one_pos)] with t ht
+    exact hom t ht
+  exact h2.unique (h3.congr_of_eventuallyEq heq)
+
+/-- **Gibbs 関数と化学ポテンシャル**：Euler の関係 `S = β U + π V + Σ κ_i N_i` のもとで、
+`T := 1/β`, `p := π/β`, `μ_i := -κ_i/β` とおくと `U + p V - T S = Σ μ_i N_i`。 -/
+theorem gibbs_euler {ι : Type*} (s : Finset ι) {U V S β π : ℝ} (κ N : ι → ℝ) (hβ : β ≠ 0)
+    (h : S = β * U + π * V + ∑ i ∈ s, κ i * N i) :
+    U + (π / β) * V - β⁻¹ * S = ∑ i ∈ s, (-κ i / β) * N i := by
+  have hsum : ∑ i ∈ s, (-κ i / β) * N i = -β⁻¹ * ∑ i ∈ s, κ i * N i := by
+    rw [Finset.mul_sum]; refine Finset.sum_congr rfl fun i _ =&gt; ?_; field_simp
+  rw [hsum, h]; field_simp; ring
+
+/-! ### 温度の定義 -/
+
+/-- **逆温度**：エネルギーの関数としてのエントロピー `s` の微分 `β = ds/du`。 -/
+noncomputable def invTemp (s : ℝ → ℝ) (u : ℝ) : ℝ := deriv s u
+
+/-- **温度**：`T := 1/β`。 -/
+noncomputable def temperature (s : ℝ → ℝ) (u : ℝ) : ℝ := (invTemp s u)⁻¹
+
+/-- **温度の単位**：エントロピーを `a * s + b` に取り替えると、温度は `1/a` 倍になる。
+エントロピーの単位を選ぶことと、温度の単位を選ぶことは同じである。 -/
+theorem temperature_rescale {s : ℝ → ℝ} {u : ℝ} (a b : ℝ) (hs : DifferentiableAt ℝ s u) :
+    temperature (fun x =&gt; a * s x + b) u = temperature s u / a := by
+  unfold temperature invTemp
+  rw [deriv_add_const, deriv_const_mul _ hs, mul_inv]
+  ring
+
+/-- **Kelvin の温度比**：温度 `T₁`, `T₂` の理想的な熱浴のエントロピー変化は `Q₁ / T₁`, `Q₂ / T₂`。
+全エントロピーを保つ (可逆な) 操作で熱浴が受け取るエネルギー `Q₁`, `Q₂` の比は、
+温度の比で決まる：`T₁ / T₂ = -(Q₁ / Q₂)`。 -/
+theorem kelvin_ratio {T₁ T₂ Q₁ Q₂ : ℝ} (h₁ : T₁ ≠ 0) (h₂ : T₂ ≠ 0) (hQ : Q₂ ≠ 0)
+    (hS : Q₁ / T₁ + Q₂ / T₂ = 0) : T₁ / T₂ = -(Q₁ / Q₂) := by
+  field_simp at hS ⊢
+  linarith
+
+section Stirring
+
+open Adiabatic
+
+variable {𝒮 C : Type*} [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] [Adiabatic 𝒮 C]
+
+/-- **かき混ぜで上がるエントロピー**：エネルギーの区間 `I` 上の状態の族 `γ` (体積と組成を固定し、
+内部エネルギー `u` の状態が `γ u`) について、組成が変わらず、かき混ぜで `u ≤ v` なら `γ u ≺ γ v`
+とする。このときエネルギーの関数としてのエントロピー `u ↦ S (γ u)` は `I` 上で単調非減少。 -/
+theorem entropy_monotone_of_stirring (c : Calibration 𝒮 C) (γ : ℝ → 𝒮) (I : Set ℝ)
+    (hcomp : ∀ u ∈ I, ∀ v ∈ I, comp (γ u) = comp (γ v))
+    (hstir : ∀ u ∈ I, ∀ v ∈ I, u ≤ v → γ u ≺ γ v) :
+    MonotoneOn (fun u =&gt; c.entropy (γ u)) I :=
+  fun u hu v hv huv =&gt; (c.entropy_principle (hcomp u hu v hv)).1 (hstir u hu v hv huv)
+
+/-- かき混ぜがあれば、区間の内点で逆温度は非負。 -/
+theorem invTemp_nonneg (c : Calibration 𝒮 C) (γ : ℝ → 𝒮) (I : Set ℝ)
+    (hcomp : ∀ u ∈ I, ∀ v ∈ I, comp (γ u) = comp (γ v))
+    (hstir : ∀ u ∈ I, ∀ v ∈ I, u ≤ v → γ u ≺ γ v) {u : ℝ} (hu : I ∈ 𝓝 u) :
+    0 ≤ invTemp (fun u =&gt; c.entropy (γ u)) u := by
+  rw [invTemp, ← derivWithin_of_mem_nhds hu]
+  exact (entropy_monotone_of_stirring c γ I hcomp hstir).derivWithin_nonneg
+
+/-- かき混ぜがあり、逆温度が `0` でなければ温度は正。 -/
+theorem temperature_pos (c : Calibration 𝒮 C) (γ : ℝ → 𝒮) (I : Set ℝ)
+    (hcomp : ∀ u ∈ I, ∀ v ∈ I, comp (γ u) = comp (γ v))
+    (hstir : ∀ u ∈ I, ∀ v ∈ I, u ≤ v → γ u ≺ γ v) {u : ℝ} (hu : I ∈ 𝓝 u)
+    (hβ : invTemp (fun u =&gt; c.entropy (γ u)) u ≠ 0) :
+    0 &lt; temperature (fun u =&gt; c.entropy (γ u)) u :=
+  inv_pos.2 (lt_of_le_of_ne (invTemp_nonneg c γ I hcomp hstir hu) (Ne.symm hβ))
+
+/-- **熱接触の平衡はエントロピーの和を最大にする**：A, B のエネルギーで並べた状態の族を
+`γA`, `γB` (区間 `IA`, `IB`) とする。エネルギーの合計が `Q` の結合系の平衡状態を `J` とし、
+どの分配 `x` から接触させても `J` に移れ (`hin`)、`J` を切り離すと分配 `u` になる (`hout`) とする。
+`J` が分配 `x` によらないことが、結合系の平衡状態が合計で決まるという経験則の内容である。
+このとき分配 `u` は `S_A + S_B` を最大にする。 -/
+theorem contact_maximizes (c : Calibration 𝒮 C) (γA γB : ℝ → 𝒮) (IA IB : Set ℝ)
+    (hA : ∀ u ∈ IA, ∀ v ∈ IA, comp (γA u) = comp (γA v))
+    (hB : ∀ u ∈ IB, ∀ v ∈ IB, comp (γB u) = comp (γB v))
+    {Q u : ℝ} (hu : u ∈ IA) (hu&#39; : Q - u ∈ IB) (J : 𝒮)
+    (hin : ∀ x ∈ IA, Q - x ∈ IB → γA x + γB (Q - x) ≺ J)
+    (hout : J ≺ γA u + γB (Q - u)) {x : ℝ} (hx : x ∈ IA) (hx&#39; : Q - x ∈ IB) :
+    c.entropy (γA x) + c.entropy (γB (Q - x)) ≤ c.entropy (γA u) + c.entropy (γB (Q - u)) := by
+  have hc : comp (γA x + γB (Q - x)) = comp (γA u + γB (Q - u)) := by
+    rw [map_add, map_add, hA x hx u hu, hB _ hx&#39; _ hu&#39;]
+  have := (c.entropy_principle hc).1 (trans (hin x hx hx&#39;) hout)
+  rwa [c.entropy_add, c.entropy_add] at this
+
+/-- 分配 `u` が両方の区間の内点なら、`u` は全エントロピーの極大点。 -/
+theorem contact_isLocalMax (c : Calibration 𝒮 C) (γA γB : ℝ → 𝒮) (IA IB : Set ℝ)
+    (hA : ∀ u ∈ IA, ∀ v ∈ IA, comp (γA u) = comp (γA v))
+    (hB : ∀ u ∈ IB, ∀ v ∈ IB, comp (γB u) = comp (γB v))
+    {Q u : ℝ} (hu : IA ∈ 𝓝 u) (hu&#39; : IB ∈ 𝓝 (Q - u)) (J : 𝒮)
+    (hin : ∀ x ∈ IA, Q - x ∈ IB → γA x + γB (Q - x) ≺ J)
+    (hout : J ≺ γA u + γB (Q - u)) :
+    IsLocalMax (fun x =&gt; c.entropy (γA x) + c.entropy (γB (Q - x))) u := by
+  have hsub : ∀ᶠ x in 𝓝 u, Q - x ∈ IB :=
+    ((continuous_const.sub continuous_id).continuousAt (x := u)).preimage_mem_nhds hu&#39;
+  filter_upwards [hu, hsub] with x hx hx&#39;
+  exact contact_maximizes c γA γB IA IB hA hB (mem_of_mem_nhds hu) (mem_of_mem_nhds hu&#39;) J
+    hin hout hx hx&#39;
+
+end Stirring
+
+/-- **熱接触の平衡では温度が等しい**：エネルギーを交換する二つの系の全エントロピーが
+分配 `u` で極大なら、`T_A(u) = T_B(Q - u)`。 -/
+theorem exchange_temperature {f g : ℝ → ℝ} {Q u βA βB : ℝ}
+    (hf : HasDerivAt f βA u) (hg : HasDerivAt g βB (Q - u))
+    (hmax : IsLocalMax (fun x =&gt; f x + g (Q - x)) u) :
+    temperature f u = temperature g (Q - u) := by
+  simp only [temperature, invTemp, hf.deriv, hg.deriv, exchange_equilibrium hf hg hmax]
+
+/-- **熱力学第零法則**：A と B、B と C がそれぞれ熱平衡 (温度が等しい) なら、A と C も
+温度が等しい。温度を数で定めたので、推移律は等号の推移律になる。 -/
+theorem zeroth_law {TA TB TC : ℝ} (hAB : TA = TB) (hBC : TB = TC) : TA = TC :=
+  hAB.trans hBC
+
+/-- **熱は温度の高い系から低い系へ流れる**：温度が正で `T_A(u) &lt; T_B(Q - u)` なら、
+A にエネルギーを少し移すと全エントロピーが増える。 -/
+theorem heat_flows_to_colder {f g : ℝ → ℝ} {Q u βA βB : ℝ}
+    (hf : HasDerivAt f βA u) (hg : HasDerivAt g βB (Q - u)) (hA : 0 &lt; βA) (hB : 0 &lt; βB)
+    (hT : temperature f u &lt; temperature g (Q - u)) :
+    ∀ᶠ x in 𝓝[&gt;] u, f u + g (Q - u) &lt; f x + g (Q - x) := by
+  simp only [temperature, invTemp, hf.deriv, hg.deriv] at hT
+  exact exchange_direction hf hg ((inv_lt_inv₀ hA hB).1 hT)
+
+/-- **例：理想気体**：エネルギーの関数としてのエントロピーが `a log u + b` (`a &gt; 0`) なら
+温度は `T = u / a`、つまり `u = a T`。 -/
+theorem ideal_gas {a b u : ℝ} (ha : 0 &lt; a) (hu : 0 &lt; u) :
+    temperature (fun u =&gt; a * Real.log u + b) u = u / a := by
+  have h : HasDerivAt (fun u =&gt; a * Real.log u + b) (a * u⁻¹) u :=
+    ((Real.hasDerivAt_log hu.ne&#39;).const_mul a).add_const b
+  simp only [temperature, invTemp, h.deriv]
+  field_simp
+
+/-- **例：理想気体の状態方程式**：`β = a / u`、`π = ∂S/∂V = N / V` なら、`p := π / β` と
+`T = u / a` は `p V = N T` を満たす。 -/
+theorem ideal_gas_law {a u N V : ℝ} (ha : 0 &lt; a) (hu : 0 &lt; u) (hV : 0 &lt; V) :
+    (N / V) / (a / u) * V = N * (u / a) := by
+  field_simp
+
+/-- **熱量測定によるエントロピー差**：体積と組成を固定してかき混ぜ、エネルギーを `u` から `v` に
+上げるとき、`S(v) - S(u) = ∫ β(x) dx = ∫ dx / T(x)`。
+エネルギーの増分はかき混ぜの仕事 (重りの降下) で、`T` は温度計で測る。 -/
+theorem entropy_calorimetry {s : ℝ → ℝ} {u v : ℝ}
+    (hs : ∀ x ∈ Set.uIcc u v, DifferentiableAt ℝ s x)
+    (hint : IntervalIntegrable (invTemp s) MeasureTheory.volume u v) :
+    s v - s u = ∫ x in u..v, invTemp s x :=
+  (intervalIntegral.integral_eq_sub_of_hasDerivAt (fun x hx =&gt; (hs x hx).hasDerivAt) hint).symm
+
+/-! ### 理想気体 -/
+
+/-- **理想気体のエントロピー**：`S(U, V, N) = N (c log (U/N) + log (V/N) + s₀)`。
+`c` は単原子気体で `3/2` (エントロピーの単位を Boltzmann 定数にとる)。 -/
+noncomputable def idealGasEntropy (c s₀ U V N : ℝ) : ℝ :=
+  N * (c * Real.log (U / N) + Real.log (V / N) + s₀)
+
+variable {c s₀ U V N : ℝ}
+
+/-- `∂S/∂U = c N / U`。 -/
+theorem idealGas_hasDerivAt_U (hU : 0 &lt; U) (hN : 0 &lt; N) :
+    HasDerivAt (fun U =&gt; idealGasEntropy c s₀ U V N) (c * N / U) U := by
+  have h1 : HasDerivAt (fun U =&gt; U / N) (1 / N) U := by
+    simpa using (hasDerivAt_id U).div_const N
+  have h2 := h1.log (div_pos hU hN).ne&#39;
+  have h3 := ((h2.const_mul c).add_const (Real.log (V / N) + s₀)).const_mul N
+  convert h3 using 1
+  · funext U; simp only [idealGasEntropy]; ring
+  · field_simp
+
+/-- `∂S/∂V = N / V`。 -/
+theorem idealGas_hasDerivAt_V (hV : 0 &lt; V) (hN : 0 &lt; N) :
+    HasDerivAt (fun V =&gt; idealGasEntropy c s₀ U V N) (N / V) V := by
+  have h1 : HasDerivAt (fun V =&gt; V / N) (1 / N) V := by
+    simpa using (hasDerivAt_id V).div_const N
+  have h2 := h1.log (div_pos hV hN).ne&#39;
+  have h3 := (h2.const_add (c * Real.log (U / N))).add_const s₀ |&gt;.const_mul N
+  convert h3 using 1
+  · funext V; simp only [idealGasEntropy]
+  · field_simp
+
+/-- **理想気体の温度**：`T = U / (c N)`、つまり `U = c N T`。 -/
+theorem idealGas_temperature (hc : 0 &lt; c) (hU : 0 &lt; U) (hN : 0 &lt; N) :
+    temperature (fun U =&gt; idealGasEntropy c s₀ U V N) U = U / (c * N) := by
+  simp only [temperature, invTemp, (idealGas_hasDerivAt_U (c := c) (s₀ := s₀) (V := V) hU hN).deriv]
+  field_simp
+
+/-- **理想気体の状態方程式**：`p := (∂S/∂V) / (∂S/∂U)` は `p V = N T` を満たす。 -/
+theorem idealGas_law (hc : 0 &lt; c) (hU : 0 &lt; U) (hV : 0 &lt; V) (hN : 0 &lt; N) :
+    (N / V) / (c * N / U) * V = N * (U / (c * N)) := by
+  field_simp
+
+/-- **理想気体のエントロピーは示量的**：`S(tU, tV, tN) = t S(U, V, N)`。 -/
+theorem idealGas_homogeneous {t : ℝ} (ht : 0 &lt; t) (hN : 0 &lt; N) :
+    idealGasEntropy c s₀ (t * U) (t * V) (t * N) = t * idealGasEntropy c s₀ U V N := by
+  have e1 : t * U / (t * N) = U / N := by field_simp
+  have e2 : t * V / (t * N) = V / N := by field_simp
+  simp only [idealGasEntropy, e1, e2]; ring
+
+/-- 正の実数上で微分が `0` の関数は定数。 -/
+theorem const_of_hasDerivAt_zero_pos {f : ℝ → ℝ} (hf : ∀ x, 0 &lt; x → HasDerivAt f 0 x)
+    {x y : ℝ} (hx : 0 &lt; x) (hy : 0 &lt; y) : f x = f y :=
+  (isOpen_Ioi (a := (0 : ℝ))).is_const_of_deriv_eq_zero isPreconnected_Ioi
+    (fun z hz =&gt; (hf z (mem_Ioi.1 hz)).differentiableAt.differentiableWithinAt)
+    (fun z hz =&gt; (hf z (mem_Ioi.1 hz)).deriv) (mem_Ioi.2 hx) (mem_Ioi.2 hy)
+
+/-- **理想気体の特徴づけ**：関数 `S(U, V, N)` が示量的で、`∂S/∂U = c N / U` と
+`∂S/∂V = N / V` を満たすなら、`S` は理想気体のエントロピーで、定数は `s₀ = S(1, 1, 1)`。
+温度を使わない主張である。温度と圧力の定義で読みかえると、条件は `U = c N T` と `p V = N T`。 -/
+theorem idealGas_unique (S : ℝ → ℝ → ℝ → ℝ) {c : ℝ}
+    (hU : ∀ U V N, 0 &lt; U → 0 &lt; V → 0 &lt; N → HasDerivAt (fun U =&gt; S U V N) (c * N / U) U)
+    (hV : ∀ U V N, 0 &lt; U → 0 &lt; V → 0 &lt; N → HasDerivAt (fun V =&gt; S U V N) (N / V) V)
+    (hom : ∀ t U V N, 0 &lt; t → 0 &lt; U → 0 &lt; V → 0 &lt; N → S (t * U) (t * V) (t * N) = t * S U V N)
+    {U V N : ℝ} (hU0 : 0 &lt; U) (hV0 : 0 &lt; V) (hN0 : 0 &lt; N) :
+    S U V N = idealGasEntropy c (S 1 1 1) U V N := by
+  -- `S - N (c log U + log V)` は `U` にも `V` にもよらない
+  have stepU : ∀ U V N, 0 &lt; U → 0 &lt; V → 0 &lt; N →
+      S U V N - N * (c * Real.log U + Real.log V) =
+        S 1 V N - N * (c * Real.log 1 + Real.log V) := by
+    intro U V N hU0 hV0 hN0
+    refine const_of_hasDerivAt_zero_pos (f := fun U =&gt; S U V N - N * (c * Real.log U + Real.log V))
+      (fun x hx =&gt; ?_) hU0 one_pos
+    have h := (hU x V N hx hV0 hN0).sub
+      ((((Real.hasDerivAt_log hx.ne&#39;).const_mul c).add_const (Real.log V)).const_mul N)
+    convert h using 1
+    field_simp; ring
+  have stepV : ∀ V N, 0 &lt; V → 0 &lt; N →
+      S 1 V N - N * Real.log V = S 1 1 N - N * Real.log 1 := by
+    intro V N hV0 hN0
+    refine const_of_hasDerivAt_zero_pos (f := fun V =&gt; S 1 V N - N * Real.log V)
+      (fun x hx =&gt; ?_) hV0 one_pos
+    have h := (hV 1 x N one_pos hx hN0).sub ((Real.hasDerivAt_log hx.ne&#39;).const_mul N)
+    convert h using 1
+    field_simp; ring
+  have hS : ∀ U V N, 0 &lt; U → 0 &lt; V → 0 &lt; N →
+      S U V N = N * (c * Real.log U + Real.log V) + S 1 1 N := by
+    intro U V N hU0 hV0 hN0
+    have h1 := stepU U V N hU0 hV0 hN0
+    have h2 := stepV V N hV0 hN0
+    simp only [Real.log_one, mul_zero, zero_add, sub_zero] at h1 h2
+    linarith
+  -- 示量性から `S(1, 1, N)` が決まる
+  have hN : S 1 1 N = N * S 1 1 1 - N * (c + 1) * Real.log N := by
+    have h := hom N 1 1 1 hN0 one_pos one_pos one_pos
+    simp only [mul_one] at h
+    rw [hS N N N hN0 hN0 hN0] at h
+    linear_combination h
+  rw [hS U V N hU0 hV0 hN0, hN, idealGasEntropy, Real.log_div hU0.ne&#39; hN0.ne&#39;,
+    Real.log_div hV0.ne&#39; hN0.ne&#39;]
+  ring
+
+/-! ### 第三法則と到達不能性 -/
+
+/-- **絶対零度の到達不能性**：制御変数 (体積など) の値 `i` ごとに、温度の関数としての
+エントロピー `s i` が正の温度 `(0, ∞)` 上で狭義単調増加とする。Nernst の熱定理として、
+`T → +0` の極限が `i` によらない共通の値 `L` であるとし (`hlim`)、零度での値をその極限で
+定める (`hend`)。系に次の二種類の操作を繰り返す。
+
+* 等温操作：温度を保ったまま制御変数を変える (溜めと熱をやりとりしてよい)。
+* 断熱操作：エントロピーは減らない (エントロピー原理)。
+
+このとき、正の温度から始めると、何回操作しても温度は正のままである。 -/
+theorem unattainability {ι : Type*} (s : ι → ℝ → ℝ) (hmono : ∀ i, StrictMonoOn (s i) (Ioi 0))
+    (L : ℝ) (hlim : ∀ i, Tendsto (s i) (𝓝[&gt;] 0) (𝓝 L)) (hend : ∀ i, s i 0 = L)
+    (idx : ℕ → ι) (T : ℕ → ℝ) (hT : ∀ n, 0 ≤ T n)
+    (hstep : ∀ n, T (n + 1) = T n ∨ s (idx n) (T n) ≤ s (idx (n + 1)) (T (n + 1)))
+    (h0 : 0 &lt; T 0) (n : ℕ) : 0 &lt; T n := by
+  have key : ∀ i (t : ℝ), 0 &lt; t → L &lt; s i t := by
+    intro i t ht
+    have h2 : (0 : ℝ) &lt; t / 2 := by positivity
+    have hle : L ≤ s i (t / 2) := by
+      apply le_of_tendsto (hlim i)
+      filter_upwards [Ioo_mem_nhdsGT h2] with y hy
+      exact (hmono i hy.1 h2 hy.2).le
+    exact hle.trans_lt (hmono i h2 ht (half_lt_self ht))
+  induction n with
+  | zero =&gt; exact h0
+  | succ n ih =&gt;
+    rcases hstep n with h | h
+    · rw [h]; exact ih
+    · rcases (hT (n + 1)).lt_or_eq with hpos | hzero
+      · exact hpos
+      · exfalso
+        rw [← hzero, hend] at h
+        have := key (idx n) (T n) ih
+        linarith
+
+end OpThermo</code></pre>
+<h1 id="opthermogibbs.lean"><code>OpThermo/Gibbs.lean</code></h1>
+<pre class="lean"><code>import OpThermo.Accessibility
+
+/-!
+# Gibbs 自由エネルギー：一定温度・一定圧力の環境でのエントロピー原理
+
+系 `X` を環境 (溜め) `R` と接触させ、全体を外界から孤立させる。
+全体のエネルギー `U` と体積 `V` は保存し、質量も保存する。
+
+## 主結果
+
+* `gibbs_criterion` (理想的な溜め)：溜めのエントロピーが `U`, `V` の一次式
+  `σ + (U + p₀ V)/T₀` で書けるなら、
+  `X + R ≺ Y + R&#39; ↔ G Y ≤ G X` (`G = U + p₀ V - T₀ S`)。
+  証明は `Entropy.lean` のエントロピー原理と加法性だけを使う。
+* `total_entropy_ideal`：同じ仮定で `ΔS_全体 = -ΔG / T₀` (等式)。
+* `large_reservoir_limit`：有限の溜めでも、示量性 `S(λ x) = λ s(x)` と `s` の微分可能性から、
+  溜めを大きくする極限で `ΔS_全体 → -ΔG / T₀`。`T₀ = 1/(∂s/∂u)`, `p₀ = T₀ ∂s/∂v`。
+  「溜めが十分大きいので `T₀, p₀` は変わらない」という議論の正確な形である。
+* `large_reservoir_criterion`：`G` が厳密に減るなら十分大きな溜めで到達可能、
+  厳密に増えるなら十分大きな溜めで到達不可能。等号の場合はこの極限からは決まらない。
+* `gibbs_hasDerivAt`：`dU = T dS - p dV` の下で `dG = -S dT + V dp`。
+
+## 第一法則とのつなぎ
+
+`gibbs_criterion` の `U` は任意の関数である。
+`isolated_process_lowers_gibbs` と `reachable_of_gibbs_le` では、断熱到達性を断熱操作の存在とし
+(`CompositeOps.toAdiabatic`)、`U` を断熱仕事から作った示量的な内部エネルギー
+(`CompositeOps.energy`) とする。追加の仮定は要らない。
+-/
+
+open NNReal Filter Topology
+
+namespace OpThermo
+
+/-- `T₀, p₀` の環境に対する Gibbs 関数 `G = U + p₀ V - T₀ S`。 -/
+def gibbs {Γ : Type*} (S U V : Γ → ℝ) (T₀ p₀ : ℝ) (X : Γ) : ℝ :=
+  U X + p₀ * V X - T₀ * S X
+
+/-- 理想的な溜めでは、全エントロピー変化は `-ΔG / T₀` に等しい。 -/
+theorem total_entropy_ideal {Γ : Type*} (S U V : Γ → ℝ) {T₀ p₀ σ : ℝ} (hT : T₀ ≠ 0)
+    {X Y : Γ} {UR VR UR&#39; VR&#39; : ℝ}
+    (hU : U X + UR = U Y + UR&#39;) (hV : V X + VR = V Y + VR&#39;) :
+    (S Y + (σ + (UR&#39; + p₀ * VR&#39;) / T₀)) - (S X + (σ + (UR + p₀ * VR) / T₀)) =
+      -(gibbs S U V T₀ p₀ Y - gibbs S U V T₀ p₀ X) / T₀ := by
+  obtain rfl : UR&#39; = U X + UR - U Y := by linarith
+  obtain rfl : VR&#39; = V X + VR - V Y := by linarith
+  unfold gibbs
+  field_simp
+  ring
+
+namespace Adiabatic
+
+variable {𝒮 C : Type*} [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] [Adiabatic 𝒮 C]
+
+/-- **Gibbs 自由エネルギーの最小原理** (理想的な溜め)。
+
+仮定：
+* `hmass`：組成の保存。
+* `hU`, `hV`：系と溜めを合わせたエネルギーと体積の保存 (外界とは仕事も交換しない)。
+* `hR`, `hR&#39;`：溜めのエントロピーは `U`, `V` の一次式で、傾きは `1/T₀` と `p₀/T₀`。
+
+結論：系と溜めの複合状態 `X + R` から `Y + R&#39;` へ断熱到達できることと、
+`G_{T₀,p₀}` が増えないことは同値。 -/
+theorem gibbs_criterion (c : Calibration 𝒮 C) (U V : 𝒮 → ℝ) {T₀ p₀ σ : ℝ} (hT : 0 &lt; T₀)
+    {X Y R R&#39; : 𝒮} (hmass : comp (X + R) = comp (Y + R&#39;))
+    (hU : U X + U R = U Y + U R&#39;) (hV : V X + V R = V Y + V R&#39;)
+    (hR : c.entropy R = σ + (U R + p₀ * V R) / T₀)
+    (hR&#39; : c.entropy R&#39; = σ + (U R&#39; + p₀ * V R&#39;) / T₀) :
+    X + R ≺ Y + R&#39; ↔ gibbs c.entropy U V T₀ p₀ Y ≤ gibbs c.entropy U V T₀ p₀ X := by
+  rw [Calibration.entropy_principle hmass, Calibration.entropy_add, Calibration.entropy_add,
+    ← sub_nonneg, hR, hR&#39;, total_entropy_ideal c.entropy U V hT.ne&#39; hU hV,
+    neg_div, neg_nonneg, div_nonpos_iff]
+  constructor
+  · rintro (⟨-, h⟩ | ⟨h, -⟩)
+    · linarith
+    · linarith
+  · intro h; exact Or.inr ⟨by linarith, hT.le⟩
+
+end Adiabatic
+
+namespace CompositeOps
+
+variable {𝒮 C W : Type*} [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] (O : CompositeOps 𝒮 C W)
+  {m : W → ℝ} (hpi : O.PathIndependent m) (ref : (C → ℝ≥0) →ₗ[ℝ≥0] 𝒮)
+  (href : ∀ k, O.comp (ref k) = k)
+
+include hpi
+
+/-- 孤立した断熱操作 (重りの正味の仕事が `0`) で `X + R` から `Y + R&#39;` に移れるなら、
+`G_{T₀,p₀}` は増えない。断熱到達性は断熱操作の存在、`U` は断熱仕事から作った示量的な
+内部エネルギー (`CompositeOps.energy`)。 -/
+theorem isolated_process_lowers_gibbs (c : O.Calibration)
+    (V : 𝒮 → ℝ) {T₀ p₀ σ : ℝ} (hT : 0 &lt; T₀) {X Y R R&#39; : 𝒮}
+    (hV : V X + V R = V Y + V R&#39;)
+    (hR : O.entropy c R = σ + (O.energy ref href m R + p₀ * V R) / T₀)
+    (hR&#39; : O.entropy c R&#39; = σ + (O.energy ref href m R&#39; + p₀ * V R&#39;) / T₀)
+    (p : O.Operation (X + R) (Y + R&#39;)) (hp : O.work m p = 0) :
+    gibbs (O.entropy c) (O.energy ref href m) V T₀ p₀ Y ≤
+      gibbs (O.entropy c) (O.energy ref href m) V T₀ p₀ X := by
+  have h := O.energy_spec ref href hpi p
+  rw [hp, O.energy_add ref href hpi, O.energy_add ref href hpi] at h
+  exact (@Adiabatic.gibbs_criterion 𝒮 C _ _ O.toAdiabatic c _ V T₀ p₀ σ hT X Y R R&#39;
+    (O.comp_eq p) (by linarith) hV hR hR&#39;).1 ⟨p⟩
+
+/-- 逆向き：組成、エネルギー、体積が保存する終状態で `G_{T₀,p₀}` が増えないなら、
+`X + R` から `Y + R&#39;` への断熱操作が存在し、その仕事は `0` である。 -/
+theorem reachable_of_gibbs_le (c : O.Calibration)
+    (V : 𝒮 → ℝ) {T₀ p₀ σ : ℝ} (hT : 0 &lt; T₀) {X Y R R&#39; : 𝒮}
+    (hmass : O.comp (X + R) = O.comp (Y + R&#39;))
+    (hUc : O.energy ref href m X + O.energy ref href m R =
+      O.energy ref href m Y + O.energy ref href m R&#39;)
+    (hV : V X + V R = V Y + V R&#39;)
+    (hR : O.entropy c R = σ + (O.energy ref href m R + p₀ * V R) / T₀)
+    (hR&#39; : O.entropy c R&#39; = σ + (O.energy ref href m R&#39; + p₀ * V R&#39;) / T₀)
+    (hG : gibbs (O.entropy c) (O.energy ref href m) V T₀ p₀ Y ≤
+      gibbs (O.entropy c) (O.energy ref href m) V T₀ p₀ X) :
+    ∃ p : O.Operation (X + R) (Y + R&#39;), O.work m p = 0 := by
+  obtain ⟨p⟩ := (@Adiabatic.gibbs_criterion 𝒮 C _ _ O.toAdiabatic c _ V T₀ p₀ σ hT X Y R R&#39;
+    hmass hUc hV hR hR&#39;).2 hG
+  refine ⟨p, ?_⟩
+  have h := O.energy_spec ref href hpi p
+  rw [O.energy_add ref href hpi, O.energy_add ref href hpi] at h
+  linarith
+
+end CompositeOps
+
+/-- 大きさ `λ` の溜めのエントロピー変化の極限。`s` が `x₀` で微分可能なら
+`λ (s (x₀ + λ⁻¹ Δ) - s x₀) → s&#39; Δ`。 -/
+theorem large_reservoir_limit {s : ℝ × ℝ → ℝ} {s&#39; : ℝ × ℝ →L[ℝ] ℝ} {x₀ : ℝ × ℝ}
+    (hs : HasFDerivAt s s&#39; x₀) (Δ : ℝ × ℝ) :
+    Tendsto (fun lam : ℝ =&gt; lam * (s (x₀ + lam⁻¹ • Δ) - s x₀)) atTop (𝓝 (s&#39; Δ)) := by
+  simpa using hs.lim Δ (c := id) (l := atTop) (by simpa using tendsto_abs_atTop_atTop)
+
+/-- **大きな溜めのエントロピー**：示量性 `SR λ (λ x) = λ s(x)` と `s` の微分可能性があれば、
+大きさ `λ` の溜めのエネルギーと体積を `(ΔU, ΔV)` だけ変えたときのエントロピー変化は、
+`λ → ∞` で `(ΔU + p₀ ΔV) / T₀` に近づく。ここで `T₀ := 1/β`, `p₀ := (∂s/∂v)/β`,
+`β := ∂s/∂u`。理想的な溜めの一次式は、この極限である。 -/
+theorem large_reservoir_entropy {SR : ℝ → ℝ × ℝ → ℝ}
+    {s : ℝ × ℝ → ℝ} {s&#39; : ℝ × ℝ →L[ℝ] ℝ} {x₀ : ℝ × ℝ}
+    (hext : ∀ lam &gt; 0, ∀ x, SR lam (lam • x) = lam * s x)
+    (hs : HasFDerivAt s s&#39; x₀) (hβ : s&#39; (1, 0) ≠ 0) (ΔU ΔV : ℝ) :
+    Tendsto (fun lam : ℝ =&gt; SR lam (lam • x₀ + (ΔU, ΔV)) - SR lam (lam • x₀)) atTop
+      (𝓝 ((ΔU + s&#39; (0, 1) / s&#39; (1, 0) * ΔV) / (s&#39; (1, 0))⁻¹)) := by
+  have hval : s&#39; (ΔU, ΔV) = (ΔU + s&#39; (0, 1) / s&#39; (1, 0) * ΔV) / (s&#39; (1, 0))⁻¹ := by
+    have hΔ : ((ΔU, ΔV) : ℝ × ℝ) = ΔU • ((1 : ℝ), (0 : ℝ)) + ΔV • ((0 : ℝ), (1 : ℝ)) := by
+      simp
+    rw [hΔ, map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    field_simp
+  rw [← hval]
+  refine (large_reservoir_limit hs (ΔU, ΔV)).congr&#39; ?_
+  filter_upwards [eventually_gt_atTop 0] with lam hlam
+  have h1 : lam • x₀ + (ΔU, ΔV) = lam • (x₀ + lam⁻¹ • (ΔU, ΔV)) := by
+    rw [smul_add, smul_inv_smul₀ hlam.ne&#39;]
+  rw [h1, hext lam hlam, hext lam hlam]
+  ring
+
+/-- 大きさ `λ` の溜めを使ったときの全エントロピー変化。溜めの状態は `(U, V)` で表し、
+始めは `λ x₀`。系が `X → Y` と変わると、溜めは `(-ΔU, -ΔV)` だけ変わる。 -/
+def totalEntropyChange {Γ : Type*} (S U V : Γ → ℝ) (SR : ℝ → ℝ × ℝ → ℝ) (x₀ : ℝ × ℝ)
+    (X Y : Γ) (lam : ℝ) : ℝ :=
+  S Y - S X + (SR lam (lam • x₀ + (-(U Y - U X), -(V Y - V X))) - SR lam (lam • x₀))
+
+/-- **大きな溜めの極限での Gibbs 関数**。
+
+仮定：
+* `hext`：示量性 `SR λ (λ x) = λ s(x)` (`Entropy.lean` の `entropy_smul` にあたる)。
+* `hs`：単位量あたりのエントロピー `s(u, v)` が `x₀` で微分可能。
+* `hβ`：`β := ∂s/∂u &gt; 0` (正の温度)。
+
+`T₀ := 1/β`, `p₀ := (∂s/∂v)/β` とおくと、`ΔS_全体 → -ΔG_{T₀,p₀} / T₀`。 -/
+theorem gibbs_large_reservoir {Γ : Type*} (S U V : Γ → ℝ) {SR : ℝ → ℝ × ℝ → ℝ}
+    {s : ℝ × ℝ → ℝ} {s&#39; : ℝ × ℝ →L[ℝ] ℝ} {x₀ : ℝ × ℝ}
+    (hext : ∀ lam &gt; 0, ∀ x, SR lam (lam • x) = lam * s x)
+    (hs : HasFDerivAt s s&#39; x₀) (hβ : 0 &lt; s&#39; (1, 0)) (X Y : Γ) :
+    Tendsto (totalEntropyChange S U V SR x₀ X Y) atTop
+      (𝓝 (-(gibbs S U V (s&#39; (1, 0))⁻¹ (s&#39; (0, 1) / s&#39; (1, 0)) Y -
+        gibbs S U V (s&#39; (1, 0))⁻¹ (s&#39; (0, 1) / s&#39; (1, 0)) X) / (s&#39; (1, 0))⁻¹)) := by
+  set Δ : ℝ × ℝ := (-(U Y - U X), -(V Y - V X))
+  have hlim := (large_reservoir_limit hs Δ).const_add (S Y - S X)
+  have hval : S Y - S X + s&#39; Δ = -(gibbs S U V (s&#39; (1, 0))⁻¹ (s&#39; (0, 1) / s&#39; (1, 0)) Y -
+      gibbs S U V (s&#39; (1, 0))⁻¹ (s&#39; (0, 1) / s&#39; (1, 0)) X) / (s&#39; (1, 0))⁻¹ := by
+    have hΔ : Δ = (-(U Y - U X)) • ((1 : ℝ), (0 : ℝ)) + (-(V Y - V X)) • ((0 : ℝ), (1 : ℝ)) := by
+      simp [Δ]
+    rw [hΔ, map_add, map_smul, map_smul, smul_eq_mul, smul_eq_mul]
+    unfold gibbs
+    field_simp
+    ring
+  rw [← hval]
+  refine hlim.congr&#39; ?_
+  filter_upwards [eventually_gt_atTop 0] with lam hlam
+  unfold totalEntropyChange
+  have h1 : lam • x₀ + Δ = lam • (x₀ + lam⁻¹ • Δ) := by
+    rw [smul_add, smul_inv_smul₀ hlam.ne&#39;]
+  rw [h1, hext lam hlam, hext lam hlam]
+  ring
+
+/-- **大きな溜めでの判定**：到達可能性がエントロピー原理で決まるとする (`hreach`)。
+`G` が厳密に減る変化は十分大きな溜めで到達可能、厳密に増える変化は到達不可能。 -/
+theorem large_reservoir_criterion {Γ : Type*} (S U V : Γ → ℝ) {SR : ℝ → ℝ × ℝ → ℝ}
+    {s : ℝ × ℝ → ℝ} {s&#39; : ℝ × ℝ →L[ℝ] ℝ} {x₀ : ℝ × ℝ}
+    (hext : ∀ lam &gt; 0, ∀ x, SR lam (lam • x) = lam * s x)
+    (hs : HasFDerivAt s s&#39; x₀) (hβ : 0 &lt; s&#39; (1, 0)) {X Y : Γ} (reach : ℝ → Prop)
+    (hreach : ∀ lam, reach lam ↔ 0 ≤ totalEntropyChange S U V SR x₀ X Y lam) :
+    (gibbs S U V (s&#39; (1, 0))⁻¹ (s&#39; (0, 1) / s&#39; (1, 0)) Y &lt;
+        gibbs S U V (s&#39; (1, 0))⁻¹ (s&#39; (0, 1) / s&#39; (1, 0)) X → ∀ᶠ lam in atTop, reach lam) ∧
+    (gibbs S U V (s&#39; (1, 0))⁻¹ (s&#39; (0, 1) / s&#39; (1, 0)) X &lt;
+        gibbs S U V (s&#39; (1, 0))⁻¹ (s&#39; (0, 1) / s&#39; (1, 0)) Y → ∀ᶠ lam in atTop, ¬ reach lam) := by
+  have hlim := gibbs_large_reservoir S U V hext hs hβ X Y
+  have hT : 0 &lt; (s&#39; (1, 0))⁻¹ := inv_pos.2 hβ
+  constructor
+  · intro h
+    have hpos : 0 &lt; -(gibbs S U V (s&#39; (1, 0))⁻¹ (s&#39; (0, 1) / s&#39; (1, 0)) Y -
+        gibbs S U V (s&#39; (1, 0))⁻¹ (s&#39; (0, 1) / s&#39; (1, 0)) X) / (s&#39; (1, 0))⁻¹ :=
+      div_pos (by linarith) hT
+    filter_upwards [hlim.eventually (lt_mem_nhds hpos)] with lam h
+    exact (hreach lam).2 h.le
+  · intro h
+    have hneg : -(gibbs S U V (s&#39; (1, 0))⁻¹ (s&#39; (0, 1) / s&#39; (1, 0)) Y -
+        gibbs S U V (s&#39; (1, 0))⁻¹ (s&#39; (0, 1) / s&#39; (1, 0)) X) / (s&#39; (1, 0))⁻¹ &lt; 0 :=
+      div_neg_of_neg_of_pos (by linarith) hT
+    filter_upwards [hlim.eventually (gt_mem_nhds hneg)] with lam h
+    rw [hreach lam]
+    exact not_le.2 h
+
+/-- **`dG = -S dT + V dp`**：経路に沿って `dU = T dS - p dV` が成り立つとき、
+`G = U + p V - T S` の変化率は `-S T&#39; + V p&#39;`。 -/
+theorem gibbs_hasDerivAt {U S V T p : ℝ → ℝ} {t U&#39; S&#39; V&#39; T&#39; p&#39; : ℝ}
+    (hU : HasDerivAt U U&#39; t) (hS : HasDerivAt S S&#39; t) (hV : HasDerivAt V V&#39; t)
+    (hT : HasDerivAt T T&#39; t) (hp : HasDerivAt p p&#39; t)
+    (hfund : U&#39; = T t * S&#39; - p t * V&#39;) :
+    HasDerivAt (fun t =&gt; U t + p t * V t - T t * S t) (-S t * T&#39; + V t * p&#39;) t := by
+  convert (hU.add (hp.mul hV)).sub (hT.mul hS) using 1
+  rw [hfund]; ring
+
+end OpThermo</code></pre>
+<h1 id="opthermopotentials.lean"><code>OpThermo/Potentials.lean</code></h1>
+<pre class="lean"><code>import OpThermo.Gibbs
+
+/-!
+# Helmholtz 自由エネルギーとエンタルピー
+
+Gibbs 関数 `G = U + p₀ V - T₀ S` と同じ形の組み合わせを、環境の種類ごとに考える。
+
+* Helmholtz 自由エネルギー `F = U - T₀ S`：温度 `T₀` の熱浴とだけエネルギーをやりとりする系。
+  * `total_entropy_helmholtz`：理想的な熱浴では `ΔS_全体 = -ΔF / T₀`。
+  * `helmholtz_criterion`：体積を変えない系では `X + R ≺ Y + R&#39; ↔ F Y ≤ F X`。
+    エントロピー原理と加法性から直接示す。
+  * `CompositeOps.max_work`：熱浴と接した系から取り出せる仕事は `F` の減少分を超えない。
+    「自由エネルギー」という名前の由来である。
+* エンタルピー `H = U + p₀ V`：圧力 `p₀` のピストン (重りを載せた蓋) と接した系。
+  * `CompositeOps.enthalpy_change`：ピストンの重り以外の仕事 (かき混ぜ、電熱) が `W&#39;` の
+    断熱操作では `ΔH = W&#39;`。定圧の熱量測定が測るのは `ΔH` である。
+  * `joule_thomson`：絞り膨張では `U₁ + p₁ V₁ = U₂ + p₂ V₂`。
+* `min_of_max`、`Adiabatic.energy_minimum`、`Adiabatic.enthalpy_minimum`：エントロピー最大から
+  エネルギー最小とエンタルピー最小を導く。
+* `helmholtz_hasDerivAt`、`enthalpy_hasDerivAt`：`dU = T dS - p dV` の下で
+  `dF = -S dT - p dV`、`dH = T dS + V dp`。
+* `idealGas_enthalpy`：理想気体では `H = (c + 1) N T`。
+-/
+
+open NNReal
+
+namespace OpThermo
+
+/-- 温度 `T₀` の環境に対する Helmholtz 関数 `F = U - T₀ S`。 -/
+def helmholtz {Γ : Type*} (S U : Γ → ℝ) (T₀ : ℝ) (X : Γ) : ℝ :=
+  U X - T₀ * S X
+
+/-- 圧力 `p₀` の環境に対するエンタルピー `H = U + p₀ V`。 -/
+def enthalpy {Γ : Type*} (U V : Γ → ℝ) (p₀ : ℝ) (X : Γ) : ℝ :=
+  U X + p₀ * V X
+
+/-- Helmholtz 関数は、体積を使わない (`V = 0`, `p₀ = 0`) Gibbs 関数である。 -/
+theorem helmholtz_eq_gibbs {Γ : Type*} (S U : Γ → ℝ) (T₀ : ℝ) (X : Γ) :
+    helmholtz S U T₀ X = gibbs S U (fun _ =&gt; 0) T₀ 0 X := by
+  simp [helmholtz, gibbs]
+
+/-- 理想的な熱浴では、全エントロピー変化は `-ΔF / T₀` に等しい。 -/
+theorem total_entropy_helmholtz {Γ : Type*} (S U : Γ → ℝ) {T₀ σ : ℝ} (hT : T₀ ≠ 0)
+    {X Y : Γ} {UR UR&#39; : ℝ} (hU : U X + UR = U Y + UR&#39;) :
+    (S Y + (σ + UR&#39; / T₀)) - (S X + (σ + UR / T₀)) =
+      -(helmholtz S U T₀ Y - helmholtz S U T₀ X) / T₀ := by
+  obtain rfl : UR&#39; = U X + UR - U Y := by linarith
+  unfold helmholtz
+  field_simp
+  ring
+
+namespace Adiabatic
+
+variable {𝒮 C : Type*} [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] [Adiabatic 𝒮 C]
+
+/-- **Helmholtz 自由エネルギーの最小原理** (理想的な熱浴)。系と熱浴 `R` のエネルギーの和が
+保存し、熱浴のエントロピーが `σ + U / T₀` なら、`X + R ≺ Y + R&#39; ↔ F Y ≤ F X`。 -/
+theorem helmholtz_criterion (c : Calibration 𝒮 C) (U : 𝒮 → ℝ) {T₀ σ : ℝ} (hT : 0 &lt; T₀)
+    {X Y R R&#39; : 𝒮} (hmass : comp (X + R) = comp (Y + R&#39;))
+    (hU : U X + U R = U Y + U R&#39;)
+    (hR : c.entropy R = σ + U R / T₀) (hR&#39; : c.entropy R&#39; = σ + U R&#39; / T₀) :
+    X + R ≺ Y + R&#39; ↔ helmholtz c.entropy U T₀ Y ≤ helmholtz c.entropy U T₀ X := by
+  rw [Calibration.entropy_principle hmass, Calibration.entropy_add, Calibration.entropy_add,
+    ← sub_nonneg, hR, hR&#39;, total_entropy_helmholtz c.entropy U hT.ne&#39; hU, neg_div, neg_nonneg,
+    div_nonpos_iff]
+  constructor
+  · rintro (⟨-, h⟩ | ⟨h, -⟩)
+    · linarith
+    · linarith
+  · intro h; exact Or.inr ⟨by linarith, hT.le⟩
+
+end Adiabatic
+
+/-! ### エネルギーとエンタルピーの最小原理 -/
+
+/-- **極大から極小へ** (Callen)：集合 `P` 上で、`E` が等しい中で `S` が `x` で最大になり、
+どの `y ∈ P` からも `S` を厳密に増やしながら `E` を任意に上げられるとする。
+このとき、`S` が等しい中で `E` は `x` で最小になる。 -/
+theorem min_of_max {α : Type*} (P : Set α) (S E : α → ℝ) {x : α}
+    (hmax : ∀ y ∈ P, E y = E x → S y ≤ S x)
+    (hup : ∀ y ∈ P, ∀ e, E y &lt; e → ∃ y&#39; ∈ P, E y&#39; = e ∧ S y &lt; S y&#39;) :
+    ∀ y ∈ P, S y = S x → E x ≤ E y := by
+  intro y hy hS
+  by_contra h
+  obtain ⟨y&#39;, hy&#39;, hE, hlt⟩ := hup y hy (E x) (lt_of_not_ge h)
+  have := hmax y&#39; hy&#39; hE
+  linarith
+
+namespace Adiabatic
+
+variable {𝒮 C : Type*} [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] [Adiabatic 𝒮 C]
+
+/-- **エネルギー最小原理**：`P` は体積と組成の等しい状態の集まりで、`X ∈ P` は内部の拘束を
+外して到達する平衡状態とする。内部エネルギーの等しい `Y ∈ P` からは `X` に断熱的に移れ
+(`hreach`)、かき混ぜで `S` を厳密に増やしながら `U` を上げられる (`hstir`) なら、
+エントロピーの等しい状態の中で `U` は `X` で最小。 -/
+theorem energy_minimum (c : Calibration 𝒮 C) (U : 𝒮 → ℝ) (P : Set 𝒮) {X : 𝒮}
+    (hcomp : ∀ Y ∈ P, comp Y = comp X)
+    (hreach : ∀ Y ∈ P, U Y = U X → Y ≺ X)
+    (hstir : ∀ Y ∈ P, ∀ u, U Y &lt; u → ∃ Y&#39; ∈ P, U Y&#39; = u ∧ c.entropy Y &lt; c.entropy Y&#39;) :
+    ∀ Y ∈ P, c.entropy Y = c.entropy X → U X ≤ U Y :=
+  min_of_max P c.entropy U
+    (fun Y hY hU =&gt; (c.entropy_principle (hcomp Y hY)).1 (hreach Y hY hU)) hstir
+
+/-- **エンタルピー最小原理**：`P` は圧力 `p₀` のピストンと接した、組成の等しい状態の集まりで、
+`X ∈ P` は平衡状態とする。エンタルピーの等しい `Y ∈ P` からは、ピストンの重りだけが動く
+断熱操作で `X` に移れ (`hreach`)、定圧でかき混ぜれば `S` を厳密に増やしながら `H` を上げられる
+(`hstir`) なら、エントロピーの等しい状態の中で `H` は `X` で最小。 -/
+theorem enthalpy_minimum (c : Calibration 𝒮 C) (U V : 𝒮 → ℝ) (p₀ : ℝ) (P : Set 𝒮) {X : 𝒮}
+    (hcomp : ∀ Y ∈ P, comp Y = comp X)
+    (hreach : ∀ Y ∈ P, enthalpy U V p₀ Y = enthalpy U V p₀ X → Y ≺ X)
+    (hstir : ∀ Y ∈ P, ∀ h, enthalpy U V p₀ Y &lt; h →
+      ∃ Y&#39; ∈ P, enthalpy U V p₀ Y&#39; = h ∧ c.entropy Y &lt; c.entropy Y&#39;) :
+    ∀ Y ∈ P, c.entropy Y = c.entropy X → enthalpy U V p₀ X ≤ enthalpy U V p₀ Y :=
+  min_of_max P c.entropy (enthalpy U V p₀)
+    (fun Y hY hH =&gt; (c.entropy_principle (hcomp Y hY)).1 (hreach Y hY hH)) hstir
+
+end Adiabatic
+
+namespace CompositeOps
+
+variable {𝒮 C W : Type*} [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] (O : CompositeOps 𝒮 C W)
+  {m : W → ℝ} (hpi : O.PathIndependent m) (ref : (C → ℝ≥0) →ₗ[ℝ≥0] 𝒮)
+  (href : ∀ k, O.comp (ref k) = k)
+
+include hpi
+
+/-- **最大仕事の原理**：温度 `T₀` の理想的な熱浴 `R` と接した系を `X` から `Y` に移す断熱操作で
+取り出せる仕事 `-W(p)` は、Helmholtz 関数の減少分 `F(X) - F(Y)` を超えない。 -/
+theorem max_work (c : O.Calibration) {T₀ σ : ℝ} (hT : 0 &lt; T₀) {X Y R R&#39; : 𝒮}
+    (hR : O.entropy c R = σ + O.energy ref href m R / T₀)
+    (hR&#39; : O.entropy c R&#39; = σ + O.energy ref href m R&#39; / T₀)
+    (p : O.Operation (X + R) (Y + R&#39;)) :
+    -O.work m p ≤ helmholtz (O.entropy c) (O.energy ref href m) T₀ X -
+      helmholtz (O.entropy c) (O.energy ref href m) T₀ Y := by
+  have hE := O.energy_spec ref href hpi p
+  rw [O.energy_add ref href hpi, O.energy_add ref href hpi] at hE
+  have hS := (@Adiabatic.Calibration.entropy_principle 𝒮 C _ _ O.toAdiabatic c _ _
+    (O.comp_eq p)).1 ⟨p⟩
+  rw [@Adiabatic.Calibration.entropy_add 𝒮 C _ _ O.toAdiabatic c,
+    @Adiabatic.Calibration.entropy_add 𝒮 C _ _ O.toAdiabatic c] at hS
+  change O.entropy c X + O.entropy c R ≤ O.entropy c Y + O.entropy c R&#39; at hS
+  rw [hR, hR&#39;] at hS
+  have h2 : (O.energy ref href m R - O.energy ref href m R&#39;) / T₀ ≤
+      O.entropy c Y - O.entropy c X := by
+    rw [_root_.sub_div]; linarith
+  have h3 := (div_le_iff₀ hT).1 h2
+  unfold helmholtz
+  linarith
+
+/-- **エンタルピーの変化**：圧力 `p₀` のピストンと接した系の断熱操作で、仕事が
+ピストンの重りの分 `-p₀ ΔV` とそれ以外 `W&#39;` に分かれるなら、`ΔH = W&#39;`。 -/
+theorem enthalpy_change (V : 𝒮 → ℝ) {p₀ W&#39; : ℝ} {X Y : 𝒮} (p : O.Operation X Y)
+    (hW : O.work m p = W&#39; - p₀ * (V Y - V X)) :
+    enthalpy (O.energy ref href m) V p₀ Y - enthalpy (O.energy ref href m) V p₀ X = W&#39; := by
+  have hE := O.energy_spec ref href hpi p
+  unfold enthalpy
+  linarith
+
+end CompositeOps
+
+/-- **Joule–Thomson の絞り膨張**：圧力 `p₁` で押し込まれ、圧力 `p₂` で押し出される気体の
+エネルギー収支 `U₂ - U₁ = p₁ V₁ - p₂ V₂` から、`U₁ + p₁ V₁ = U₂ + p₂ V₂`。 -/
+theorem joule_thomson {U₁ U₂ p₁ p₂ V₁ V₂ : ℝ} (h : U₂ - U₁ = p₁ * V₁ - p₂ * V₂) :
+    U₁ + p₁ * V₁ = U₂ + p₂ * V₂ := by
+  linarith
+
+/-- **`dF = -S dT - p dV`**：経路に沿って `dU = T dS - p dV` なら、`F = U - T S` の変化率は
+`-S T&#39; - p V&#39;`。 -/
+theorem helmholtz_hasDerivAt {U S T p : ℝ → ℝ} {t U&#39; S&#39; V&#39; T&#39; : ℝ}
+    (hU : HasDerivAt U U&#39; t) (hS : HasDerivAt S S&#39; t) (hT : HasDerivAt T T&#39; t)
+    (hfund : U&#39; = T t * S&#39; - p t * V&#39;) :
+    HasDerivAt (fun t =&gt; U t - T t * S t) (-S t * T&#39; - p t * V&#39;) t := by
+  convert hU.sub (hT.mul hS) using 1
+  rw [hfund]; ring
+
+/-- **`dH = T dS + V dp`**：経路に沿って `dU = T dS - p dV` なら、`H = U + p V` の変化率は
+`T S&#39; + V p&#39;`。 -/
+theorem enthalpy_hasDerivAt {U V T p : ℝ → ℝ} {t U&#39; S&#39; V&#39; p&#39; : ℝ}
+    (hU : HasDerivAt U U&#39; t) (hV : HasDerivAt V V&#39; t) (hp : HasDerivAt p p&#39; t)
+    (hfund : U&#39; = T t * S&#39; - p t * V&#39;) :
+    HasDerivAt (fun t =&gt; U t + p t * V t) (T t * S&#39; + V t * p&#39;) t := by
+  convert hU.add (hp.mul hV) using 1
+  rw [hfund]; ring
+
+/-- **理想気体のエンタルピー**：`U = c N T` と `p V = N T` から `H = (c + 1) N T`。 -/
+theorem idealGas_enthalpy {c N T U p V : ℝ} (hU : U = c * N * T) (hpV : p * V = N * T) :
+    U + p * V = (c + 1) * N * T := by
+  rw [hU, hpV]; ring
+
+end OpThermo</code></pre>
+<h1 id="opthermoconcavity.lean"><code>OpThermo/Concavity.lean</code></h1>
+<pre class="lean"><code>import OpThermo.Temperature
+
+/-!
+# エントロピーの凹性
+
+単純系の平衡状態を座標 `x` (内部エネルギー、体積、物質量の組) で `γ x` と書く。
+割合 `a : b` (`a + b = 1`) で二つの状態 `γ x`, `γ y` から部分を切り出して並べ、間の仕切りを抜くと、
+座標が `a x + b y` の平衡状態に移る。この操作から次が出る。
+
+* `Adiabatic.concaveOn_of_partition`：`x ↦ S (γ x)` は凹 (上に凸)。
+* `concave_continuousOn`：一変数の凹関数は開区間上で連続。
+  `merge_range` などで仮定した連続性は、凹性から出る。
+* `superadditive_of_concave`：凹で一次同次な関数は優加法的 `S(x) + S(y) ≤ S(x + y)`。
+* `Adiabatic.contact_reversible_of_equal_temp`：温度の等しい系の熱接触は可逆
+  (接触して切り離すと元の分配に戻せる)。第零法則の「温度が等しければ何も起こらない」の向き。
+-/
+
+open Set NNReal
+
+namespace OpThermo
+
+namespace Adiabatic
+
+variable {𝒮 C : Type*} [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] [Adiabatic 𝒮 C]
+
+/-- **仕切りを抜くとエントロピーは凹**：`D` の `x, y` と `a + b = 1` について、
+`a • γ x + b • γ y` から仕切りを抜いて `γ (a x + b y)` に断熱的に移れ (`hpart`)、
+組成が座標について線形 (`hcomp`) なら、`x ↦ S (γ x)` は `D` 上で凹。 -/
+theorem concaveOn_of_partition {E : Type*} [AddCommGroup E] [Module ℝ E]
+    (c : Calibration 𝒮 C) (γ : E → 𝒮) {D : Set E} (hD : Convex ℝ D)
+    (hcomp : ∀ x ∈ D, ∀ y ∈ D, ∀ a b : ℝ≥0, a + b = 1 →
+      comp (γ ((a : ℝ) • x + (b : ℝ) • y)) = a • comp (γ x) + b • comp (γ y))
+    (hpart : ∀ x ∈ D, ∀ y ∈ D, ∀ a b : ℝ≥0, a + b = 1 →
+      a • γ x + b • γ y ≺ γ ((a : ℝ) • x + (b : ℝ) • y)) :
+    ConcaveOn ℝ D (fun x =&gt; c.entropy (γ x)) := by
+  refine ⟨hD, fun x hx y hy a b ha hb hab =&gt; ?_⟩
+  lift a to ℝ≥0 using ha
+  lift b to ℝ≥0 using hb
+  have hab&#39; : a + b = 1 := by exact_mod_cast hab
+  have hm : comp (a • γ x + b • γ y) = comp (γ ((a : ℝ) • x + (b : ℝ) • y)) := by
+    rw [map_add, map_smul, map_smul, hcomp x hx y hy a b hab&#39;]
+  have h := (c.entropy_principle hm).1 (hpart x hx y hy a b hab&#39;)
+  rw [c.entropy_add, c.entropy_smul, c.entropy_smul] at h
+  simpa only [NNReal.smul_def, smul_eq_mul] using h
+
+end Adiabatic
+
+/-- **凹関数は連続**：開区間 (一般に開集合) 上の凹関数は連続。 -/
+theorem concave_continuousOn {s : ℝ → ℝ} {I : Set ℝ} (hI : IsOpen I) (hc : ConcaveOn ℝ I s) :
+    ContinuousOn s I :=
+  hc.continuousOn hI
+
+/-- **優加法性**：凸錐 `D` 上で凹かつ一次同次な関数は `f x + f y ≤ f (x + y)`。 -/
+theorem superadditive_of_concave {E : Type*} [AddCommGroup E] [Module ℝ E] {D : Set E}
+    {f : E → ℝ} (hc : ConcaveOn ℝ D f) (hhom : ∀ x ∈ D, f ((2 : ℝ) • x) = 2 * f x)
+    {x y : E} (hx : x ∈ D) (hy : y ∈ D) :
+    f x + f y ≤ f (x + y) := by
+  have hmid := hc.2 hx hy (by norm_num : (0 : ℝ) ≤ 1 / 2) (by norm_num : (0 : ℝ) ≤ 1 / 2)
+    (by norm_num)
+  have hmem : (1 / 2 : ℝ) • x + (1 / 2 : ℝ) • y ∈ D :=
+    hc.1 hx hy (by norm_num) (by norm_num) (by norm_num)
+  have h2 : (2 : ℝ) • ((1 / 2 : ℝ) • x + (1 / 2 : ℝ) • y) = x + y := by
+    rw [smul_add, smul_smul, smul_smul]; norm_num
+  have := hhom _ hmem
+  rw [h2] at this
+  simp only [smul_eq_mul] at hmid
+  linarith
+
+/-- **微分が `0` の点は凹関数の最大点**。 -/
+theorem concave_max_of_deriv_zero {F : ℝ → ℝ} {K : Set ℝ} (hc : ConcaveOn ℝ K F) {x : ℝ}
+    (hx : x ∈ K) (hd : HasDerivAt F 0 x) {y : ℝ} (hy : y ∈ K) : F y ≤ F x := by
+  rcases lt_trichotomy x y with h | rfl | h
+  · have h1 := hc.slope_le_of_hasDerivAt hx hy h hd
+    rw [slope_def_field] at h1
+    have := (div_le_iff₀ (sub_pos.2 h)).1 h1
+    linarith
+  · exact le_rfl
+  · have h1 := hc.le_slope_of_hasDerivAt hy hx h hd
+    rw [slope_def_field] at h1
+    have := (le_div_iff₀ (sub_pos.2 h)).1 h1
+    linarith
+
+namespace Adiabatic
+
+variable {𝒮 C : Type*} [AddCommMonoid 𝒮] [Module ℝ≥0 𝒮] [Adiabatic 𝒮 C]
+
+/-- **温度の等しい系の熱接触は可逆**：A, B のエントロピー `sA`, `sB` がそれぞれ凹で、
+分配 `x` で逆温度が等しい (`sA&#39; x = sB&#39; (Q - x) = β`) とする。熱接触で結合系の平衡状態 `J` に移り
+(`hin`)、`J` から切り離すと何らかの分配 `u` に戻れる (`hout`) なら、`J` から分配 `x` にも
+断熱的に戻れる。つまり、温度の等しい二つの系を接触させ、切り離して元の分配に戻すことができ、
+接触は全エントロピーを変えない。 -/
+theorem contact_reversible_of_equal_temp (c : Calibration 𝒮 C) (γA γB : ℝ → 𝒮)
+    {IA IB : Set ℝ} (hcA : ConcaveOn ℝ IA (fun u =&gt; c.entropy (γA u)))
+    (hcB : ConcaveOn ℝ IB (fun u =&gt; c.entropy (γB u))) {Q x u β : ℝ}
+    (hx : x ∈ IA) (hx&#39; : Q - x ∈ IB) (hu : u ∈ IA) (hu&#39; : Q - u ∈ IB)
+    (hdA : HasDerivAt (fun u =&gt; c.entropy (γA u)) β x)
+    (hdB : HasDerivAt (fun u =&gt; c.entropy (γB u)) β (Q - x))
+    (J : 𝒮) (hJ : comp J = comp (γA x + γB (Q - x)))
+    (hJu : comp J = comp (γA u + γB (Q - u)))
+    (hin : γA x + γB (Q - x) ≺ J) (hout : J ≺ γA u + γB (Q - u)) :
+    γA x + γB (Q - x) ∼ₐ J := by
+  set K : Set ℝ := IA ∩ {y | Q - y ∈ IB}
+  have hK : Convex ℝ K := by
+    refine hcA.1.inter ?_
+    intro y hy z hz a b ha hb hab
+    have : Q - (a • y + b • z) = a • (Q - y) + b • (Q - z) := by
+      simp only [smul_eq_mul]; linear_combination (-Q) * hab
+    change Q - (a • y + b • z) ∈ IB
+    rw [this]; exact hcB.1 hy hz ha hb hab
+  have hcB&#39; : ConcaveOn ℝ K (fun y =&gt; c.entropy (γB (Q - y))) := by
+    refine ⟨hK, fun y hy z hz a b ha hb hab =&gt; ?_⟩
+    have e : Q - (a • y + b • z) = a • (Q - y) + b • (Q - z) := by
+      simp only [smul_eq_mul]; linear_combination (-Q) * hab
+    simp only [e]
+    exact hcB.2 hy.2 hz.2 ha hb hab
+  have hF : ConcaveOn ℝ K (fun y =&gt; c.entropy (γA y) + c.entropy (γB (Q - y))) :=
+    (hcA.subset inter_subset_left hK).add hcB&#39;
+  have hd : HasDerivAt (fun y =&gt; c.entropy (γA y) + c.entropy (γB (Q - y))) 0 x := by
+    simpa using hasDerivAt_exchange hdA hdB
+  have hmax := concave_max_of_deriv_zero hF ⟨hx, hx&#39;⟩ hd (y := u) ⟨hu, hu&#39;⟩
+  have h1 := (c.entropy_principle hJu).1 hout
+  rw [c.entropy_add] at h1
+  refine ⟨hin, (c.entropy_principle hJ).2 ?_⟩
+  rw [c.entropy_add]
+  linarith
+
+end Adiabatic
+
+end OpThermo</code></pre>
+<h1 id="opthermoheatcapacity.lean"><code>OpThermo/HeatCapacity.lean</code></h1>
+<pre class="lean"><code>import OpThermo.Concavity
+
+/-!
+# 熱容量
+
+体積と組成を固定した単純系の状態 `γ u` (内部エネルギー `u`) と、そのエントロピー `s u` を考える。
+
+* `heatCapacity s u := (dT/du)⁻¹`：温度を単位だけ上げるのに要るエネルギー (定積熱容量)。
+* `heatCapacity_eq`：`β := s&#39;`, `β&#39; := s&#39;&#39;` とすると `C = -β² / β&#39;`。
+* `heatCapacity_pos`：`s` が凹 (`Concavity.lean`) で `β&#39; ≠ 0` なら `C &gt; 0`。
+* `entropy_hasDerivAt_temperature`：温度の関数として見たエントロピーの変化率は `C / T`。
+-/
+
+open Filter Topology Set NNReal
+
+namespace OpThermo
+
+/-- 熱容量 `C := du/dT`。体積と組成を固定した系では定積熱容量 `C_V` である。 -/
+noncomputable def heatCapacity (s : ℝ → ℝ) (u : ℝ) : ℝ := (deriv (temperature s) u)⁻¹
+
+/-- 温度 `T = 1/β` の変化率は `-β&#39; / β²`。 -/
+theorem temperature_hasDerivAt {s : ℝ → ℝ} {u β&#39; : ℝ} (hβ&#39; : HasDerivAt (deriv s) β&#39; u)
+    (hβ : deriv s u ≠ 0) :
+    HasDerivAt (temperature s) (-β&#39; / (deriv s u) ^ 2) u := by
+  have h := hβ&#39;.inv hβ
+  exact h
+
+/-- **熱容量とエントロピーの二階微分**：`β ≠ 0` かつ `β&#39; ≠ 0` なら、温度はエネルギーについて
+変化率 `T&#39; = -β&#39;/β² ≠ 0` を持ち、熱容量 `C = 1/T&#39;` は `C · T&#39; = 1` を満たして `C = -β² / β&#39;`。
+`β&#39; = 0` のとき `heatCapacity` は Lean の約束 `0⁻¹ = 0` で `0` を返すが、これは熱容量ではない。 -/
+theorem heatCapacity_eq {s : ℝ → ℝ} {u β&#39; : ℝ} (hβ&#39; : HasDerivAt (deriv s) β&#39; u)
+    (hβ : deriv s u ≠ 0) (hβ&#39;0 : β&#39; ≠ 0) :
+    heatCapacity s u * deriv (temperature s) u = 1 ∧
+      heatCapacity s u = -(deriv s u) ^ 2 / β&#39; := by
+  have hT := (temperature_hasDerivAt hβ&#39; hβ).deriv
+  have hT0 : deriv (temperature s) u ≠ 0 := by
+    rw [hT]; exact div_ne_zero (neg_ne_zero.2 hβ&#39;0) (pow_ne_zero 2 hβ)
+  refine ⟨inv_mul_cancel₀ hT0, ?_⟩
+  rw [heatCapacity, hT, inv_div, neg_div, div_neg]
+
+/-- **熱容量は正**：`s` が `u` の近くで凹、`β ≠ 0`、`β&#39; ≠ 0` なら `C &gt; 0`。 -/
+theorem heatCapacity_pos {s : ℝ → ℝ} {I : Set ℝ} {u β&#39; : ℝ} (hc : ConcaveOn ℝ I s)
+    (hd : ∀ x ∈ I, DifferentiableAt ℝ s x) (hu : I ∈ 𝓝 u)
+    (hβ&#39; : HasDerivAt (deriv s) β&#39; u) (hβ&#39;0 : β&#39; ≠ 0) (hβ : deriv s u ≠ 0) :
+    0 &lt; heatCapacity s u := by
+  have hanti := hc.antitoneOn_deriv hd
+  have hle : β&#39; ≤ 0 := by
+    have := hanti.derivWithin_nonpos (x := u)
+    rwa [derivWithin_of_mem_nhds hu, hβ&#39;.deriv] at this
+  have hlt : β&#39; &lt; 0 := lt_of_le_of_ne hle hβ&#39;0
+  rw [(heatCapacity_eq hβ&#39; hβ hβ&#39;0).2, neg_div, ← div_neg]
+  exact div_pos (by positivity) (neg_pos.2 hlt)
+
+/-- **熱量測定の微分形**：`T` の関数として見たエントロピー `s ∘ u` の変化率は `C / T`。
+`u(T)` が `T` で微分可能で、その微分が `C` であるとする。 -/
+theorem entropy_hasDerivAt_temperature {s ueq : ℝ → ℝ} {T C : ℝ}
+    (hu : HasDerivAt ueq C T) (hs : HasDerivAt s (1 / T) (ueq T)) :
+    HasDerivAt (fun T =&gt; s (ueq T)) (C / T) T := by
+  rw [show C / T = 1 / T * C by ring]
+  exact hs.comp T hu
+
+end OpThermo</code></pre>
+<h1 id="axiomcheck.lean"><code>AxiomCheck.lean</code></h1>
+<pre class="lean"><code>import OpThermo
+
+/-! 主定理が `sorry` や追加の公理に依存しないことを確かめる。
+`lake env lean AxiomCheck.lean` で実行する。出力が
+`[propext, Classical.choice, Quot.sound]` (Lean 標準の公理) だけなら問題ない。 -/
+
+open OpThermo OpThermo.Adiabatic OpThermo.Adiabatic.Calibration OpThermo.ExtensiveStructure
+
+#print axioms length_exists
+#print axioms length_unique
+#print axioms compatible_of_represents
+#print axioms gravity_work_eq
+#print axioms WeightStatics.compatible_of_mechanicalLaw
+#print axioms WeightStatics.compatible_with_balance
+#print axioms AdiabaticOps.pathIndependent_iff_of_mechanicalLaw
+#print axioms Laboratory.stationary_congr
+#print axioms stationary_not_state_property
+#print axioms Laboratory.Clock.time_exists
+#print axioms Laboratory.Clock.compatible
+#print axioms Laboratory.Clock.stationary_wait
+#print axioms AdiabaticProcesses.internalEnergy_spec
+#print axioms AdiabaticProcesses.internalEnergy_unique
+#print axioms AdiabaticOps.pathIndependent_iff_of_compatible
+#print axioms AdiabaticOps.internalEnergy_of_compatible
+#print axioms pathIndependent_depends_on_mass
+#print axioms cancel
+#print axioms entropy_principle
+#print axioms entropy_add
+#print axioms entropy_smul
+#print axioms entropy_unique
+#print axioms exchange_equilibrium
+#print axioms exchange_direction
+#print axioms gibbs_criterion
+#print axioms CompositeOps.toAdiabatic
+#print axioms CompositeOps.energy_spec
+#print axioms CompositeOps.energy_extensive
+#print axioms entropy_extensive
+#print axioms fundamental_relation_multi
+#print axioms euler_homogeneous
+#print axioms gibbs_euler
+#print axioms CompositeOps.isolated_process_lowers_gibbs
+#print axioms CompositeOps.reachable_of_gibbs_le
+#print axioms gibbs_large_reservoir
+#print axioms large_reservoir_criterion
+#print axioms gibbs_hasDerivAt
+#print axioms model_entropy
+#print axioms entropy_bisect
+#print axioms entropy_monotone_of_stirring
+#print axioms temperature_pos
+#print axioms exchange_temperature
+#print axioms zeroth_law
+#print axioms heat_flows_to_colder
+#print axioms ideal_gas
+#print axioms ideal_gas_law
+#print axioms entropy_calorimetry
+#print axioms contact_isLocalMax
+#print axioms Adiabatic.Calibration.caratheodory
+#print axioms idealGas_temperature
+#print axioms idealGas_law
+#print axioms idealGas_homogeneous
+#print axioms idealGas_hasDerivAt_V
+#print axioms unattainability
+#print axioms idealGas_unique
+#print axioms fundamental_relation_forms
+#print axioms Adiabatic.helmholtz_criterion
+#print axioms CompositeOps.max_work
+#print axioms CompositeOps.enthalpy_change
+#print axioms helmholtz_hasDerivAt
+#print axioms enthalpy_hasDerivAt
+#print axioms total_entropy_helmholtz
+#print axioms Adiabatic.energy_minimum
+#print axioms Adiabatic.enthalpy_minimum
+#print axioms large_reservoir_entropy
+#print axioms temperature_rescale
+#print axioms kelvin_ratio
+#print axioms heatCapacity_eq
+#print axioms heatCapacity_pos
+#print axioms entropy_hasDerivAt_temperature
+#print axioms Adiabatic.concaveOn_of_partition
+#print axioms concave_continuousOn
+#print axioms superadditive_of_concave
+#print axioms Adiabatic.contact_reversible_of_equal_temp
+#print axioms model_reach_all</code></pre>
+</body>
+</html>
