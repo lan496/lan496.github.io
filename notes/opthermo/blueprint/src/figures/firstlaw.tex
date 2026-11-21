@@ -1,0 +1,24 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}
+  \node[box, circle, minimum size=10mm] (X0) at (0,0) {$X_0$};
+  \node[box, circle, minimum size=10mm] (X) at (4,1.6) {$X$};
+  \node[box, circle, minimum size=10mm] (Y) at (9,1.6) {$Y$};
+  \node[box, circle, minimum size=10mm] (Z) at (6.5,-0.6) {$Z$};
+  \draw[->, thick] (X0) -- node[above left, note] {$U(X) := W(X_0 \to X)$} (X);
+  \draw[->, thick, rod] (X) -- node[above, note] {断熱操作 $p$：かき混ぜる} (Y);
+  \draw[->, thick, rodb] (X) -- node[below left, note] {断熱操作 $q_1$：電流を流す} (Z);
+  \draw[->, thick, rodb] (Z) -- node[below right, note] {断熱操作 $q_2$：圧縮} (Y);
+  \node[expl, anchor=north west, text width=11cm] at (-0.6, -2.5)
+    {経路独立性：$W(p) = W(q_1) + W(q_2)$\\[2pt]
+     仕事 $W = \sum m(b)\, h_b$ は、重りの降下の記録から計算する。\\[2pt]
+     帰結：$U(Y) - U(X) = W(p)$ が任意の断熱操作で成り立つ。};
+  % weight icon
+  \begin{scope}[xshift=2.2cm, yshift=-1.6cm]
+    \draw[draw, fill=gray!25] (0,0) rectangle (0.5,0.5) node[midway, font=\footnotesize] {$b$};
+    \draw[->, ngc, thick] (0.8,0.5) -- (0.8,-0.3) node[right, font=\footnotesize] {$h_b$};
+    \node[note, anchor=west] at (1.2, 0.2) {各断熱操作で重りが下がった量を記録};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

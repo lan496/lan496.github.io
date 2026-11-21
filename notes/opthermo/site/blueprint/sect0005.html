@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$'], ['\\(','\\)']] },
+  };
+  // MathJax 4 may re-render formulas after load, so tag the current containers at copy time.
+  function tagFormulas() {
+    for (const item of MathJax.startup.document.math) {
+      const root = item.typesetRoot;
+      if (!root) continue;
+      root.setAttribute('data-tex', item.math.trim());
+      if (item.display) root.setAttribute('data-display', 'true');
+    }
+  }
+  document.addEventListener('copy', (event) => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || !window.MathJax || !MathJax.startup) return;
+    tagFormulas();
+    const frag = sel.getRangeAt(0).cloneContents();
+    const boxes = frag.querySelectorAll('mjx-container[data-tex]');
+    if (boxes.length === 0) return;
+    for (const box of boxes) {
+      const tex = box.getAttribute('data-tex').replace(/\{\\gt\}/g, '>').replace(/\{\\lt\}/g, '<');
+      const text = box.hasAttribute('data-display') ? '\n$$' + tex + '$$\n' : '$' + tex + '$';
+      box.replaceWith(document.createTextNode(text));
+    }
+    const holder = document.createElement('div');
+    holder.style.position = 'fixed';
+    holder.style.left = '-10000px';
+    holder.appendChild(frag);
+    document.body.appendChild(holder);
+    const plain = holder.innerText;
+    holder.remove();
+    event.clipboardData.setData('text/plain', plain);
+    event.preventDefault();
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>第一法則</title>
+<link rel="next" href="sect0006.html" title="断熱到達性とエントロピー" />
+<link rel="prev" href="sect0004.html" title="仕事の力学的な基礎" />
+<link rel="up" href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">概要</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000010"><span class="toc_ref">1.1</span> <span class="toc_entry">用語</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">2</span> <span class="toc_entry">長さの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">3</span> <span class="toc_entry">状態と平衡状態</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0003.html#a0000000011"><span class="toc_ref">3.1</span> <span class="toc_entry">時間の目盛り</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000012"><span class="toc_ref">3.2</span> <span class="toc_entry">状態の空間</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">4</span> <span class="toc_entry">仕事の力学的な基礎</span></a>
+ </li>
+<li class=" active current">
+  <a href="sect0005.html"><span class="toc_ref">5</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html"><span class="toc_ref">6</span> <span class="toc_entry">断熱到達性とエントロピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html#sec:accessibility-axioms"><span class="toc_ref">6.1</span> <span class="toc_entry">断熱操作から断熱到達性へ</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000013"><span class="toc_ref">6.2</span> <span class="toc_entry">複合系の内部エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000014"><span class="toc_ref">6.3</span> <span class="toc_entry">相殺則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000015"><span class="toc_ref">6.4</span> <span class="toc_entry">基準状態と形式的な不等式</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000016"><span class="toc_ref">6.5</span> <span class="toc_entry">エントロピーの構成</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000017"><span class="toc_ref">6.6</span> <span class="toc_entry">エントロピーの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000018"><span class="toc_ref">6.7</span> <span class="toc_entry">エントロピー原理</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#sec:second-law"><span class="toc_ref">6.8</span> <span class="toc_entry">第二法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000019"><span class="toc_ref">6.9</span> <span class="toc_entry">無矛盾性</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">7</span> <span class="toc_entry">温度、圧力、化学ポテンシャル</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0007.html#a0000000020"><span class="toc_ref">7.1</span> <span class="toc_entry">温度の定義</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000021"><span class="toc_ref">7.2</span> <span class="toc_entry">熱接触と温度の比較</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000022"><span class="toc_ref">7.3</span> <span class="toc_entry">圧力と化学ポテンシャル</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:ideal-gas"><span class="toc_ref">7.4</span> <span class="toc_entry">理想気体</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:fundamental"><span class="toc_ref">7.5</span> <span class="toc_entry">基本関係式</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:concavity"><span class="toc_ref">7.6</span> <span class="toc_entry">エントロピーの凹性</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0007.html#a0000000023"><span class="toc_ref">7.6.1</span> <span class="toc_entry">凹性から出ること</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000024"><span class="toc_ref">7.6.2</span> <span class="toc_entry">安定性</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000025"><span class="toc_ref">7.6.3</span> <span class="toc_entry">相の共存</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000026"><span class="toc_ref">7.6.4</span> <span class="toc_entry">凹性と自由エネルギー</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:heat-capacity"><span class="toc_ref">7.7</span> <span class="toc_entry">熱容量</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:third-law"><span class="toc_ref">7.8</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html"><span class="toc_ref">8</span> <span class="toc_entry">自由エネルギーとエンタルピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-potentials.html#a0000000027"><span class="toc_ref">8.1</span> <span class="toc_entry">環境</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-potentials.html#sec:large-reservoir"><span class="toc_ref">8.1.1</span> <span class="toc_entry">大きな溜め</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000028"><span class="toc_ref">8.2</span> <span class="toc_entry">Helmholtz 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000029"><span class="toc_ref">8.3</span> <span class="toc_entry">エンタルピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000030"><span class="toc_ref">8.4</span> <span class="toc_entry">Gibbs 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000031"><span class="toc_ref">8.5</span> <span class="toc_entry">エネルギーとエンタルピーの最小原理</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000032"><span class="toc_ref">8.6</span> <span class="toc_entry">ポテンシャルの微分</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html"><span class="toc_ref">9</span> <span class="toc_entry">実験室での熱測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-calorimetry.html#sec:thermometry"><span class="toc_ref">9.1</span> <span class="toc_entry">温度の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000033"><span class="toc_ref">9.1.1</span> <span class="toc_entry">温度計が測っているもの</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000034"><span class="toc_ref">9.1.2</span> <span class="toc_entry">温度の比と単位</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000035"><span class="toc_ref">9.1.3</span> <span class="toc_entry">一次温度計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000036"><span class="toc_ref">9.1.4</span> <span class="toc_entry">国際温度目盛</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000037"><span class="toc_ref">9.1.5</span> <span class="toc_entry">一次温度計どうしの一致</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:measure-heat-capacity"><span class="toc_ref">9.2</span> <span class="toc_entry">熱容量の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000038"><span class="toc_ref">9.2.1</span> <span class="toc_entry">断熱型熱量計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000039"><span class="toc_ref">9.2.2</span> <span class="toc_entry">定圧と定積</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000040"><span class="toc_ref">9.2.3</span> <span class="toc_entry">相転移</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000041"><span class="toc_ref">9.2.4</span> <span class="toc_entry">ほかの熱量計</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000042"><span class="toc_ref">9.3</span> <span class="toc_entry">エントロピーの値</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000043"><span class="toc_ref">9.3.1</span> <span class="toc_entry">エントロピーは直接は測れない</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000044"><span class="toc_ref">9.3.2</span> <span class="toc_entry">第三法則と絶対エントロピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000045"><span class="toc_ref">9.3.3</span> <span class="toc_entry">ほかの方法</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:tests"><span class="toc_ref">9.4</span> <span class="toc_entry">熱力学は実験で確かめられているか</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000046"><span class="toc_ref">9.4.1</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000047"><span class="toc_ref">9.4.2</span> <span class="toc_entry">恒等式の検査</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000048"><span class="toc_ref">9.4.3</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000049"><span class="toc_ref">9.4.4</span> <span class="toc_entry">温度</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000050"><span class="toc_ref">9.4.5</span> <span class="toc_entry">小さな系</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000051"><span class="toc_ref">9.4.6</span> <span class="toc_entry">公理の検査</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-assumptions.html"><span class="toc_ref">10</span> <span class="toc_entry">残っている仮定</span></a>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref">11</span> <span class="toc_entry">参考文献</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000006">5 第一法則</h1>
+<p>系を平衡状態から平衡状態へ移す手順のうち、系の外に重りの高さの変化しか残さないものを断熱操作と呼ぶ (定義&#160;<a href="sect0005.html#def:adiabatic-op">44</a>)。 図&#160;<a href="sect0004.html#fig:joule">4.1</a> の Joule の実験はその典型である。 断熱仕事の経路独立性は Joule の実験&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Joule1850" >16</a>
+	]
+</span> に基づく。 ここでの定式化は Lieb–Yngvason&#160;<span class="cite">
+	[
+	<a href="sect0008.html#LY99" >1</a>
+	, 
+	§2.4
+	]
+</span> に近い。 </p>
+<p>仕事は平衡状態の関数ではなく、断熱操作の関数である。 同じ \(X\) と \(Y\) を、かき混ぜて結ぶことも、電流を流して結ぶこともできる。 それらの仕事が等しいことが第一法則の経験的な内容 (経路独立性) である。 経路独立性が成り立つと、仕事は始状態と終状態だけで決まり、その差として平衡状態の関数 \(U : \Gamma \to \mathbb {R}\) (内部エネルギー) が定まる。 平衡状態の関数になるのは仕事 \(W\) ではなく内部エネルギー \(U\) である。 </p>
+<figure id="fig:firstlaw">
+  <div class="centered"><img src="images/img-0008.svg" alt="\includegraphics{figures/firstlaw.svg}" style="width: ; height: " />
+ <figcaption>
+  <span class="caption_title">図</span> 
+  <span class="caption_ref">5.1</span> 
+  <span class="caption_text">第一法則。同じ始状態と終状態を結ぶ断熱操作の仕事は等しい (経路独立性)。基準状態 \(X_0\) からの仕事で内部エネルギー \(U\) を定義する。</span> 
+</figcaption>  </div>
+
+</figure>
+<div class="definition_thmwrapper theorem-style-definition" id="def:apparatus">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">43</span>
+    <span class="definition_thmtitle">装置</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#def:apparatus">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0004.html#def:weight">定義 28</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   系の外にあって手順で使うもののうち、重り以外のものを装置という。 </p>
+
+  </div>
+</div>
+<p>羽根車、ひも、滑車、発電機、ピストン、容器の壁などが装置である。 </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:adiabatic-op">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">44</span>
+    <span class="definition_thmtitle">断熱操作</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#def:adiabatic-op">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#def:apparatus">定義 43</a></li>
+          
+          <li><a href="sect0003.html#def:equilibrium">定義 16</a></li>
+          
+          <li><a href="sect0003.html#def:state">定義 11</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   系を平衡状態 \(X\) から平衡状態 \(Y\) へ移す手順で、終わったとき次の二つが成り立つものを断熱操作という。 </p>
+<ul class="itemize">
+  <li><p>使った装置はすべて、始める前と同じ状態に戻っている。 </p>
+</li>
+  <li><p>系の外に残る変化は、重りの高さの変化だけである。 </p>
+</li>
+</ul>
+
+  </div>
+</div>
+<p>この定義は熱という語を使わない。 熱は後で、内部エネルギーを使って定義する (定義&#160;<a href="sect0005.html#def:heat">58</a>)。 断熱壁は、二つ目の条件を満たす手段の一つにすぎない。 </p>
+<p>Joule の実験 (図&#160;<a href="sect0004.html#fig:joule">4.1</a>) は断熱操作である。 羽根車とひもは元の状態に戻り、変化は重りの高さだけに残る。 重りで回した発電機の電流を系の中の抵抗に流す手順や、重りで押したピストンで気体を圧縮する手順も断熱操作である。 バーナーで温める手順は断熱操作ではない。燃料が減り、バーナーが元の状態に戻らないからである。 </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:ops">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">45</span>
+    <span class="definition_thmtitle">断熱操作の集まり</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#def:ops">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#def:adiabatic-op">定義 44</a></li>
+          
+          <li><a href="sect0004.html#def:drops">定義 29</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps" class="lean_decl">OpThermo.AdiabaticOps</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    \(X\) から \(Y\) へ移す断熱操作の集まりを \(\mathrm{Operation}(X, Y)\) と書く。 断熱操作 \(p\) の間の降下の記録を \(\mathrm{drops}(p)\) と書く。 </p>
+
+  </div>
+</div>
+<div class="empirical_thmwrapper theorem-style-definition" id="emp:ops-seq">
+  <div class="empirical_thmheading">
+    <span class="empirical_thmcaption">
+    経験則
+    </span>
+    <span class="empirical_thmlabel">46</span>
+    <span class="empirical_thmtitle">断熱操作は続けて行える</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#emp:ops-seq">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#def:ops">定義 45</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.comp" class="lean_decl">OpThermo.AdiabaticOps.comp</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.drops_comp" class="lean_decl">OpThermo.AdiabaticOps.drops_comp</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="empirical_thmcontent">
+  <p>    断熱操作は続けて行え、その降下の記録はそれぞれの記録をつなげたものである。 </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:prec">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">47</span>
+    <span class="definition_thmtitle">断熱到達性</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#def:prec">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#def:ops">定義 45</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.Prec" class="lean_decl">OpThermo.AdiabaticOps.Prec</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    \(X\) から \(Y\) への断熱操作が存在するとき、\(X \prec Y\) と書き、\(Y\) は \(X\) から断熱到達可能という。 </p>
+
+  </div>
+</div>
+<div class="empirical_thmwrapper theorem-style-definition" id="emp:connected">
+  <div class="empirical_thmheading">
+    <span class="empirical_thmcaption">
+    経験則
+    </span>
+    <span class="empirical_thmlabel">48</span>
+    <span class="empirical_thmtitle">連結性</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#emp:connected">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#def:prec">定義 47</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.connected" class="lean_decl">OpThermo.AdiabaticOps.connected</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.prec_total" class="lean_decl">OpThermo.AdiabaticOps.prec_total</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="empirical_thmcontent">
+  <p>    任意の二つの平衡状態 \(X, Y\) で、\(X \prec Y\) または \(Y \prec X\)。 </p>
+
+  </div>
+</div>
+<p>断熱到達性は、状態を断熱操作で比べる手順である。 この章では内部エネルギーを作るために使い、次の章ではエントロピーという目盛りを作るために使う。 </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:work">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">49</span>
+    <span class="definition_thmtitle">仕事</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#def:work">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#def:ops">定義 45</a></li>
+          
+          <li><a href="sect0004.html#def:weighted-sum">定義 34</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.work" class="lean_decl">OpThermo.AdiabaticOps.work</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.work_comp" class="lean_decl">OpThermo.AdiabaticOps.work_comp</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    重みづけ \(m\) を選ぶと、断熱操作 \(p\) の仕事を \(W_m(p) := \Sigma _m(\mathrm{drops}(p))\) と定める。 </p>
+
+  </div>
+</div>
+<p>重力加速度は使わない。 \(m\) が天秤の質量なら、\(W_m(p)\) に \(g\) を掛けたものが、重りに重力がした仕事 (定理&#160;<a href="sect0004.html#thm:gravity-work">38</a>) である。 \(W_m\) は断熱操作の上の関数であり、\(\Gamma \) の上の関数ではない。 続けて行った断熱操作の仕事は、それぞれの仕事の和である。 </p>
+<p>以下、仕事の計算に使う重みづけ \(m\) は、力学の法則 (定義&#160;<a href="sect0004.html#def:mechanical-law">39</a>) を満たす正のものに限る。 天秤の質量目盛りがその代表である。 定理&#160;<a href="sect0004.html#thm:mech-compatible">42</a> から、そうした重みづけは互いに定数倍しか違わない。 </p>
+<div class="empirical_thmwrapper theorem-style-definition" id="emp:path-indep">
+  <div class="empirical_thmheading">
+    <span class="empirical_thmcaption">
+    経験則
+    </span>
+    <span class="empirical_thmlabel">50</span>
+    <span class="empirical_thmtitle">経路独立性 (Joule)</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#emp:path-indep">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#def:work">定義 49</a></li>
+          
+          <li><a href="sect0004.html#def:mechanical-law">定義 39</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.PathIndependent" class="lean_decl">OpThermo.AdiabaticOps.PathIndependent</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="empirical_thmcontent">
+  <p>    同じ始状態と終状態を結ぶ二つの断熱操作 \(p, q \in \mathrm{Operation}(X, Y)\) で \(W_m(p) = W_m(q)\)。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:path-compatible">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">51</span>
+    <span class="theorem_thmtitle">重みづけの選び方によらない</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#thm:path-compatible">#</a>
+    
+    <a class="icon proof" href="sect0005.html#a0000000063"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#emp:path-indep">経験則 50</a></li>
+          
+          <li><a href="sect0004.html#thm:mech-compatible">定理 42</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.pathIndependent_iff_of_mechanicalLaw" class="lean_decl">OpThermo.AdiabaticOps.pathIndependent_iff_of_mechanicalLaw</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.pathIndependent_iff_of_compatible" class="lean_decl">OpThermo.AdiabaticOps.pathIndependent_iff_of_compatible</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.work_of_compatible" class="lean_decl">OpThermo.AdiabaticOps.work_of_compatible</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    力学の法則を満たす正の重みづけ \(m, m'\) の一方で経路独立性が成り立てば、他方でも成り立つ。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000063">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>定理&#160;<a href="sect0004.html#thm:mech-compatible">42</a> から \(m' = c\,  m\) (\(c {\gt} 0\)) なので \(W_{m'} = c\,  W_m\)。 </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:processes">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">52</span>
+    <span class="definition_thmtitle">経路独立な仕事を持つ断熱操作</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#def:processes">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#emp:path-indep">経験則 50</a></li>
+          
+          <li><a href="sect0005.html#emp:connected">経験則 48</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticProcesses" class="lean_decl">OpThermo.AdiabaticProcesses</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.toProcesses" class="lean_decl">OpThermo.AdiabaticOps.toProcesses</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    経路独立性が成り立つ重みづけを一つ固定すると、以下の議論に必要なのは各断熱操作の仕事 \(W(p)\) だけになる。 そこで、断熱操作の集まりと仕事 \(W\) の組で、仕事の加法性、経路独立性、連結性を満たすものを考える。 定義&#160;<a href="sect0005.html#def:ops">45</a> の断熱操作から、経路独立な重みづけを選んでこの組が作れる。 </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:work-loop">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">53</span>
+    <span class="lemma_thmtitle">閉じた断熱操作の仕事</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#lem:work-loop">#</a>
+    
+    <a class="icon proof" href="sect0005.html#a0000000064"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#def:processes">定義 52</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticProcesses.work_loop" class="lean_decl">OpThermo.AdiabaticProcesses.work_loop</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>    \(p : X \to X\) なら \(W(p) = 0\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000064">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>経路独立性から \(W(p) = W(p \circ p) = 2 W(p)\)。 </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:internal-energy">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">54</span>
+    <span class="definition_thmtitle">内部エネルギー</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#def:internal-energy">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#def:processes">定義 52</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticProcesses.internalEnergy" class="lean_decl">OpThermo.AdiabaticProcesses.internalEnergy</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.energy" class="lean_decl">OpThermo.AdiabaticOps.energy</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    基準状態 \(X_0\) を固定する。 \(X_0 \to X\) の断熱操作 \(p\) があれば \(U(X) := W(p)\)、なければ \(X \to X_0\) の断熱操作 \(q\) をとって \(U(X) := -W(q)\) とする。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:internal-energy">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">55</span>
+    <span class="theorem_thmtitle">内部エネルギーの存在</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#thm:internal-energy">#</a>
+    
+    <a class="icon proof" href="sect0005.html#a0000000065"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#def:internal-energy">定義 54</a></li>
+          
+          <li><a href="sect0005.html#lem:work-loop">補題 53</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticProcesses.internalEnergy_spec" class="lean_decl">OpThermo.AdiabaticProcesses.internalEnergy_spec</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticProcesses.exists_internalEnergy" class="lean_decl">OpThermo.AdiabaticProcesses.exists_internalEnergy</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.energy_spec" class="lean_decl">OpThermo.AdiabaticOps.energy_spec</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    任意の断熱操作 \(p : X \to Y\) について \(U(Y) - U(X) = W(p)\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000065">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(X_0\) と \(X\)、\(X_0\) と \(Y\) をそれぞれどちら向きに結ぶかで四通りに分け、合成と経路独立性を使う。 \(X_0 \to X \to Y \to X_0\) の場合は閉じた断熱操作の補題を使う。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:internal-energy-unique">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">56</span>
+    <span class="theorem_thmtitle">内部エネルギーの一意性</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#thm:internal-energy-unique">#</a>
+    
+    <a class="icon proof" href="sect0005.html#a0000000066"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#def:processes">定義 52</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticProcesses.internalEnergy_unique" class="lean_decl">OpThermo.AdiabaticProcesses.internalEnergy_unique</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    断熱仕事を再現する状態関数は、定数の差を除いて一意である。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000066">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>連結性により任意の \(X\) は \(X_0\) と一方向に結べるので、差 \(U' - U\) は定数になる。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:energy-compatible">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">57</span>
+    <span class="theorem_thmtitle">内部エネルギーも重みづけの選び方によらない</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#thm:energy-compatible">#</a>
+    
+    <a class="icon proof" href="sect0005.html#a0000000067"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#thm:path-compatible">定理 51</a></li>
+          
+          <li><a href="sect0005.html#thm:internal-energy-unique">定理 56</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticOps.internalEnergy_of_compatible" class="lean_decl">OpThermo.AdiabaticOps.internalEnergy_of_compatible</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    力学の法則を満たす正の重みづけ \(m, m' = c\,  m\) から作った内部エネルギーは、\(U' = c\,  U + d\) の関係にある。 違いは単位と基準点の選び方だけである。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000067">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(c\,  U\) は \(W_{m'}\) を再現するので、一意性の定理を適用する。 </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:heat">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">58</span>
+    <span class="definition_thmtitle">熱</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#def:heat">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#thm:internal-energy">定理 55</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticProcesses.heat" class="lean_decl">OpThermo.AdiabaticProcesses.heat</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    仕事 \(W\) を伴う、断熱とは限らない手順 \(X \to Y\) で入った熱を \(Q := U(Y) - U(X) - W\) と定義する。 第一法則 \(\Delta U = Q + W\) は定義から従う。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:heat-adiabatic">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">59</span>
+    <span class="theorem_thmtitle">断熱操作の熱</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0005.html#thm:heat-adiabatic">#</a>
+    
+    <a class="icon proof" href="sect0005.html#a0000000068"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#def:heat">定義 58</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticProcesses.heat_adiabatic" class="lean_decl">OpThermo.AdiabaticProcesses.heat_adiabatic</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.AdiabaticProcesses.first_law" class="lean_decl">OpThermo.AdiabaticProcesses.first_law</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    断熱操作で系に入る熱は \(0\) である。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000068">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>内部エネルギーの存在定理を代入する。 </p>
+
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sect0004.html" title="仕事の力学的な基礎"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0006.html" title="断熱到達性とエントロピー"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

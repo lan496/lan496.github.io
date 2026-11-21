@@ -1,0 +1,27 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}
+  \tikzset{sys/.style={draw, rounded corners=2pt, fill=boxc, minimum width=1.2cm, minimum height=1.2cm}}
+  \node[sys] (a1) at (0,0) {$x$};
+  \node[sys] (b1) at (1.35,0) {$Q-x$};
+  \node[note] at (0.675,-1.0) {分配 $x$\\(切り離した状態)};
+  \begin{scope}[xshift=5.4cm]
+    \node[sys, fill=okc!15] (a2) at (0,0) {};
+    \node[sys, fill=okc!15] (b2) at (1.2,0) {};
+    \draw[very thick, rodb] (0.6,-0.6) -- (0.6,0.6);
+    \node[above] at (0.6,0.6) {$J$};
+    \node[note] at (0.6,-1.0) {結合系の平衡 $J$\\合計 $Q$ だけで決まる};
+  \end{scope}
+  \begin{scope}[xshift=10.8cm]
+    \node[sys] (a3) at (0,0) {$u$};
+    \node[sys] (b3) at (1.35,0) {$Q-u$};
+    \node[note] at (0.675,-1.0) {分配 $u$};
+  \end{scope}
+  \draw[->, thick] (2.25,0) -- node[above, note] {接触させて待つ} (4.6,0);
+  \draw[->, thick] (7.4,0) -- node[above, note] {断熱壁で切る} (9.9,0);
+  \node[expl, anchor=west, text width=13cm] at (-0.6,-2.1)
+    {どの $x$ から始めても同じ $J$ を通るので $\gamma_A(x) + \gamma_B(Q-x) \prec \gamma_A(u) + \gamma_B(Q-u)$。\\
+     エントロピー原理から $S_A(x) + S_B(Q-x) \le S_A(u) + S_B(Q-u)$。};
+\end{tikzpicture}
+\end{document}

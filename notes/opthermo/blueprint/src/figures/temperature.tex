@@ -1,0 +1,23 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}[x=1.3cm, y=1.6cm]
+  \draw[->] (0,0) -- (6.3,0) node[right] {$u$};
+  \draw[->] (0,0) -- (0,2.6) node[above right] {$s(u) = S(\gamma(u))$};
+  \draw[thick, dashed, gray] (0.6,0) -- (0.6,2.4);
+  \node[note, anchor=north] at (0.6,0) {$I_{V,N}$ の下限};
+  \draw[very thick, rod, domain=0.62:6, samples=80] plot (\x, {0.85*ln(\x/0.55)});
+  \pgfmathsetmacro{\uo}{2.4}
+  \pgfmathsetmacro{\so}{0.85*ln(\uo/0.55)}
+  \pgfmathsetmacro{\sl}{0.85/\uo}
+  \draw[okc, thick] ({\uo-1.3}, {\so-1.3*\sl}) -- ({\uo+1.5}, {\so+1.5*\sl});
+  \fill[okc] (\uo, \so) circle (2pt);
+  \node[okc, note, anchor=south east] at ({\uo-0.1}, {\so+0.1}) {傾き $\beta = 1/T$};
+  \draw[->, thick, ngc] (2.4,-0.45) -- node[below, note] {かき混ぜ (Joule)：$\gamma(u) \prec \gamma(v)$} (4.6,-0.45);
+  \node[note, below] at (2.4,0) {$u$};
+  \node[note, below] at (4.6,0) {$v$};
+  \node[expl, anchor=west, text width=12cm] at (0,-1.25)
+    {かき混ぜでエネルギーを上げられるので、エントロピー原理から $s$ は単調で、$\beta \ge 0$。\\
+     傾きが緩いほど温度が高い。};
+\end{tikzpicture}
+\end{document}

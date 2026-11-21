@@ -40,6 +40,7 @@ jobs:
           bundle exec htmlproofer _site
           --disable-external
           --ignore-empty-alt
+          --allow-missing-href
           --checks Links,Images,Scripts
 
       - uses: actions/upload-pages-artifact@v5

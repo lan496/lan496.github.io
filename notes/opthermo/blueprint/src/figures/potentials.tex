@@ -1,0 +1,42 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}
+  \tikzset{bath/.style={draw, rounded corners=2pt, fill=ngc!10}, sysb/.style={draw, rounded corners=2pt, fill=boxc}}
+  % (a) Helmholtz
+  \node[anchor=west, font=\bfseries] at (-0.2, 3.6) {(a) 熱浴：$F = U - T_0 S$};
+  \draw[bath] (0,0) rectangle (4,3);
+  \node[note] at (2,2.65) {熱浴 $T_0$};
+  \draw[sysb] (1,0.5) rectangle (3,2.2);
+  \node at (2,1.35) {系};
+  \draw[line width=2pt, rodb] (1,0.5) rectangle (3,2.2);
+  \node[note] at (2,-0.4) {熱を通す壁、体積一定};
+  % (b) enthalpy
+  \begin{scope}[xshift=5.9cm]
+    \node[anchor=west, font=\bfseries] at (-0.2, 3.6) {(b) ピストン：$H = U + p_0 V$};
+    \draw[line width=2.5pt] (0.6,0) -- (0.6,2.6);
+    \draw[line width=2.5pt] (3.4,0) -- (3.4,2.6);
+    \draw[line width=2.5pt] (0.6,0) -- (3.4,0);
+    \fill[boxc] (0.72,0.12) rectangle (3.28,1.6);
+    \node at (2,0.85) {系};
+    \draw[fill=gray!40] (0.72,1.6) rectangle (3.28,1.8);
+    \draw[fill=rod!35] (1.4,1.8) rectangle (2.6,2.5);
+    \node[note] at (2,2.15) {重り};
+    \node[note] at (2,-0.4) {断熱壁、圧力 $p_0$};
+  \end{scope}
+  % (c) Gibbs
+  \begin{scope}[xshift=11.8cm]
+    \node[anchor=west, font=\bfseries] at (-0.2, 3.6) {(c) 両方：$G = U + p_0 V - T_0 S$};
+    \draw[bath] (0,0) rectangle (4,3);
+    \node[note] at (2,2.7) {熱浴 $T_0$};
+    \draw[line width=2pt, rodb] (1,0.4) -- (1,2.3);
+    \draw[line width=2pt, rodb] (3,0.4) -- (3,2.3);
+    \draw[line width=2pt, rodb] (1,0.4) -- (3,0.4);
+    \fill[boxc] (1.08,0.48) rectangle (2.92,1.6);
+    \node at (2,1.0) {系};
+    \draw[fill=gray!40] (1.08,1.6) rectangle (2.92,1.75);
+    \draw[fill=rod!35] (1.6,1.75) rectangle (2.4,2.25);
+    \node[note] at (2,-0.4) {熱を通す壁、圧力 $p_0$};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

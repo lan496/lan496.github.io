@@ -1,0 +1,41 @@
+% Printable version of the blueprint, compiled by xelatex (`leanblueprint pdf`).
+
+\documentclass[a4paper]{report}
+
+\usepackage{geometry}
+\usepackage{expl3}
+\usepackage{graphicx}
+\usepackage{amssymb, amsthm, mathtools}
+\usepackage[unicode,colorlinks=true,linkcolor=blue,urlcolor=magenta,citecolor=blue]{hyperref}
+\usepackage[warnings-off={mathtools-colon,mathtools-overbracket}]{unicode-math}
+\usepackage{xeCJK}
+\setCJKmainfont[AutoFakeSlant]{Hiragino Mincho ProN}
+\setCJKsansfont{Hiragino Sans}
+\setCJKmonofont{Hiragino Sans}
+
+\input{macros/common}
+\input{macros/print}
+
+% Boxed statements: definitions in blue, empirical laws in green, theorems, lemmas and corollaries in amber.
+\usepackage[most]{tcolorbox}
+\definecolor{defframe}{RGB}{58,107,176}
+\definecolor{defback}{RGB}{241,245,251}
+\definecolor{thmframe}{RGB}{192,122,28}
+\definecolor{thmback}{RGB}{253,247,236}
+\tcbset{opbox/.style={enhanced, breakable, boxrule=0.4pt, leftrule=3pt, arc=2pt, left=6pt, right=6pt, top=4pt, bottom=4pt, before skip=8pt, after skip=8pt}}
+\tcolorboxenvironment{definition}{opbox, colframe=defframe, colback=defback}
+\definecolor{empframe}{RGB}{46,139,87}
+\definecolor{empback}{RGB}{238,248,241}
+\tcolorboxenvironment{empirical}{opbox, colframe=empframe, colback=empback}
+\tcolorboxenvironment{theorem}{opbox, colframe=thmframe, colback=thmback}
+\tcolorboxenvironment{lemma}{opbox, colframe=thmframe, colback=thmback}
+\tcolorboxenvironment{proposition}{opbox, colframe=thmframe, colback=thmback}
+\tcolorboxenvironment{corollary}{opbox, colframe=thmframe, colback=thmback}
+
+\title{操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで}
+\author{OpThermo}
+
+\begin{document}
+\maketitle
+\input{content}
+\end{document}

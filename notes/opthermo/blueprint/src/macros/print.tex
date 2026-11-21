@@ -1,0 +1,19 @@
+% Macros used only by the print version.
+% Dummy versions of the plasTeX-only blueprint macros.
+
+\newcommand{\lean}[1]{}
+\newcommand{\discussion}[1]{}
+\newcommand{\leanok}{}
+\newcommand{\mathlibok}{}
+\newcommand{\notready}{}
+\ExplSyntaxOn
+\NewDocumentCommand{\uses}{m}
+ {\clist_map_inline:nn{#1}{\vphantom{\ref{##1}}}%
+  \ignorespaces}
+\NewDocumentCommand{\proves}{m}
+ {\clist_map_inline:nn{#1}{\vphantom{\ref{##1}}}%
+  \ignorespaces}
+\ExplSyntaxOff
+
+% Figures: PDF for print (built by scripts/build_figures.py).
+\newcommand{\opgraphic}[1]{\includegraphics[width=\linewidth]{figures/#1.pdf}}

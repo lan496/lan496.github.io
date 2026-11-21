@@ -1,0 +1,32 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}
+  % (a) two systems
+  \node[anchor=west, font=\bfseries] at (-0.2, 3.4) {(a) 保存量 $q$ を交換する二つの系};
+  \draw[box] (0,0.6) rectangle (2.2,2.6) node[midway, align=center] {A\\[2pt]$S_A(x)$};
+  \draw[box] (2.5,0.6) rectangle (4.7,2.6) node[midway, align=center] {B\\[2pt]$S_B(Q-x)$};
+  \draw[<->, thick] (1.9,1.0) -- node[below=2pt, note] {$q$} (2.8,1.0);
+  \node[note] at (2.35, 0.1) {$q$ は $U$, $V$, $N$ のどれか\\合計 $Q$ は一定};
+
+  % (b) total entropy
+  \begin{scope}[xshift=6.4cm, x=1.15cm, y=2.4cm]
+    \node[anchor=west, font=\bfseries] at (-0.2, 1.45) {(b) 全エントロピー $F(x) = S_A(x) + S_B(Q-x)$};
+    \draw[->] (0,0) -- (4.4,0) node[right] {$x$};
+    \draw[->] (0,0) -- (0,1.3) node[left, note] {$S$};
+    \draw[thick, rod, domain=0:4, samples=60] plot (\x, {0.45*ln(1+\x)});
+    \draw[thick, rodb, domain=0:4, samples=60] plot (\x, {0.34*ln(5-\x)});
+    \draw[very thick, okc, domain=0:4, samples=80] plot (\x, {0.45*ln(1+\x) + 0.34*ln(5-\x)});
+    \node[rod, note, anchor=north west] at (3.3, {0.45*ln(4.3)}) {$S_A(x)$};
+    \node[rodb, note, anchor=south west] at (3.3, {0.34*ln(1.7)}) {$S_B(Q-x)$};
+    \node[okc, note, anchor=west] at (4.05, {0.45*ln(5)+0.03}) {$F(x)$};
+    \pgfmathsetmacro{\um}{(5*0.45-0.34)/(0.45+0.34)}
+    \pgfmathsetmacro{\Fm}{0.45*ln(1+\um) + 0.34*ln(5-\um)}
+    \draw[dashed] (\um, 0) node[below] {$x^*$} -- (\um, \Fm);
+    \fill[okc] (\um, \Fm) circle (2pt);
+    \node[note, anchor=south] at (\um+0.45, \Fm+0.05) {極大：$\partial S_A/\partial q = \partial S_B/\partial q$};
+  \end{scope}
+  \node[expl, anchor=west, text width=14cm] at (-0.2,-1.0)
+    {$q = U$ なら $1/T_A = 1/T_B$。極大点の手前では、温度の低い系にエネルギーが流れる向きで $F$ が増える。};
+\end{tikzpicture}
+\end{document}

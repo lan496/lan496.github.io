@@ -1,0 +1,27 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}
+  \tikzset{sys/.style={draw, rounded corners=2pt, fill=boxc, minimum width=1.4cm, minimum height=1.3cm}}
+  \foreach \k/\title/\q/\cond/\wall in {
+      0/熱を通す壁/{$U$}/{$T_A = T_B$}/0,
+      1/動く壁 (ピストン)/{$U, V$}/{$T_A = T_B$, $p_A = p_B$}/1,
+      2/成分 $i$ を通す膜/{$U, N_i$}/{$T_A = T_B$, $\mu_{A,i} = \mu_{B,i}$}/2} {
+    \begin{scope}[xshift=\k*4.6cm]
+      \node[font=\bfseries] at (1.5,1.3) {\title};
+      \node[sys] at (0.75,0) {A};
+      \node[sys] at (2.25,0) {B};
+      \ifcase\wall
+        \draw[line width=2.5pt, rodb] (1.5,-0.65) -- (1.5,0.65);
+      \or
+        \draw[line width=2.5pt, rodb] (1.5,-0.65) -- (1.5,0.65);
+        \draw[<->, thick] (1.1,-0.95) -- (1.9,-0.95);
+      \or
+        \draw[line width=2.5pt, rodb, dash pattern=on 3pt off 2pt] (1.5,-0.65) -- (1.5,0.65);
+      \fi
+      \node[note] at (1.5,-1.45) {やりとりする量：\q};
+      \node[note] at (1.5,-1.95) {平衡：\cond};
+    \end{scope}
+  }
+\end{tikzpicture}
+\end{document}

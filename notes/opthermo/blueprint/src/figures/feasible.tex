@@ -1,0 +1,32 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}
+  % (a) one weight
+  \node[anchor=west, font=\bfseries] at (-3.2, 2.0) {(a) 重り $b$ 一つ：記録 $r = [(b, h)]$};
+  \fill[ngc!20] (-3,-0.25) rectangle (0,0.25);
+  \fill[gray!20] (0,-0.25) rectangle (3,0.25);
+  \draw[->] (-3.2,0) -- (3.3,0) node[right] {$h$};
+  \fill[okc] (0,0) circle (3pt);
+  \node[note, ngc!80!black, text width=3.4cm] at (-1.5, 0.95) {実現できない\\(装置だけで持ち上げる)};
+  \node[note, okc!70!black] at (0,-0.65) {$h = 0$：何もしない};
+  \node[note, text width=2.8cm] at (1.6, 0.95) {法則は何も決めない\\(摩擦で下げられる)};
+  \node[expl, anchor=north west, text width=6.4cm] at (-3.2,-1.2)
+    {水と羽根車を加えた Joule の断熱操作では $h > 0$ が起き、その分が水になされた仕事になる。
+     力学的な装置だけでは、重りを持ち上げることはできない。};
+
+  % (b) two weights
+  \begin{scope}[xshift=9.2cm]
+    \node[anchor=west, font=\bfseries] at (-3.0, 2.0) {(b) 重り $b$, $u$：記録 $r = [(b, h_b), (u, h_u)]$};
+    \fill[ngc!20] (-2.5,1.25) -- (2.5,-1.25) -- (2.5,-1.8) -- (-2.5,-1.8) -- cycle;
+    \fill[gray!20] (-2.5,1.25) -- (2.5,-1.25) -- (2.5,1.6) -- (-2.5,1.6) -- cycle;
+    \draw[->] (-2.6,0) -- (2.7,0) node[right] {$h_b$};
+    \draw[->] (0,-1.9) -- (0,1.7) node[above] {$h_u$};
+    \draw[okc, very thick] (-2.5,1.25) -- (2.5,-1.25);
+    \node[note, okc!70!black, anchor=west, text width=3.8cm] at (2.6,-1.25) {$m_b h_b + m_u h_u = 0$\\理想的なてこで実現できる};
+    \node[note, ngc!80!black] at (-1.2,-1.55) {$\sum m h < 0$：実現できない};
+    \node[note] at (1.1, 1.05) {$\sum m h > 0$：法則は決めない};
+    \fill (1.6,-0.8) circle (2pt) node[above right, font=\footnotesize] {てこの例};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

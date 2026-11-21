@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$'], ['\\(','\\)']] },
+  };
+  // MathJax 4 may re-render formulas after load, so tag the current containers at copy time.
+  function tagFormulas() {
+    for (const item of MathJax.startup.document.math) {
+      const root = item.typesetRoot;
+      if (!root) continue;
+      root.setAttribute('data-tex', item.math.trim());
+      if (item.display) root.setAttribute('data-display', 'true');
+    }
+  }
+  document.addEventListener('copy', (event) => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || !window.MathJax || !MathJax.startup) return;
+    tagFormulas();
+    const frag = sel.getRangeAt(0).cloneContents();
+    const boxes = frag.querySelectorAll('mjx-container[data-tex]');
+    if (boxes.length === 0) return;
+    for (const box of boxes) {
+      const tex = box.getAttribute('data-tex').replace(/\{\\gt\}/g, '>').replace(/\{\\lt\}/g, '<');
+      const text = box.hasAttribute('data-display') ? '\n$$' + tex + '$$\n' : '$' + tex + '$';
+      box.replaceWith(document.createTextNode(text));
+    }
+    const holder = document.createElement('div');
+    holder.style.position = 'fixed';
+    holder.style.left = '-10000px';
+    holder.appendChild(frag);
+    document.body.appendChild(holder);
+    const plain = holder.innerText;
+    holder.remove();
+    event.clipboardData.setData('text/plain', plain);
+    event.preventDefault();
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>参考文献</title>
+<link rel="prev" href="chap-assumptions.html" title="残っている仮定" />
+<link rel="up" href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">概要</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000010"><span class="toc_ref">1.1</span> <span class="toc_entry">用語</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">2</span> <span class="toc_entry">長さの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">3</span> <span class="toc_entry">状態と平衡状態</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0003.html#a0000000011"><span class="toc_ref">3.1</span> <span class="toc_entry">時間の目盛り</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000012"><span class="toc_ref">3.2</span> <span class="toc_entry">状態の空間</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">4</span> <span class="toc_entry">仕事の力学的な基礎</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">5</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html"><span class="toc_ref">6</span> <span class="toc_entry">断熱到達性とエントロピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html#sec:accessibility-axioms"><span class="toc_ref">6.1</span> <span class="toc_entry">断熱操作から断熱到達性へ</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000013"><span class="toc_ref">6.2</span> <span class="toc_entry">複合系の内部エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000014"><span class="toc_ref">6.3</span> <span class="toc_entry">相殺則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000015"><span class="toc_ref">6.4</span> <span class="toc_entry">基準状態と形式的な不等式</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000016"><span class="toc_ref">6.5</span> <span class="toc_entry">エントロピーの構成</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000017"><span class="toc_ref">6.6</span> <span class="toc_entry">エントロピーの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000018"><span class="toc_ref">6.7</span> <span class="toc_entry">エントロピー原理</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#sec:second-law"><span class="toc_ref">6.8</span> <span class="toc_entry">第二法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000019"><span class="toc_ref">6.9</span> <span class="toc_entry">無矛盾性</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">7</span> <span class="toc_entry">温度、圧力、化学ポテンシャル</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0007.html#a0000000020"><span class="toc_ref">7.1</span> <span class="toc_entry">温度の定義</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000021"><span class="toc_ref">7.2</span> <span class="toc_entry">熱接触と温度の比較</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000022"><span class="toc_ref">7.3</span> <span class="toc_entry">圧力と化学ポテンシャル</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:ideal-gas"><span class="toc_ref">7.4</span> <span class="toc_entry">理想気体</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:fundamental"><span class="toc_ref">7.5</span> <span class="toc_entry">基本関係式</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:concavity"><span class="toc_ref">7.6</span> <span class="toc_entry">エントロピーの凹性</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0007.html#a0000000023"><span class="toc_ref">7.6.1</span> <span class="toc_entry">凹性から出ること</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000024"><span class="toc_ref">7.6.2</span> <span class="toc_entry">安定性</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000025"><span class="toc_ref">7.6.3</span> <span class="toc_entry">相の共存</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000026"><span class="toc_ref">7.6.4</span> <span class="toc_entry">凹性と自由エネルギー</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:heat-capacity"><span class="toc_ref">7.7</span> <span class="toc_entry">熱容量</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:third-law"><span class="toc_ref">7.8</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html"><span class="toc_ref">8</span> <span class="toc_entry">自由エネルギーとエンタルピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-potentials.html#a0000000027"><span class="toc_ref">8.1</span> <span class="toc_entry">環境</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-potentials.html#sec:large-reservoir"><span class="toc_ref">8.1.1</span> <span class="toc_entry">大きな溜め</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000028"><span class="toc_ref">8.2</span> <span class="toc_entry">Helmholtz 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000029"><span class="toc_ref">8.3</span> <span class="toc_entry">エンタルピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000030"><span class="toc_ref">8.4</span> <span class="toc_entry">Gibbs 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000031"><span class="toc_ref">8.5</span> <span class="toc_entry">エネルギーとエンタルピーの最小原理</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000032"><span class="toc_ref">8.6</span> <span class="toc_entry">ポテンシャルの微分</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html"><span class="toc_ref">9</span> <span class="toc_entry">実験室での熱測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-calorimetry.html#sec:thermometry"><span class="toc_ref">9.1</span> <span class="toc_entry">温度の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000033"><span class="toc_ref">9.1.1</span> <span class="toc_entry">温度計が測っているもの</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000034"><span class="toc_ref">9.1.2</span> <span class="toc_entry">温度の比と単位</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000035"><span class="toc_ref">9.1.3</span> <span class="toc_entry">一次温度計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000036"><span class="toc_ref">9.1.4</span> <span class="toc_entry">国際温度目盛</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000037"><span class="toc_ref">9.1.5</span> <span class="toc_entry">一次温度計どうしの一致</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:measure-heat-capacity"><span class="toc_ref">9.2</span> <span class="toc_entry">熱容量の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000038"><span class="toc_ref">9.2.1</span> <span class="toc_entry">断熱型熱量計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000039"><span class="toc_ref">9.2.2</span> <span class="toc_entry">定圧と定積</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000040"><span class="toc_ref">9.2.3</span> <span class="toc_entry">相転移</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000041"><span class="toc_ref">9.2.4</span> <span class="toc_entry">ほかの熱量計</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000042"><span class="toc_ref">9.3</span> <span class="toc_entry">エントロピーの値</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000043"><span class="toc_ref">9.3.1</span> <span class="toc_entry">エントロピーは直接は測れない</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000044"><span class="toc_ref">9.3.2</span> <span class="toc_entry">第三法則と絶対エントロピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000045"><span class="toc_ref">9.3.3</span> <span class="toc_entry">ほかの方法</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:tests"><span class="toc_ref">9.4</span> <span class="toc_entry">熱力学は実験で確かめられているか</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000046"><span class="toc_ref">9.4.1</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000047"><span class="toc_ref">9.4.2</span> <span class="toc_entry">恒等式の検査</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000048"><span class="toc_ref">9.4.3</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000049"><span class="toc_ref">9.4.4</span> <span class="toc_entry">温度</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000050"><span class="toc_ref">9.4.5</span> <span class="toc_entry">小さな系</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000051"><span class="toc_ref">9.4.6</span> <span class="toc_entry">公理の検査</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-assumptions.html"><span class="toc_ref">10</span> <span class="toc_entry">残っている仮定</span></a>
+ </li>
+<li class=" active current">
+  <a href="sect0008.html"><span class="toc_ref">11</span> <span class="toc_entry">参考文献</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000009">11 参考文献</h1>
+<dl class="bibliography">
+  <dt><a name="LY99">1</a></dt>
+  <dd><p>E.&#160;H. Lieb and J.&#160;Yngvason, The physics and mathematics of the second law of thermodynamics, <em>Physics Reports</em> <b class="bfseries">310</b>, 1–96 (1999). </p>
+</dd>
+  <dt><a name="LY98">2</a></dt>
+  <dd><p>E.&#160;H. Lieb and J.&#160;Yngvason, A guide to entropy and the second law of thermodynamics, <em>Notices of the American Mathematical Society</em> <b class="bfseries">45</b>, 571–581 (1998). </p>
+</dd>
+  <dt><a name="LY00">3</a></dt>
+  <dd><p>E.&#160;H. Lieb and J.&#160;Yngvason, A fresh look at entropy and the second law of thermodynamics, <em>Physics Today</em> <b class="bfseries">53</b>(4), 32–37 (2000). </p>
+</dd>
+  <dt><a name="LY13">4</a></dt>
+  <dd><p>E.&#160;H. Lieb and J.&#160;Yngvason, The entropy concept for non-equilibrium states, <em>Proceedings of the Royal Society A</em> <b class="bfseries">469</b>, 20130408 (2013). </p>
+</dd>
+  <dt><a name="Caratheodory1909">5</a></dt>
+  <dd><p>C.&#160;Carathéodory, Untersuchungen über die Grundlagen der Thermodynamik, <em>Mathematische Annalen</em> <b class="bfseries">67</b>, 355–386 (1909). </p>
+</dd>
+  <dt><a name="Giles1964">6</a></dt>
+  <dd><p>R.&#160;Giles, <em>Mathematical Foundations of Thermodynamics</em>, Pergamon Press (1964). </p>
+</dd>
+  <dt><a name="Buchdahl1966">7</a></dt>
+  <dd><p>H.&#160;A. Buchdahl, <em>The Concepts of Classical Thermodynamics</em>, Cambridge University Press (1966). </p>
+</dd>
+  <dt><a name="Thess2011">8</a></dt>
+  <dd><p>A.&#160;Thess, <em>The Entropy Principle: Thermodynamics for the Unsatisfied</em>, Springer (2011). </p>
+</dd>
+  <dt><a name="Tasaki2000">9</a></dt>
+  <dd><p>田崎晴明, <em>熱力学――現代的な視点から</em>, 培風館 (2000). </p>
+</dd>
+  <dt><a name="Sasa2000">10</a></dt>
+  <dd><p>佐々真一, <em>熱力学入門</em>, 共立出版 (2000). </p>
+</dd>
+  <dt><a name="ITS90">11</a></dt>
+  <dd><p>H.&#160;Preston-Thomas, The International Temperature Scale of 1990 (ITS-90), <em>Metrologia</em> <b class="bfseries">27</b>, 3–10 (1990). </p>
+</dd>
+  <dt><a name="SI2019">12</a></dt>
+  <dd><p>Bureau International des Poids et Mesures, <em>The International System of Units (SI)</em>, 9th edition (2019). </p>
+</dd>
+  <dt><a name="GiauqueStout1936">13</a></dt>
+  <dd><p>W.&#160;F. Giauque and J.&#160;W. Stout, The entropy of water and the third law of thermodynamics. The heat capacity of ice from 15 to 273\(^\circ \)K, <em>Journal of the American Chemical Society</em> <b class="bfseries">58</b>, 1144–1150 (1936). </p>
+</dd>
+  <dt><a name="Pauling1935">14</a></dt>
+  <dd><p>L.&#160;Pauling, The structure and entropy of ice and of other crystals with some randomness of atomic arrangement, <em>Journal of the American Chemical Society</em> <b class="bfseries">57</b>, 2680–2684 (1935). </p>
+</dd>
+  <dt><a name="Callen1985">15</a></dt>
+  <dd><p>H.&#160;B. Callen, <em>Thermodynamics and an Introduction to Thermostatistics</em>, 2nd ed., Wiley (1985). </p>
+</dd>
+  <dt><a name="Joule1850">16</a></dt>
+  <dd><p>J.&#160;P. Joule, On the mechanical equivalent of heat, <em>Philosophical Transactions of the Royal Society of London</em> <b class="bfseries">140</b>, 61–82 (1850). </p>
+</dd>
+  <dt><a name="Clausius1865">17</a></dt>
+  <dd><p>R.&#160;Clausius, Über verschiedene für die Anwendung bequeme Formen der Hauptgleichungen der mechanischen Wärmetheorie, <em>Annalen der Physik und Chemie</em> <b class="bfseries">125</b>, 353–400 (1865). </p>
+</dd>
+  <dt><a name="Gibbs1876">18</a></dt>
+  <dd><p>J.&#160;W. Gibbs, On the equilibrium of heterogeneous substances, <em>Transactions of the Connecticut Academy of Arts and Sciences</em> <b class="bfseries">3</b>, 108–248 (1876) and 343–524 (1878). </p>
+</dd>
+  <dt><a name="Bridgman1927">19</a></dt>
+  <dd><p>P.&#160;W. Bridgman, <em>The Logic of Modern Physics</em>, Macmillan (1927). </p>
+</dd>
+  <dt><a name="Holder1901">20</a></dt>
+  <dd><p>O.&#160;Hölder, Die Axiome der Quantität und die Lehre vom Mass, <em>Berichte über die Verhandlungen der Königlich Sächsischen Gesellschaft der Wissenschaften zu Leipzig, Mathematisch-Physische Classe</em> <b class="bfseries">53</b>, 1–64 (1901). </p>
+</dd>
+  <dt><a name="KLST1971">21</a></dt>
+  <dd><p>D.&#160;H. Krantz, R.&#160;D. Luce, P.&#160;Suppes, and A.&#160;Tversky, <em>Foundations of Measurement, Vol.&#160;I: Additive and Polynomial Representations</em>, Academic Press (1971). </p>
+</dd>
+  <dt><a name="Hardy2001">22</a></dt>
+  <dd><p>L.&#160;Hardy, Quantum theory from five reasonable axioms, arXiv:quant-ph/0101012 (2001). </p>
+</dd>
+  <dt><a name="CDP2010">23</a></dt>
+  <dd><p>G.&#160;Chiribella, G.&#160;M. D’Ariano, and P.&#160;Perinotti, Probabilistic theories with purification, <em>Physical Review A</em> <b class="bfseries">81</b>, 062348 (2010). </p>
+</dd>
+  <dt><a name="Lean4">24</a></dt>
+  <dd><p>L.&#160;de Moura and S.&#160;Ullrich, The Lean 4 theorem prover and programming language, in <em>Automated Deduction – CADE 28</em>, LNCS <b class="bfseries">12699</b>, 625–635, Springer (2021). </p>
+</dd>
+  <dt><a name="Mathlib2020">25</a></dt>
+  <dd><p>The mathlib Community, The Lean mathematical library, in <em>Proceedings of the 9th ACM SIGPLAN International Conference on Certified Programs and Proofs (CPP 2020)</em>, 367–381 (2020). </p>
+</dd>
+  <dt><a name="Fischer2018">26</a></dt>
+  <dd><p>J.&#160;Fischer <em>et al.</em>, The Boltzmann project, <em>Metrologia</em> <b class="bfseries">55</b>, R1–R20 (2018). </p>
+</dd>
+  <dt><a name="Fischer2011">27</a></dt>
+  <dd><p>J.&#160;Fischer <em>et al.</em>, Present estimates of the differences between thermodynamic temperatures and the ITS-90, <em>International Journal of Thermophysics</em> <b class="bfseries">32</b>, 12–25 (2011). </p>
+</dd>
+  <dt><a name="Moldover1988">28</a></dt>
+  <dd><p>M.&#160;R. Moldover, J.&#160;P.&#160;M. Trusler, T.&#160;J. Edwards, J.&#160;B. Mehl, and R.&#160;S. Davis, Measurement of the universal gas constant \(R\) using a spherical acoustic resonator, <em>Journal of Research of the National Bureau of Standards</em> <b class="bfseries">93</b>, 85 (1988). </p>
+</dd>
+  <dt><a name="Moldover2014">29</a></dt>
+  <dd><p>M.&#160;R. Moldover, R.&#160;M. Gavioso, J.&#160;B. Mehl, L.&#160;Pitre, M.&#160;de&#160;Podesta, and J.&#160;T. Zhang, Acoustic gas thermometry, <em>Metrologia</em> <b class="bfseries">51</b>, R1–R19 (2014). </p>
+</dd>
+  <dt><a name="dePodesta2013">30</a></dt>
+  <dd><p>M.&#160;de&#160;Podesta <em>et al.</em>, A low-uncertainty measurement of the Boltzmann constant, <em>Metrologia</em> <b class="bfseries">50</b>, 354–376 (2013). </p>
+</dd>
+  <dt><a name="Westrum1968">31</a></dt>
+  <dd><p>E.&#160;F. Westrum, Jr., G.&#160;T. Furukawa, and J.&#160;P. McCullough, Adiabatic low-temperature calorimetry, in J.&#160;P. McCullough and D.&#160;W. Scott (eds.), <em>Experimental Thermodynamics, Vol.&#160;I: Calorimetry of Non-reacting Systems</em>, Butterworths (1968), pp.&#160;133–214. </p>
+</dd>
+  <dt><a name="Bachmann1972">32</a></dt>
+  <dd><p>R.&#160;Bachmann <em>et al.</em>, Heat capacity measurements on small samples at low temperatures, <em>Review of Scientific Instruments</em> <b class="bfseries">43</b>, 205–214 (1972). </p>
+</dd>
+  <dt><a name="Hwang1997">33</a></dt>
+  <dd><p>J.&#160;S. Hwang, K.&#160;J. Lin, and C.&#160;Tien, Measurement of heat capacity by fitting the whole temperature response of a heat-pulse calorimeter, <em>Review of Scientific Instruments</em> <b class="bfseries">68</b>, 94–101 (1997). </p>
+</dd>
+  <dt><a name="Lashley2003">34</a></dt>
+  <dd><p>J.&#160;C. Lashley <em>et al.</em>, Critical examination of heat capacity measurements made on a Quantum Design physical property measurement system, <em>Cryogenics</em> <b class="bfseries">43</b>, 369–378 (2003). </p>
+</dd>
+  <dt><a name="Watson1964">35</a></dt>
+  <dd><p>E.&#160;S. Watson, M.&#160;J. O’Neill, J.&#160;Justin, and N.&#160;Brenner, A differential scanning calorimeter for quantitative differential thermal analysis, <em>Analytical Chemistry</em> <b class="bfseries">36</b>, 1233–1238 (1964). </p>
+</dd>
+  <dt><a name="CODATA1989">36</a></dt>
+  <dd><p>J.&#160;D. Cox, D.&#160;D. Wagman, and V.&#160;A. Medvedev (eds.), <em>CODATA Key Values for Thermodynamics</em>, Hemisphere (1989). </p>
+</dd>
+  <dt><a name="Gerke1922">37</a></dt>
+  <dd><p>R.&#160;H. Gerke, Temperature coefficient of electromotive force of galvanic cells and the entropy of reactions, <em>Journal of the American Chemical Society</em> <b class="bfseries">44</b>, 1684–1704 (1922). </p>
+</dd>
+  <dt><a name="RoebuckOsterberg1933">38</a></dt>
+  <dd><p>J.&#160;R. Roebuck and H.&#160;Osterberg, The Joule–Thomson effect in helium, <em>Physical Review</em> <b class="bfseries">43</b>, 60–69 (1933). </p>
+</dd>
+  <dt><a name="Herington1947">39</a></dt>
+  <dd><p>E.&#160;F.&#160;G. Herington, A thermodynamic test for the internal consistency of experimental data on volatility ratios, <em>Nature</em> <b class="bfseries">160</b>, 610–611 (1947). </p>
+</dd>
+  <dt><a name="RedlichKister1948">40</a></dt>
+  <dd><p>O.&#160;Redlich and A.&#160;T. Kister, Algebraic representation of thermodynamic properties and the classification of solutions, <em>Industrial &amp; Engineering Chemistry</em> <b class="bfseries">40</b>, 345–348 (1948). </p>
+</dd>
+  <dt><a name="VanNess1973">41</a></dt>
+  <dd><p>H.&#160;C. Van&#160;Ness, S.&#160;M. Byer, and R.&#160;E. Gibbs, Vapor-liquid equilibrium: Part I. An appraisal of data reduction methods, <em>AIChE Journal</em> <b class="bfseries">19</b>, 238–244 (1973). </p>
+</dd>
+  <dt><a name="Frenkel2005">42</a></dt>
+  <dd><p>M.&#160;Frenkel, R.&#160;D. Chirico, V.&#160;Diky, X.&#160;Yan, Q.&#160;Dong, and C.&#160;Muzny, ThermoData Engine (TDE): software implementation of the dynamic data evaluation concept, <em>Journal of Chemical Information and Modeling</em> <b class="bfseries">45</b>, 816–838 (2005). </p>
+</dd>
+  <dt><a name="EastmanMcGavock1937">43</a></dt>
+  <dd><p>E.&#160;D. Eastman and W.&#160;C. McGavock, The heat capacity and entropy of rhombic and monoclinic sulfur, <em>Journal of the American Chemical Society</em> <b class="bfseries">59</b>, 145–151 (1937). </p>
+</dd>
+  <dt><a name="StephensonGiauque1937">44</a></dt>
+  <dd><p>C.&#160;C. Stephenson and W.&#160;F. Giauque, A test of the third law of thermodynamics by means of two crystalline forms of phosphine, <em>Journal of Chemical Physics</em> <b class="bfseries">5</b>, 149–158 (1937). </p>
+</dd>
+  <dt><a name="GiauqueWiebe1928">45</a></dt>
+  <dd><p>W.&#160;F. Giauque and R.&#160;Wiebe, The entropy of hydrogen chloride, <em>Journal of the American Chemical Society</em> <b class="bfseries">50</b>, 101–122 (1928). </p>
+</dd>
+  <dt><a name="GiauqueJohnston1929">46</a></dt>
+  <dd><p>W.&#160;F. Giauque and H.&#160;L. Johnston, The heat capacity of oxygen from 12\(^\circ \)K to its boiling point and its heat of vaporization. The entropy from spectroscopic data, <em>Journal of the American Chemical Society</em> <b class="bfseries">51</b>, 2300–2321 (1929). </p>
+</dd>
+  <dt><a name="Wilks1961">47</a></dt>
+  <dd><p>J.&#160;Wilks, <em>The Third Law of Thermodynamics</em>, Oxford University Press (1961). </p>
+</dd>
+  <dt><a name="Wang2002">48</a></dt>
+  <dd><p>G.&#160;M. Wang, E.&#160;M. Sevick, E.&#160;Mittag, D.&#160;J. Searles, and D.&#160;J. Evans, Experimental demonstration of violations of the second law of thermodynamics for small systems and short time scales, <em>Physical Review Letters</em> <b class="bfseries">89</b>, 050601 (2002). </p>
+</dd>
+  <dt><a name="Liphardt2002">49</a></dt>
+  <dd><p>J.&#160;Liphardt, S.&#160;Dumont, S.&#160;B. Smith, I.&#160;Tinoco, Jr., and C.&#160;Bustamante, Equilibrium information from nonequilibrium measurements in an experimental test of Jarzynski’s equality, <em>Science</em> <b class="bfseries">296</b>, 1832–1835 (2002). </p>
+</dd>
+  <dt><a name="Collin2005">50</a></dt>
+  <dd><p>D.&#160;Collin, F.&#160;Ritort, C.&#160;Jarzynski, S.&#160;B. Smith, I.&#160;Tinoco, Jr., and C.&#160;Bustamante, Verification of the Crooks fluctuation theorem and recovery of RNA folding free energies, <em>Nature</em> <b class="bfseries">437</b>, 231–234 (2005). </p>
+</dd>
+  <dt><a name="Berut2012">51</a></dt>
+  <dd><p>A.&#160;Bérut, A.&#160;Arakelyan, A.&#160;Petrosyan, S.&#160;Ciliberto, R.&#160;Dillenschneider, and E.&#160;Lutz, Experimental verification of Landauer’s principle linking information and thermodynamics, <em>Nature</em> <b class="bfseries">483</b>, 187–189 (2012). </p>
+</dd>
+  <dt><a name="Toyabe2010">52</a></dt>
+  <dd><p>S.&#160;Toyabe, T.&#160;Sagawa, M.&#160;Ueda, E.&#160;Muneyuki, and M.&#160;Sano, Experimental demonstration of information-to-energy conversion and validation of the generalized Jarzynski equality, <em>Nature Physics</em> <b class="bfseries">6</b>, 988–992 (2010). </p>
+</dd>
+</dl>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="chap-assumptions.html" title="残っている仮定"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

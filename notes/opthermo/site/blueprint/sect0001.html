@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$'], ['\\(','\\)']] },
+  };
+  // MathJax 4 may re-render formulas after load, so tag the current containers at copy time.
+  function tagFormulas() {
+    for (const item of MathJax.startup.document.math) {
+      const root = item.typesetRoot;
+      if (!root) continue;
+      root.setAttribute('data-tex', item.math.trim());
+      if (item.display) root.setAttribute('data-display', 'true');
+    }
+  }
+  document.addEventListener('copy', (event) => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || !window.MathJax || !MathJax.startup) return;
+    tagFormulas();
+    const frag = sel.getRangeAt(0).cloneContents();
+    const boxes = frag.querySelectorAll('mjx-container[data-tex]');
+    if (boxes.length === 0) return;
+    for (const box of boxes) {
+      const tex = box.getAttribute('data-tex').replace(/\{\\gt\}/g, '>').replace(/\{\\lt\}/g, '<');
+      const text = box.hasAttribute('data-display') ? '\n$$' + tex + '$$\n' : '$' + tex + '$';
+      box.replaceWith(document.createTextNode(text));
+    }
+    const holder = document.createElement('div');
+    holder.style.position = 'fixed';
+    holder.style.left = '-10000px';
+    holder.appendChild(frag);
+    document.body.appendChild(holder);
+    const plain = holder.innerText;
+    holder.remove();
+    event.clipboardData.setData('text/plain', plain);
+    event.preventDefault();
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>概要</title>
+<link rel="next" href="sect0002.html" title="長さの測定" />
+<link rel="prev" href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで" />
+<link rel="up" href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class=" active current">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">概要</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sect0001.html#a0000000010"><span class="toc_ref">1.1</span> <span class="toc_entry">用語</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">2</span> <span class="toc_entry">長さの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">3</span> <span class="toc_entry">状態と平衡状態</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0003.html#a0000000011"><span class="toc_ref">3.1</span> <span class="toc_entry">時間の目盛り</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000012"><span class="toc_ref">3.2</span> <span class="toc_entry">状態の空間</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">4</span> <span class="toc_entry">仕事の力学的な基礎</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">5</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html"><span class="toc_ref">6</span> <span class="toc_entry">断熱到達性とエントロピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html#sec:accessibility-axioms"><span class="toc_ref">6.1</span> <span class="toc_entry">断熱操作から断熱到達性へ</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000013"><span class="toc_ref">6.2</span> <span class="toc_entry">複合系の内部エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000014"><span class="toc_ref">6.3</span> <span class="toc_entry">相殺則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000015"><span class="toc_ref">6.4</span> <span class="toc_entry">基準状態と形式的な不等式</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000016"><span class="toc_ref">6.5</span> <span class="toc_entry">エントロピーの構成</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000017"><span class="toc_ref">6.6</span> <span class="toc_entry">エントロピーの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000018"><span class="toc_ref">6.7</span> <span class="toc_entry">エントロピー原理</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#sec:second-law"><span class="toc_ref">6.8</span> <span class="toc_entry">第二法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000019"><span class="toc_ref">6.9</span> <span class="toc_entry">無矛盾性</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">7</span> <span class="toc_entry">温度、圧力、化学ポテンシャル</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0007.html#a0000000020"><span class="toc_ref">7.1</span> <span class="toc_entry">温度の定義</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000021"><span class="toc_ref">7.2</span> <span class="toc_entry">熱接触と温度の比較</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000022"><span class="toc_ref">7.3</span> <span class="toc_entry">圧力と化学ポテンシャル</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:ideal-gas"><span class="toc_ref">7.4</span> <span class="toc_entry">理想気体</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:fundamental"><span class="toc_ref">7.5</span> <span class="toc_entry">基本関係式</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:concavity"><span class="toc_ref">7.6</span> <span class="toc_entry">エントロピーの凹性</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0007.html#a0000000023"><span class="toc_ref">7.6.1</span> <span class="toc_entry">凹性から出ること</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000024"><span class="toc_ref">7.6.2</span> <span class="toc_entry">安定性</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000025"><span class="toc_ref">7.6.3</span> <span class="toc_entry">相の共存</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000026"><span class="toc_ref">7.6.4</span> <span class="toc_entry">凹性と自由エネルギー</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:heat-capacity"><span class="toc_ref">7.7</span> <span class="toc_entry">熱容量</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:third-law"><span class="toc_ref">7.8</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html"><span class="toc_ref">8</span> <span class="toc_entry">自由エネルギーとエンタルピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-potentials.html#a0000000027"><span class="toc_ref">8.1</span> <span class="toc_entry">環境</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-potentials.html#sec:large-reservoir"><span class="toc_ref">8.1.1</span> <span class="toc_entry">大きな溜め</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000028"><span class="toc_ref">8.2</span> <span class="toc_entry">Helmholtz 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000029"><span class="toc_ref">8.3</span> <span class="toc_entry">エンタルピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000030"><span class="toc_ref">8.4</span> <span class="toc_entry">Gibbs 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000031"><span class="toc_ref">8.5</span> <span class="toc_entry">エネルギーとエンタルピーの最小原理</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000032"><span class="toc_ref">8.6</span> <span class="toc_entry">ポテンシャルの微分</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html"><span class="toc_ref">9</span> <span class="toc_entry">実験室での熱測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-calorimetry.html#sec:thermometry"><span class="toc_ref">9.1</span> <span class="toc_entry">温度の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000033"><span class="toc_ref">9.1.1</span> <span class="toc_entry">温度計が測っているもの</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000034"><span class="toc_ref">9.1.2</span> <span class="toc_entry">温度の比と単位</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000035"><span class="toc_ref">9.1.3</span> <span class="toc_entry">一次温度計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000036"><span class="toc_ref">9.1.4</span> <span class="toc_entry">国際温度目盛</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000037"><span class="toc_ref">9.1.5</span> <span class="toc_entry">一次温度計どうしの一致</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:measure-heat-capacity"><span class="toc_ref">9.2</span> <span class="toc_entry">熱容量の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000038"><span class="toc_ref">9.2.1</span> <span class="toc_entry">断熱型熱量計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000039"><span class="toc_ref">9.2.2</span> <span class="toc_entry">定圧と定積</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000040"><span class="toc_ref">9.2.3</span> <span class="toc_entry">相転移</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000041"><span class="toc_ref">9.2.4</span> <span class="toc_entry">ほかの熱量計</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000042"><span class="toc_ref">9.3</span> <span class="toc_entry">エントロピーの値</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000043"><span class="toc_ref">9.3.1</span> <span class="toc_entry">エントロピーは直接は測れない</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000044"><span class="toc_ref">9.3.2</span> <span class="toc_entry">第三法則と絶対エントロピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000045"><span class="toc_ref">9.3.3</span> <span class="toc_entry">ほかの方法</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:tests"><span class="toc_ref">9.4</span> <span class="toc_entry">熱力学は実験で確かめられているか</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000046"><span class="toc_ref">9.4.1</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000047"><span class="toc_ref">9.4.2</span> <span class="toc_entry">恒等式の検査</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000048"><span class="toc_ref">9.4.3</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000049"><span class="toc_ref">9.4.4</span> <span class="toc_entry">温度</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000050"><span class="toc_ref">9.4.5</span> <span class="toc_entry">小さな系</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000051"><span class="toc_ref">9.4.6</span> <span class="toc_entry">公理の検査</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-assumptions.html"><span class="toc_ref">10</span> <span class="toc_entry">残っている仮定</span></a>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref">11</span> <span class="toc_entry">参考文献</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000002">1 概要</h1>
+<p>温度、熱、エントロピー、自由エネルギーを原始概念とせず、実験の手順とその結果だけから熱力学を組み立てる。 中心は Lieb–Yngvason による断熱到達性の公理化である&#160;<span class="cite">
+	[
+	<a href="sect0008.html#LY99" >1</a>
+	, 
+	<a href="sect0008.html#LY98" >2</a>
+	, 
+	<a href="sect0008.html#LY00" >3</a>
+	]
+</span>。 断熱到達性から出発する考え方は Carathéodory&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Caratheodory1909" >5</a>
+	]
+</span> にさかのぼり、Buchdahl&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Buchdahl1966" >7</a>
+	]
+</span> と Giles&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Giles1964" >6</a>
+	]
+</span> が発展させた。 非平衡状態への拡張は&#160;<span class="cite">
+	[
+	<a href="sect0008.html#LY13" >4</a>
+	]
+</span> にある。 準備手順、変換、測定手順を原始概念とする操作的理論&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Hardy2001" >22</a>
+	, 
+	<a href="sect0008.html#CDP2010" >23</a>
+	]
+</span> は、測定手順への依存を明示する点で、この構成の比較対象になる。 操作主義の立場は Bridgman&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Bridgman1927" >19</a>
+	]
+</span> による。 各段階で、定義と、実験に基づいて新しく置く仮定を区別する。 この blueprint のすべての定義と定理は Lean 4&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Lean4" >24</a>
+	]
+</span> と Mathlib&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Mathlib2020" >25</a>
+	]
+</span> で形式化済みであり、<span class="ttfamily">sorry</span> や追加の公理は使っていない。 </p>
+<p>依存関係は次の順に進む。 長さの目盛り、状態と平衡状態、時間の目盛り、仕事の力学的な基礎、断熱仕事による内部エネルギー、断熱操作から定めた断熱到達性、相殺則、エントロピー原理、交換平衡による温度と圧力、Gibbs 自由エネルギーの最小原理 (図&#160;<a href="sect0001.html#fig:chain">1.1</a>)。 </p>
+<figure id="fig:chain">
+  <div class="centered"><img src="images/img-0001.svg" alt="\includegraphics{figures/chain.svg}" style="width: ; height: " />
+ <figcaption>
+  <span class="caption_title">図</span> 
+  <span class="caption_ref">1.1</span> 
+  <span class="caption_text">概念の依存関係。矢印の元が先に定義される。左端の外延的構造 (比較と連結の法則) から、長さ、質量、時間の目盛りが同じ定理で作られる。時間から状態への破線は、平衡の定義には待ち手順だけを使い、数値の時間は使わないことを表す。</span> 
+</figcaption>  </div>
+
+</figure>
+<p>測定から抽象的な量に移る段階では、物理的に非自明な仮定が入り込みやすい。 例えば、二つの目盛りが同じ量を測っていることは、同じ数学的構造を持つことからは出ない。 この blueprint では、そうした主張を定理の仮定として取り出す。 本文では、名前をつけるだけの「定義」(青の枠) と、実験で確かめる主張である「経験則」(緑の枠) を分けて書く。 定義は正しいか誤りかを問えず、経験則は実験で反証されうる。 Lean では、経験則は構造のフィールドか定理の仮定として現れる。 主な例は次のとおり。 </p>
+<ul class="itemize">
+  <li><p>二つの目盛りが同じ量を測ることは、比例関係 \(\mathrm{Compatible}\) として明示する (定義&#160;<a href="sect0002.html#def:compatible">7</a>)。 </p>
+</li>
+  <li><p>平衡が状態の性質であるためには、状態が以後の変化を決めるという仮定が要る (経験則&#160;<a href="sect0003.html#emp:state-determines">14</a>)。 </p>
+</li>
+  <li><p>仕事の計算には、力学の法則を満たす重みづけだけを使う。その範囲では、第一法則は重みづけの選び方によらない (定理&#160;<a href="sect0005.html#thm:path-compatible">51</a>)。 </p>
+</li>
+</ul>
+<p> 残っている仮定は最後の章にまとめる。 </p>
+<h1 id="a0000000010">1.1 用語</h1>
+<p>本文では次の用語を、この意味だけで使う。 </p>
+<dl class="description">
+  <dt>手順</dt>
+  <dd><p>実験室で実行できる具体的な手続き。準備手順、測定手順、待ち手順、比較、連結はどれも手順である。 </p>
+</dd>
+  <dt>準備手順</dt>
+  <dd><p>物質を用意する手順。例えば、容器に物質を入れてピストンを固定する。記号 \(\mathrm{Prep}\)。 </p>
+</dd>
+  <dt>測定手順</dt>
+  <dd><p>巨視的な量を読む手順。例えば、体積の目盛りを読む。記号 \(\mathrm{Meas}\)。 </p>
+</dd>
+  <dt>読み</dt>
+  <dd><p>準備手順の直後に測定手順を行って得る実数。 </p>
+</dd>
+  <dt>待ち手順</dt>
+  <dd><p>基準となる過程 (砂時計、振り子など) が終わるまで何もしない手順。記号 \(\mathrm{Dur}\)。準備手順 \(p\) に待ち手順 \(d\) を続けたものを \(\mathrm{wait}_d\,  p\) と書く。 </p>
+</dd>
+  <dt>状態</dt>
+  <dd><p>どの測定手順でも読みが一致する準備手順の類。 </p>
+</dd>
+  <dt>定常</dt>
+  <dd><p>準備手順の性質。どの待ち手順を続けても、どの読みも変わらないこと。 </p>
+</dd>
+  <dt>平衡状態</dt>
+  <dd><p>定常な準備手順で作られる状態。その集合を \(\Gamma \) と書く。 </p>
+</dd>
+  <dt>比較、連結</dt>
+  <dd><p>棒、重り、待ち手順に対する二つの手順。比較は大小を、連結は和を与える。 </p>
+</dd>
+  <dt>定義</dt>
+  <dd><p>名前をつけるだけの約束。実験で反証されることはない。 </p>
+</dd>
+  <dt>経験則</dt>
+  <dd><p>実験で確かめる主張。反証されうる。本文では緑の枠で示す。 </p>
+</dd>
+  <dt>外延的構造</dt>
+  <dd><p>比較と連結が満たすべき法則の組。棒、天秤、待ち手順がこれを満たすことは経験則である。 </p>
+</dd>
+  <dt>目盛り</dt>
+  <dd><p>対象の集まりの上の実数値関数。外延的構造を表現する目盛り (比較を大小に、連結を和に移すもの) を、長さ、質量、時間の目盛りという。 </p>
+</dd>
+  <dt>両立</dt>
+  <dd><p>二つの目盛りが正の定数倍で一致すること。単位の違いだけであることを表す。 </p>
+</dd>
+  <dt>重みづけ</dt>
+  <dd><p>重りの集まりの上の目盛り。仕事の計算に使う。天秤の質量目盛りと一致するとは限らない。 </p>
+</dd>
+  <dt>断熱操作</dt>
+  <dd><p>系を平衡状態 \(X\) から平衡状態 \(Y\) へ移す手順で、終わったとき使った装置がすべて元の状態に戻り、系の外に残る変化が重りの高さだけであるもの。熱という語は使わずに定める。記号 \(\mathrm{Operation}(X, Y)\)。 </p>
+</dd>
+  <dt>重り</dt>
+  <dd><p>系の外に置く固い物体で、天秤に載せられ、ひもで吊るせるもの。状態は高さだけで指定する。 </p>
+</dd>
+  <dt>鉛直下向き</dt>
+  <dd><p>吊るした重りが静止したときにひもが指す向き。 </p>
+</dd>
+  <dt>重力</dt>
+  <dd><p>吊るした重りがひもを引く力。大きさは天秤の目盛りで測る。 </p>
+</dd>
+  <dt>降下の記録</dt>
+  <dd><p>どの重りがどれだけ下がったかの一覧。 </p>
+</dd>
+  <dt>仕事</dt>
+  <dd><p>断熱操作 \(p\) の降下の記録から \(W(p) = \sum m(b)\,  h\) と計算する実数。重力加速度は使わない。断熱操作の関数であり、平衡状態の関数ではない。 </p>
+</dd>
+  <dt>断熱到達性</dt>
+  <dd><p>状態の間の比較 \(X \prec Y\)。\(X\) から \(Y\) への断熱操作が存在することと定義する。長さの比較に当たる。 </p>
+</dd>
+  <dt>複合系</dt>
+  <dd><p>二つの系を並べて一つの系とみなしたもの \(X + Y\)。長さの連結に当たる。 </p>
+</dd>
+  <dt>組成</dt>
+  <dd><p>成分ごとに、系を作るとき天秤で量り入れた質量 \(\mathrm{comp}\,  X\)。 </p>
+</dd>
+  <dt>示量的</dt>
+  <dd><p>状態の空間の上の関数が、複合で足し合わされ、スケーリングで \(t\) 倍されること。 </p>
+</dd>
+</dl>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0002.html" title="長さの測定"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

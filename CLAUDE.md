@@ -34,6 +34,10 @@ outside the repo and to the network, so both need the sandbox disabled.
 - `_includes/head/custom.html` -- only pulls in academicons.
 - `assets/css/main.scss` -- 15 lines on top of the theme; not a fork.
 - `notes/` and `assets/poster/` -- PDFs, committed directly.
+- `notes/opthermo/` -- a Lean 4 + leanblueprint project (sources) with its
+  prebuilt site in `notes/opthermo/site/`. Jekyll copies both as static files.
+  plasTeX bibliography anchors are `<a name>` without `href`, which is why
+  htmlproofer runs with `--allow-missing-href`.
 
 ## Gotchas
 

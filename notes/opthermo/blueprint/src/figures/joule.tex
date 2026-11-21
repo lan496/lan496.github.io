@@ -1,0 +1,30 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}
+  % insulated container with water
+  \fill[rod!12] (0,0) rectangle (3.2,2.4);
+  \draw[very thick] (0,2.4) -- (0,0) -- (3.2,0) -- (3.2,2.4);
+  \draw[rod, thick] (0.05,2.0) -- (3.15,2.0);
+  \node[note, anchor=west] at (0.1,0.3) {断熱容器の中の水};
+  % paddle wheel on vertical axle
+  \draw[thick] (1.6,0.5) -- (1.6,3.1);
+  \foreach \y in {0.7,1.2,1.7} {
+    \draw[fill=gray!40] (1.0,\y) rectangle (2.2,\y+0.18);
+  }
+  % drum, string, pulley, weight
+  \draw[fill=gray!30] (1.35,2.9) rectangle (1.85,3.3);
+  \draw[thick] (1.85,3.2) -- (4.6,3.2);
+  \draw[fill=white, thick] (4.8,3.2) circle (0.2);
+  \fill (4.8,3.2) circle (1pt);
+  \draw[thick] (5.0,3.2) -- (5.0,2.2);
+  \draw[rodA] (4.7,1.6) rectangle (5.3,2.2) node[midway] {$b$};
+  \draw[dashed] (4.7,0.6) rectangle (5.3,1.2);
+  \draw[->, ngc, very thick] (5.6,1.9) -- (5.6,0.9) node[midway, right, font=\small] {$h$ 下がる};
+  \node[expl, anchor=west, text width=6.2cm] at (6.9,1.9)
+    {重り $b$ が $h$ 下がる間に、ひもが羽根車を回して水をかき混ぜる。\\[3pt]
+     降下の記録は $[(b, h)]$。\\[3pt]
+     水になされた仕事は $W = m(b)\, h$。\\[3pt]
+     $g$ を掛けた $m(b)\, g\, h$ が、重力が重りにした仕事「力 $\times$ 動いた距離」である。};
+\end{tikzpicture}
+\end{document}

@@ -16,5 +16,5 @@ run = "bundle exec jekyll build"
 description = "Build the site and validate internal links and HTML"
 run = [
   "bundle exec jekyll build",
-  "bundle exec htmlproofer _site --disable-external --ignore-empty-alt --checks Links,Images,Scripts",
+  "bundle exec htmlproofer _site --disable-external --ignore-empty-alt --allow-missing-href --checks Links,Images,Scripts",
 ]

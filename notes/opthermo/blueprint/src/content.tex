@@ -1,0 +1,3174 @@
+% Blueprint content, shared by the web and print versions.
+
+\chapter{概要}
+
+温度、熱、エントロピー、自由エネルギーを原始概念とせず、実験の手順とその結果だけから熱力学を組み立てる。
+中心は Lieb--Yngvason による断熱到達性の公理化である~\cite{LY99,LY98,LY00}。
+断熱到達性から出発する考え方は Carathéodory~\cite{Caratheodory1909} にさかのぼり、Buchdahl~\cite{Buchdahl1966} と Giles~\cite{Giles1964} が発展させた。
+非平衡状態への拡張は~\cite{LY13} にある。
+準備手順、変換、測定手順を原始概念とする操作的理論~\cite{Hardy2001,CDP2010} は、測定手順への依存を明示する点で、この構成の比較対象になる。
+操作主義の立場は Bridgman~\cite{Bridgman1927} による。
+各段階で、定義と、実験に基づいて新しく置く仮定を区別する。
+この blueprint のすべての定義と定理は Lean 4~\cite{Lean4} と Mathlib~\cite{Mathlib2020} で形式化済みであり、\texttt{sorry} や追加の公理は使っていない。
+
+依存関係は次の順に進む。
+長さの目盛り、状態と平衡状態、時間の目盛り、仕事の力学的な基礎、断熱仕事による内部エネルギー、断熱操作から定めた断熱到達性、相殺則、エントロピー原理、交換平衡による温度と圧力、Gibbs 自由エネルギーの最小原理 (図~\ref{fig:chain})。
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{chain}
+  \caption{概念の依存関係。矢印の元が先に定義される。左端の外延的構造 (比較と連結の法則) から、長さ、質量、時間の目盛りが同じ定理で作られる。時間から状態への破線は、平衡の定義には待ち手順だけを使い、数値の時間は使わないことを表す。}
+  \label{fig:chain}
+\end{figure}
+
+測定から抽象的な量に移る段階では、物理的に非自明な仮定が入り込みやすい。
+例えば、二つの目盛りが同じ量を測っていることは、同じ数学的構造を持つことからは出ない。
+この blueprint では、そうした主張を定理の仮定として取り出す。
+本文では、名前をつけるだけの「定義」(青の枠) と、実験で確かめる主張である「経験則」(緑の枠) を分けて書く。
+定義は正しいか誤りかを問えず、経験則は実験で反証されうる。
+Lean では、経験則は構造のフィールドか定理の仮定として現れる。
+主な例は次のとおり。
+\begin{itemize}
+  \item 二つの目盛りが同じ量を測ることは、比例関係 $\mathrm{Compatible}$ として明示する (定義~\ref{def:compatible})。
+  \item 平衡が状態の性質であるためには、状態が以後の変化を決めるという仮定が要る (経験則~\ref{emp:state-determines})。
+  \item 仕事の計算には、力学の法則を満たす重みづけだけを使う。その範囲では、第一法則は重みづけの選び方によらない (定理~\ref{thm:path-compatible})。
+\end{itemize}
+残っている仮定は最後の章にまとめる。
+
+\section{用語}
+
+本文では次の用語を、この意味だけで使う。
+
+\begin{description}
+  \item[手順] 実験室で実行できる具体的な手続き。準備手順、測定手順、待ち手順、比較、連結はどれも手順である。
+  \item[準備手順] 物質を用意する手順。例えば、容器に物質を入れてピストンを固定する。記号 $\mathrm{Prep}$。
+  \item[測定手順] 巨視的な量を読む手順。例えば、体積の目盛りを読む。記号 $\mathrm{Meas}$。
+  \item[読み] 準備手順の直後に測定手順を行って得る実数。
+  \item[待ち手順] 基準となる過程 (砂時計、振り子など) が終わるまで何もしない手順。記号 $\mathrm{Dur}$。準備手順 $p$ に待ち手順 $d$ を続けたものを $\mathrm{wait}_d\, p$ と書く。
+  \item[状態] どの測定手順でも読みが一致する準備手順の類。
+  \item[定常] 準備手順の性質。どの待ち手順を続けても、どの読みも変わらないこと。
+  \item[平衡状態] 定常な準備手順で作られる状態。その集合を $\Gamma$ と書く。
+  \item[比較、連結] 棒、重り、待ち手順に対する二つの手順。比較は大小を、連結は和を与える。
+  \item[定義] 名前をつけるだけの約束。実験で反証されることはない。
+  \item[経験則] 実験で確かめる主張。反証されうる。本文では緑の枠で示す。
+  \item[外延的構造] 比較と連結が満たすべき法則の組。棒、天秤、待ち手順がこれを満たすことは経験則である。
+  \item[目盛り] 対象の集まりの上の実数値関数。外延的構造を表現する目盛り (比較を大小に、連結を和に移すもの) を、長さ、質量、時間の目盛りという。
+  \item[両立] 二つの目盛りが正の定数倍で一致すること。単位の違いだけであることを表す。
+  \item[重みづけ] 重りの集まりの上の目盛り。仕事の計算に使う。天秤の質量目盛りと一致するとは限らない。
+  \item[断熱操作] 系を平衡状態 $X$ から平衡状態 $Y$ へ移す手順で、終わったとき使った装置がすべて元の状態に戻り、系の外に残る変化が重りの高さだけであるもの。熱という語は使わずに定める。記号 $\mathrm{Operation}(X, Y)$。
+  \item[重り] 系の外に置く固い物体で、天秤に載せられ、ひもで吊るせるもの。状態は高さだけで指定する。
+  \item[鉛直下向き] 吊るした重りが静止したときにひもが指す向き。
+  \item[重力] 吊るした重りがひもを引く力。大きさは天秤の目盛りで測る。
+  \item[降下の記録] どの重りがどれだけ下がったかの一覧。
+  \item[仕事] 断熱操作 $p$ の降下の記録から $W(p) = \sum m(b)\, h$ と計算する実数。重力加速度は使わない。断熱操作の関数であり、平衡状態の関数ではない。
+  \item[断熱到達性] 状態の間の比較 $X \prec Y$。$X$ から $Y$ への断熱操作が存在することと定義する。長さの比較に当たる。
+  \item[複合系] 二つの系を並べて一つの系とみなしたもの $X + Y$。長さの連結に当たる。
+  \item[組成] 成分ごとに、系を作るとき天秤で量り入れた質量 $\mathrm{comp}\, X$。
+  \item[示量的] 状態の空間の上の関数が、複合で足し合わされ、スケーリングで $t$ 倍されること。
+\end{description}
+
+\chapter{長さの測定}
+
+棒に対して行う手順は二つだけである。
+棒を端と端でつなぐこと (連結) と、二本の棒の一端をそろえて並べ、他端がどちらに出るかを見ること (比較) である。
+「長さ」という量は仮定せず、棒の集まりとこの二つの手順を原始概念とする。
+比較と連結の構造から数値の目盛りを作る問題は、測定理論の基本問題である~\cite{Holder1901,KLST1971}。
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{length}
+  \caption{長さの比較と連結。(a) 一端をそろえて並べる比較、(b) 端と端でつなぐ連結。(c) 単位の棒の本数で挟むことが、目盛りの存在と一意性の証明の中心である。}
+  \label{fig:length}
+\end{figure}
+
+\begin{definition}[比較と連結]
+  \label{def:compare-concat}
+  \lean{OpThermo.ExtensiveStructure.le, OpThermo.ExtensiveStructure.cat}
+  \leanok
+  棒の集まり $A$ の上で、$a$ と $b$ の一端をそろえて並べたとき $a$ の他端が $b$ の他端を越えないことを $a \preceq b$ と書く。
+  $a$ と $b$ を端と端でつないだ棒を $a \circ b$ と書く。
+\end{definition}
+
+\begin{definition}[外延的構造]
+  \label{def:extensive}
+  \lean{OpThermo.ExtensiveStructure}
+  \leanok
+  \uses{def:compare-concat}
+  比較と連結が次の法則を満たすとき、外延的構造という。
+  \begin{itemize}
+    \item 比較は全順序的で推移的。
+    \item 連結は、比較で区別できない範囲で結合的かつ可換。
+    \item 単調性：$a \preceq b \iff a \circ c \preceq b \circ c$。
+    \item 正値性：$a \circ b \not\preceq a$。
+    \item アルキメデス性：$a \not\preceq b$ なら、任意の $c, d$ に対しある $n$ で $(n+1) b \circ d \preceq (n+1) a \circ c$。
+  \end{itemize}
+\end{definition}
+
+\begin{empirical}[棒の比較と連結]
+  \label{emp:rods}
+  \lean{OpThermo.ExtensiveStructure.length_exists}
+  \leanok
+  \uses{def:extensive}
+  棒の比較と連結は外延的構造をなす。
+\end{empirical}
+
+同じ構造は、天秤の比較と同じ皿への同時載せによる質量にも使う (経験則~\ref{emp:balance})。
+
+\begin{definition}[表現]
+  \label{def:represents}
+  \lean{OpThermo.ExtensiveStructure.Represents}
+  \leanok
+  \uses{def:extensive}
+  目盛り $\ell : A \to \R$ が構造を表現するとは、$a \preceq b \iff \ell(a) \le \ell(b)$ かつ $\ell(a \circ b) = \ell(a) + \ell(b)$ が成り立つことをいう。
+  表現する目盛りの値は正である。
+\end{definition}
+
+\begin{theorem}[目盛りの存在]
+  \label{thm:length-exists}
+  \lean{OpThermo.ExtensiveStructure.length_exists, OpThermo.scale_exists_of_archimedean}
+  \leanok
+  \uses{def:represents, emp:rods}
+  単位の棒 $u$ を選ぶと、構造を表現する目盛り $\ell$ で $\ell(u) = 1$ を満たすものが存在する。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  比較で区別できない棒を同一視した商 $Q$ は、全順序を持つ可換半群になり、単調性から相殺則が成り立つ。
+  $Q \times Q$ の形式的な差 $(x, y) \mapsto x - y$ で群 $G$ を作り、順序 $(x,y) \le (z,w) :\iff x + w \le z + y$ を入れる。
+  アルキメデス性の公理から $G$ はアルキメデス的になる。
+  $G$ を Hölder の定理 (Mathlib の \texttt{Archimedean.embedReal}) で $\R$ に埋め込み、棒 $a$ を $G$ の元 $(a + a) - a$ に送る写像と合成する。
+\end{proof}
+
+\begin{theorem}[目盛りの一意性]
+  \label{thm:length-unique}
+  \lean{OpThermo.ExtensiveStructure.length_unique}
+  \leanok
+  \uses{def:represents}
+  構造を表現する二つの目盛りが単位の棒に $1$ を割り当てるなら、両者は一致する。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $\ell(r) < \ell'(r)$ と仮定し、有理数 $M/N$ を $\ell(r) < M/N < \ell'(r)$ となるようにとる。
+  $N$ 本の $r$ と $M$ 本の $u$ を比較すると、どちらの向きでも $\ell$ か $\ell'$ の表現性に矛盾する。
+\end{proof}
+
+\begin{definition}[目盛りの両立性]
+  \label{def:compatible}
+  \lean{OpThermo.Compatible}
+  \leanok
+  対象の集まりの上の二つの目盛り (実数値関数) $m_A, m_B$ が両立するとは、ある $c > 0$ で $m_B = c\, m_A$ となることをいう。
+\end{definition}
+
+$c$ は単位の違いに対応する。
+異なる手順を同じ量として扱うときは、両立を経験則か定理として明示する。
+
+\begin{theorem}[同じ構造を表現する目盛りは比例する]
+  \label{thm:compatible-represents}
+  \lean{OpThermo.ExtensiveStructure.compatible_of_represents}
+  \leanok
+  \uses{thm:length-unique, def:compatible}
+  同じ外延的構造を表現する二つの目盛りは両立する。
+  経験的に確かめるべきなのは、二つの手続きが同じ比較と連結の結果を与えることの方である。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  それぞれを単位の棒での値で割ると、一意性の定理から一致する。
+\end{proof}
+
+\chapter{状態と平衡状態}
+
+「状態」も「平衡」も「時間」も原始概念にしない。
+原始概念は、準備手順、測定手順、読み、待ち手順の四つである。
+読みは、準備手順の直後に測定手順を行って得る実数である。
+準備手順 $p$ に待ち手順 $d$ を続けたものも一つの準備手順であり、$\mathrm{wait}_d\, p$ と書く。
+読みが実数で再現することは仮定として置く。
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{states}
+  \caption{状態と平衡状態。(a) 読みが一致する準備手順を一つの状態とみなす。(b) 平衡は、どの待ち手順の後も読みが変わらないことで定義する。(c) 読みが一致しても待った後の振る舞いが違いうるので、平衡を状態の性質にするには仮定が要る (定理~\ref{thm:stationary-not-state})。}
+  \label{fig:states}
+\end{figure}
+
+\begin{definition}[実験室]
+  \label{def:laboratory}
+  \lean{OpThermo.Laboratory}
+  \leanok
+  準備手順の集まり $\mathrm{Prep}$、測定手順 (巨視的なもの) の集まり $\mathrm{Meas}$、読み $\mathrm{outcome} : \mathrm{Prep} \times \mathrm{Meas} \to \R$ が与えられているとする。
+\end{definition}
+
+\begin{definition}[待ち手順]
+  \label{def:waiting}
+  \lean{OpThermo.Laboratory.wait}
+  \leanok
+  \uses{def:laboratory}
+  待ち手順の集まり $\mathrm{Dur}$ と、準備手順に待ち手順 $d$ を続ける写像 $\mathrm{wait}_d : \mathrm{Prep} \to \mathrm{Prep}$ が与えられているとする。
+\end{definition}
+
+待ち手順とは、「砂時計の砂が落ち切るまで待つ」「振り子が 10 回振れるまで待つ」のように、基準となる過程が終わるまで待つ手順である。
+数値の時間は使わない。
+
+\begin{definition}[状態]
+  \label{def:state}
+  \lean{OpThermo.Laboratory.Indist, OpThermo.Laboratory.State, OpThermo.Laboratory.stateOf}
+  \leanok
+  \uses{def:laboratory}
+  二つの準備手順がどの測定手順でも同じ読みを与えるとき、区別できないという。
+  状態とは、区別できない準備手順の類である。
+  測定手順の集まりを広げれば、状態はより細かく分かれる。
+\end{definition}
+
+\begin{definition}[定常な準備手順]
+  \label{def:stationary}
+  \lean{OpThermo.Laboratory.IsStationary}
+  \leanok
+  \uses{def:waiting}
+  準備手順 $p$ が定常であるとは、任意の待ち手順 $d$ と測定手順 $M$ で $\mathrm{outcome}(\mathrm{wait}_d\, p, M) = \mathrm{outcome}(p, M)$ となることをいう。
+\end{definition}
+
+どれだけ待っても変わらないと言えれば足りるので、平衡の定義に数値の時間は要らない。
+
+\begin{theorem}[定常性はそのままでは状態の性質でない]
+  \label{thm:stationary-not-state}
+  \lean{OpThermo.stationary_not_state_property}
+  \leanok
+  \uses{def:state, def:stationary}
+  区別できない二つの準備手順で、一方は定常で他方は定常でない例がある。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  準備手順は $0, 1, 2$、測定手順は一つとする。
+  $0$ と $1$ の読みはどちらも $0$ で、$2$ の読みは $1$ とする。
+  $0$ はどの待ち手順を続けても変わらず、$1$ は待ち手順を続けると $2$ に変わるとすればよい。
+\end{proof}
+
+\begin{empirical}[状態が以後の変化を決める]
+  \label{emp:state-determines}
+  \lean{OpThermo.Laboratory.StateDeterminesEvolution}
+  \leanok
+  \uses{def:state}
+  区別できない準備手順は、待ち手順を続けた後も区別できない。
+\end{empirical}
+
+\begin{theorem}[定常性は状態の性質になる]
+  \label{thm:stationary-congr}
+  \lean{OpThermo.Laboratory.stationary_congr}
+  \leanok
+  \uses{emp:state-determines, def:stationary}
+  この仮定の下で、区別できない準備手順の一方が定常なら他方も定常である。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $\mathrm{outcome}(\mathrm{wait}_d\, q, M) = \mathrm{outcome}(\mathrm{wait}_d\, p, M) = \mathrm{outcome}(p, M) = \mathrm{outcome}(q, M)$。
+\end{proof}
+
+\begin{definition}[平衡状態]
+  \label{def:equilibrium}
+  \lean{OpThermo.Laboratory.IsEquilibrium, OpThermo.Laboratory.EqState, OpThermo.Laboratory.isEquilibrium_stateOf}
+  \leanok
+  \uses{thm:stationary-congr}
+  平衡状態とは、定常な準備手順で作られる状態である。
+  平衡状態の集合を $\Gamma$ と書く。
+  以下の章の状態は、この $\Gamma$ を念頭に置いている。
+\end{definition}
+
+\section{時間の目盛り}
+
+数値の時間は、長さと同じ外延的構造から作る。
+平衡の定義には使わないが、時計の読みが何を測っているかをここで明示する。
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{clock}
+  \caption{時間の比較と連結。(a) 二つの基準過程を同時に始め、どちらが先に終わるかを見る比較、(b) 続けて待つ連結。長さの図~\ref{fig:length} と同じ構造である。}
+  \label{fig:clock}
+\end{figure}
+
+\begin{definition}[時計]
+  \label{def:clock}
+  \lean{OpThermo.Laboratory.Clock}
+  \leanok
+  \uses{def:waiting, def:extensive}
+  待ち手順の比較 $d \preceq e$ は、二つの基準過程を同時に始めて $d$ が $e$ より遅れずに終わることである。
+  連結 $d \circ e$ は、$d$ が終わってから $e$ を始めることである。
+  これらが外延的構造をなし、$\mathrm{wait}_{d \circ e} = \mathrm{wait}_e \circ \mathrm{wait}_d$ を満たすとき、時計という。
+\end{definition}
+
+\begin{empirical}[時計がある]
+  \label{emp:clock}
+  \lean{OpThermo.Laboratory.Clock.time_exists}
+  \leanok
+  \uses{def:clock}
+  振り子の振れや砂時計の砂の落下を基準過程とする待ち手順は、時計をなす。
+\end{empirical}
+
+同時に始めることは、同じ場所で二つの出来事が一致することとして直接観測できるとする。
+
+\begin{theorem}[時間の目盛り]
+  \label{thm:time}
+  \lean{OpThermo.Laboratory.Clock.time_exists, OpThermo.Laboratory.Clock.time_unique, OpThermo.Laboratory.Clock.compatible}
+  \leanok
+  \uses{emp:clock, thm:length-exists, thm:length-unique, thm:compatible-represents}
+  単位の待ち手順 (振り子の一振りなど) を選ぶと、比較を大小に、連結を和に移す時間の目盛りが一意に存在する。
+  同じ比較と連結を与える二つの時計 (砂時計と振り子など) の読みは比例する。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  長さの目盛りの存在定理、一意性定理、比例の定理をそのまま適用する。
+\end{proof}
+
+\begin{theorem}[待ち手順を続けても定常]
+  \label{thm:stationary-wait}
+  \lean{OpThermo.Laboratory.Clock.stationary_wait}
+  \leanok
+  \uses{def:clock, def:stationary}
+  定常な準備手順を待ち手順を続けて得た準備手順も定常である。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $\mathrm{wait}_e(\mathrm{wait}_d\, p) = \mathrm{wait}_{d \circ e}\, p$ の読みは $p$ の読みと同じで、$\mathrm{wait}_d\, p$ の読みも $p$ の読みと同じ。
+\end{proof}
+
+\section{状態の空間}
+
+状態どうしを足すことと、状態を $t$ 倍することを準備手順として定める。
+長さの測定で棒の連結を決めたのと同じ役割を持つ。
+後の章では、組成、内部エネルギー、エントロピーを、この空間の上の示量的な関数として作る。
+
+\begin{definition}[仕切り]
+  \label{def:partition}
+  \uses{def:equilibrium}
+  系に差し込んで二つの部分に分ける、物質を通さない薄い壁を仕切りという。
+\end{definition}
+
+\begin{empirical}[仕切りは状態を変えない]
+  \label{emp:partition}
+  \uses{def:partition}
+  平衡状態の系に仕切りを差し込んでも、状態は変わらない。
+  差し込んだその仕切りを抜いても、状態は変わらない。
+\end{empirical}
+
+気体の容器に差し込む薄い板が例である。
+仕切りが状態を変えないことは、仕切りの体積と、差し込むときの乱れを無視できるという理想化である。
+
+この経験則は、一つの平衡状態を仕切りで分け、その仕切りを抜いて元に戻す場合だけについての主張である。
+別々に用意した二つの状態 (例えば熱い水と冷たい水) を仕切りで隔てて並べ、その仕切りを抜く場合には使えない。
+その場合は仕切りを抜くと熱や物質が流れ、別の平衡状態に移りうる。
+この操作は内部の拘束を外す断熱操作であり、エントロピーの凹性 (定理~\ref{thm:entropy-concave}) や混合 (第~\ref{sec:accessibility-axioms} 節の例) で使う。
+
+\begin{definition}[複合]
+  \label{def:composite}
+  \uses{def:partition}
+  状態 $X$ の系と状態 $Y$ の系を、仕切りで隔てたまま並べて一つの系とみなしたものの状態を $X + Y$ と書く。
+\end{definition}
+
+\begin{definition}[スケーリング]
+  \label{def:scaling}
+  \uses{def:partition}
+  $0 < t \le 1$ のとき、平衡状態 $X$ の系に仕切りを入れて体積の割合 $t : (1-t)$ に分け、$t$ の側の部分の状態を $tX$ と書く。
+  $t > 1$ のときは、$(1/t)$ 倍が $X$ になる状態を $tX$ と書く。
+\end{definition}
+
+$t > 1$ の $tX$ は、同じ物質を多く用意して作る。
+
+\begin{definition}[状態の空間]
+  \label{def:state-space}
+  \uses{def:composite, def:scaling}
+  複合とスケーリングで作った状態全体を $\mathcal{S}$ と書く。
+\end{definition}
+
+\begin{empirical}[複合とスケーリングの法則]
+  \label{emp:state-space}
+  \lean{Module}
+  \leanok
+  \uses{def:state-space, emp:partition}
+  $\mathcal{S}$ では次の等式が成り立つ。
+  \begin{itemize}
+    \item 並べる順序と組み方によらない：$X + Y = Y + X$、$(X + Y) + Z = X + (Y + Z)$。
+    \item 分割したものを並べ直すと元に戻る：$tX + (1-t)X = X$。
+    \item 分割を重ねてもよい：$s(tX) = (st)X$、$t(X + Y) = tX + tY$。
+  \end{itemize}
+\end{empirical}
+
+等号は状態 (定義~\ref{def:state}) として等しいことを表す。
+これは $\mathcal{S}$ が $\Rnn$ 加群であるということであり、Lean では Mathlib の加群の型クラスで書く。
+$t$ を実数全体に広げるのは理想化で、実際に作れるのは有理数の $t$ である。
+
+\begin{definition}[示量的な関数]
+  \label{def:extensive-fn}
+  \lean{OpThermo.IsExtensive}
+  \leanok
+  \uses{def:state-space}
+  関数 $f : \mathcal{S} \to \R$ が示量的であるとは、$f(X + Y) = f(X) + f(Y)$ と $f(tX) = t\, f(X)$ が成り立つことをいう。
+\end{definition}
+
+組成 (定義~\ref{def:mass}) の各成分、内部エネルギー (定理~\ref{thm:energy-extensive})、エントロピー (定理~\ref{thm:additive}) はどれも示量的になる。
+
+\chapter{仕事の力学的な基礎}
+
+力学では、物体に一定の力 $\vec F$ が働き、物体が変位 $\Delta \vec x$ だけ動くとき、力がした仕事を内積 $\vec F \cdot \Delta \vec x$ と定める。
+仕事の重要な例は重力によるものである。
+質量 $m$ の物体に働く重力は鉛直下向きで大きさ $m g$ なので、物体が高さ $h$ だけ下がると、重力は $m g h$ の仕事をする。
+水平方向の動きは寄与しない。
+
+熱力学で系になされた仕事を測るときも、この重力の仕事を使う。
+Joule の実験~\cite{Joule1850} では、重りが下がる間にひもが水中の羽根車を回し、水をかき混ぜる (図~\ref{fig:joule})。
+重りに重力がした仕事 $m g h$ が、ひもと羽根車を通して水に渡る。
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{joule}
+  \caption{Joule の実験。重り $b$ が $h$ 下がる間に、重力は重りに $m(b)\, g\, h$ の仕事をし、それがひもと羽根車を通して水に渡る。この断熱操作の降下の記録は $[(b, h)]$、操作的に定めた仕事は $m(b)\, h$ である。}
+  \label{fig:joule}
+\end{figure}
+
+操作的な構成では、力を原始概念にしない。
+力を測るには、さらに別の手順が要るからである。
+そこで仕事を、天秤で測る重りの質量と、長さの目盛りで測る降下量だけから定める。
+\begin{itemize}
+  \item \textbf{操作的な定義}：重りの質量と降下量の積の和 $\sum m(b)\, h_b$ を仕事とする (定義~\ref{def:work})。重力加速度は使わない。単位は「単位質量の重りを単位長さ下げる仕事」である。
+  \item \textbf{力学の仕事との一致}：重力 (定義~\ref{def:gravity}) がした仕事の和 $\sum \vec F_b \cdot \Delta \vec x_b$ は $g \sum m(b)\, h_b$ に等しい (定理~\ref{thm:gravity-work})。$g$ は力の単位の換算係数である。
+\end{itemize}
+重力の大きさが天秤の目盛りに比例すること、鉛直下向きと天秤の比較が場所によらないことは、経験則として置く (経験則~\ref{emp:gravity})。
+操作的に決めた仕事と力学の仕事が一致することは、この仮定の下での定理になる。
+
+もう一つの問題は、重りの側で測った量を、系になされた仕事とみなしてよいかである。
+ひもや滑車やてこは、重りと系の間で仕事を受け渡す。
+理想的な装置は仕事を増やしも減らしもしない。
+釣り合ったてこでは、下がった側の $m h$ と上がった側の $m h$ が等しい (図~\ref{fig:lever})。
+これは仮想仕事の原理であり、この章ではそれを法則として定め (定義~\ref{def:mechanical-law})、天秤の質量がそれを満たすことを経験則として置く (経験則~\ref{emp:balance-law})。
+この法則を満たす重みづけは、天秤で測った質量に比例するものに限られる (定理~\ref{thm:mech-compatible})。
+Newton の運動方程式や慣性質量は使わない。
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{lever}
+  \caption{(a) 天秤による質量の比較と連結。(b) 釣り合ったてこでは、下がった重りの $m h$ と上がった重りの $m h$ が等しい。装置を通しても $\sum m h$ は増やせない。}
+  \label{fig:lever}
+\end{figure}
+
+\begin{definition}[重り]
+  \label{def:weight}
+  重りとは、系の外に置く固い物体で、天秤に載せられ、ひもで吊るせるものをいう。
+  形と温度は変わらないものとし、その状態は高さだけで指定する。
+  重りは仕事を受け渡すための道具であり、熱力学で調べる対象とは区別する。
+  重りの質量は天秤 (定義~\ref{def:statics}) で、高さは長さの目盛りで測る。
+\end{definition}
+
+\begin{definition}[降下の記録]
+  \label{def:drops}
+  \lean{OpThermo.WeightDrops}
+  \leanok
+  \uses{def:weight}
+  降下の記録とは、どの重りがどれだけ下がったかの一覧 $r = [(b_1, h_1), \dots, (b_k, h_k)]$ である。
+  降下量 $h_i$ は長さの目盛りで測り、上がった重りは負の降下量で表す。
+  図~\ref{fig:joule} の Joule の実験なら $r = [(b, h)]$、図~\ref{fig:lever} のてこなら $r = [(b, h_b), (u, -h_u)]$ である。
+\end{definition}
+
+\begin{definition}[天秤]
+  \label{def:statics}
+  \lean{OpThermo.WeightStatics}
+  \leanok
+  \uses{def:compare-concat, def:weight}
+  重りの比較は天秤の傾きの向き、連結は同じ皿に一緒に載せることである。
+\end{definition}
+
+\begin{empirical}[天秤の比較と連結]
+  \label{emp:balance}
+  \lean{OpThermo.WeightStatics.balance}
+  \leanok
+  \uses{def:statics, def:extensive}
+  重りの天秤による比較と連結は外延的構造をなす。
+\end{empirical}
+
+\begin{definition}[組成]
+  \label{def:mass}
+  \lean{OpThermo.CompositeOps.comp, OpThermo.Adiabatic.comp}
+  \leanok
+  \uses{emp:balance, def:state-space}
+  系を作るのに使う物質の種類 (成分) の集まりを $C$ とする。
+  状態 $X$ の系の組成 $\mathrm{comp}\, X : C \to \Rnn$ とは、成分ごとに、系を作るとき天秤で量り入れた質量である。
+\end{definition}
+
+天秤の連結の性質から $\mathrm{comp}(X + Y) = \mathrm{comp}\, X + \mathrm{comp}\, Y$、分割の定義から $\mathrm{comp}(tX) = t\, \mathrm{comp}\, X$ となる。
+つまり組成の各成分は示量的な関数である。
+成分が一つなら、組成は系の質量そのものである。
+
+\begin{definition}[力学的に実現できる記録]
+  \label{def:feasible}
+  \lean{OpThermo.WeightStatics.Feasible}
+  \leanok
+  \uses{def:drops}
+  $\mathrm{Feasible}(r)$ は、てこや滑車などの力学的な装置で、降下の記録 $r$ のとおりに重りを動かし、装置を元の配置に戻せることをいう。
+\end{definition}
+
+\begin{definition}[重みつき和]
+  \label{def:weighted-sum}
+  \lean{OpThermo.mechanicalWork}
+  \leanok
+  \uses{def:drops}
+  重みづけ (重りの集まりの上の目盛り) $m$ に対し、$\Sigma_m(r) := \sum_{(b, h) \in r} m(b)\, h$ とおく。
+\end{definition}
+
+\begin{definition}[鉛直下向き]
+  \label{def:down}
+  \lean{OpThermo.down, OpThermo.descent}
+  \leanok
+  \uses{def:weight}
+  吊るした重りが静止したときにひもが指す向きを鉛直下向きといい、その単位ベクトルを $\vec e_{\downarrow}$ と書く。
+  変位 $\Delta \vec x$ の降下量を $\vec e_{\downarrow} \cdot \Delta \vec x$ とする。
+\end{definition}
+
+\begin{definition}[重力]
+  \label{def:gravity}
+  \lean{OpThermo.gravity}
+  \leanok
+  \uses{def:down, def:statics}
+  吊るした重り $b$ がひもを引く力を、$b$ に働く重力という。
+\end{definition}
+
+天秤は、二つの重りがひもを引く強さを比べ、同じ皿に載せた重りの引く強さを合わせる手順である。
+したがって天秤の目盛りは、重力の大きさの目盛りでもある。
+
+\begin{empirical}[重力の法則]
+  \label{emp:gravity}
+  \uses{def:gravity, emp:balance, def:compatible}
+  \begin{itemize}
+    \item 重力の向きは鉛直下向きで、大きさは天秤の目盛り $m(b)$ に比例する：$\vec F_b = m(b)\, g\, \vec e_{\downarrow}$。
+    \item 鉛直下向きの向きと天秤の比較の結果は、実験室の中で場所によらない。
+    \item ばねばかりなど別の手順で測った力の目盛りは、重りについては天秤の目盛りと両立する。
+  \end{itemize}
+\end{empirical}
+
+$g$ は、力を天秤とは別の単位 (ニュートンなど) で表すときの換算係数である。
+
+\begin{theorem}[力学の仕事との一致]
+  \label{thm:gravity-work}
+  \lean{OpThermo.gravity_work_eq, OpThermo.forceWork_gravity, OpThermo.forceWork}
+  \leanok
+  \uses{emp:gravity, def:weighted-sum}
+  力学の仕事を $\vec F \cdot \Delta \vec x$ とする。
+  重り $b$ の変位を $\Delta \vec x_b$、その降下量を $h_b := \vec e_{\downarrow} \cdot \Delta \vec x_b$ とすると、重りたちに重力がした仕事の和は
+  \[ \sum_b \vec F_b \cdot \Delta \vec x_b = g \sum_b m(b)\, h_b. \]
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  内積の線形性から $\vec F_b \cdot \Delta \vec x_b = m(b)\, g\, (\vec e_{\downarrow} \cdot \Delta \vec x_b)$。
+\end{proof}
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{feasible}
+  \caption{力学的な装置で実現できる降下の記録 ($\mathrm{Feasible}$) の範囲。(a) Joule の実験の重り $b$ だけを動かす場合。水と羽根車がなければ、$b$ を持ち上げることはできない。(b) 重りが二つの場合。緑の直線 $\Sigma_m(r) = 0$ は理想的なてこで実現でき、赤の領域 $\Sigma_m(r) < 0$ は実現できない。灰色の領域について法則は何も決めない。}
+  \label{fig:feasible}
+\end{figure}
+
+\begin{definition}[力学の法則]
+  \label{def:mechanical-law}
+  \lean{OpThermo.WeightStatics.MechanicalLaw}
+  \leanok
+  \uses{def:feasible, def:weighted-sum}
+  重みづけ $m$ が力学の法則を満たすとは、次の二つが成り立つことをいう。
+  \begin{itemize}
+    \item $\mathrm{Feasible}(r)$ なら $\Sigma_m(r) \ge 0$。
+    \item $\Sigma_m(r) = 0$ なら $\mathrm{Feasible}(r)$。
+  \end{itemize}
+\end{definition}
+
+一つ目は、装置だけで重り全体を持ち上げることはできないということである。
+二つ目は、釣り合う動かし方は理想的な (摩擦のない) てこと滑車で実現できるということである。
+合わせて、仮想仕事の原理を手順の言葉で述べたものになる。
+
+\begin{empirical}[天秤の質量は力学の法則を満たす]
+  \label{emp:balance-law}
+  \lean{OpThermo.WeightStatics.compatible_with_balance}
+  \leanok
+  \uses{def:mechanical-law, emp:balance}
+  天秤の質量目盛りは力学の法則を満たす。
+\end{empirical}
+
+\begin{lemma}[釣り合う動かし方は重みづけによらない]
+  \label{lem:mech-zero}
+  \lean{OpThermo.WeightStatics.mechanicalWork_zero_of_law, OpThermo.WeightStatics.mechanicalWork_reverse}
+  \leanok
+  \uses{def:mechanical-law}
+  $m, m'$ がともに法則を満たし $\Sigma_m(r) = 0$ なら $\Sigma_{m'}(r) = 0$。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  $r$ と、上下を逆にした記録は、どちらも $\Sigma_m = 0$ なので理想的な装置で実現できる。
+  $m'$ についての法則から $\Sigma_{m'}(r) \ge 0$ かつ $-\Sigma_{m'}(r) \ge 0$。
+\end{proof}
+
+\begin{theorem}[仕事の重みづけの一意性]
+  \label{thm:mech-compatible}
+  \lean{OpThermo.WeightStatics.compatible_of_mechanicalLaw, OpThermo.WeightStatics.compatible_with_balance}
+  \leanok
+  \uses{lem:mech-zero, def:compatible, def:represents, emp:balance-law}
+  法則を満たす正の重みづけは互いに比例する。
+  とくに経験則~\ref{emp:balance-law} から、仕事の重みづけは天秤の質量の定数倍に限られる。
+  その定数は単位の選び方にあたる。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  重り $b$ を $m(u)$ だけ下げ、$u$ を $m(b)$ だけ上げる記録は $\Sigma_m = 0$ を満たす。
+  補題から $m'(b)\, m(u) = m'(u)\, m(b)$。
+\end{proof}
+
+\chapter{第一法則}
+
+系を平衡状態から平衡状態へ移す手順のうち、系の外に重りの高さの変化しか残さないものを断熱操作と呼ぶ (定義~\ref{def:adiabatic-op})。
+図~\ref{fig:joule} の Joule の実験はその典型である。
+断熱仕事の経路独立性は Joule の実験~\cite{Joule1850} に基づく。
+ここでの定式化は Lieb--Yngvason~\cite[§2.4]{LY99} に近い。
+
+仕事は平衡状態の関数ではなく、断熱操作の関数である。
+同じ $X$ と $Y$ を、かき混ぜて結ぶことも、電流を流して結ぶこともできる。
+それらの仕事が等しいことが第一法則の経験的な内容 (経路独立性) である。
+経路独立性が成り立つと、仕事は始状態と終状態だけで決まり、その差として平衡状態の関数 $U : \Gamma \to \R$ (内部エネルギー) が定まる。
+平衡状態の関数になるのは仕事 $W$ ではなく内部エネルギー $U$ である。
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{firstlaw}
+  \caption{第一法則。同じ始状態と終状態を結ぶ断熱操作の仕事は等しい (経路独立性)。基準状態 $X_0$ からの仕事で内部エネルギー $U$ を定義する。}
+  \label{fig:firstlaw}
+\end{figure}
+
+\begin{definition}[装置]
+  \label{def:apparatus}
+  \uses{def:weight}
+  系の外にあって手順で使うもののうち、重り以外のものを装置という。
+\end{definition}
+
+羽根車、ひも、滑車、発電機、ピストン、容器の壁などが装置である。
+
+\begin{definition}[断熱操作]
+  \label{def:adiabatic-op}
+  \uses{def:apparatus, def:equilibrium, def:state}
+  系を平衡状態 $X$ から平衡状態 $Y$ へ移す手順で、終わったとき次の二つが成り立つものを断熱操作という。
+  \begin{itemize}
+    \item 使った装置はすべて、始める前と同じ状態に戻っている。
+    \item 系の外に残る変化は、重りの高さの変化だけである。
+  \end{itemize}
+\end{definition}
+
+この定義は熱という語を使わない。
+熱は後で、内部エネルギーを使って定義する (定義~\ref{def:heat})。
+断熱壁は、二つ目の条件を満たす手段の一つにすぎない。
+
+Joule の実験 (図~\ref{fig:joule}) は断熱操作である。
+羽根車とひもは元の状態に戻り、変化は重りの高さだけに残る。
+重りで回した発電機の電流を系の中の抵抗に流す手順や、重りで押したピストンで気体を圧縮する手順も断熱操作である。
+バーナーで温める手順は断熱操作ではない。燃料が減り、バーナーが元の状態に戻らないからである。
+
+\begin{definition}[断熱操作の集まり]
+  \label{def:ops}
+  \lean{OpThermo.AdiabaticOps}
+  \leanok
+  \uses{def:adiabatic-op, def:drops}
+  $X$ から $Y$ へ移す断熱操作の集まりを $\mathrm{Operation}(X, Y)$ と書く。
+  断熱操作 $p$ の間の降下の記録を $\mathrm{drops}(p)$ と書く。
+\end{definition}
+
+\begin{empirical}[断熱操作は続けて行える]
+  \label{emp:ops-seq}
+  \lean{OpThermo.AdiabaticOps.comp, OpThermo.AdiabaticOps.drops_comp}
+  \leanok
+  \uses{def:ops}
+  断熱操作は続けて行え、その降下の記録はそれぞれの記録をつなげたものである。
+\end{empirical}
+
+\begin{definition}[断熱到達性]
+  \label{def:prec}
+  \lean{OpThermo.AdiabaticOps.Prec}
+  \leanok
+  \uses{def:ops}
+  $X$ から $Y$ への断熱操作が存在するとき、$X \prec Y$ と書き、$Y$ は $X$ から断熱到達可能という。
+\end{definition}
+
+\begin{empirical}[連結性]
+  \label{emp:connected}
+  \lean{OpThermo.AdiabaticOps.connected, OpThermo.AdiabaticOps.prec_total}
+  \leanok
+  \uses{def:prec}
+  任意の二つの平衡状態 $X, Y$ で、$X \prec Y$ または $Y \prec X$。
+\end{empirical}
+
+断熱到達性は、状態を断熱操作で比べる手順である。
+この章では内部エネルギーを作るために使い、次の章ではエントロピーという目盛りを作るために使う。
+
+\begin{definition}[仕事]
+  \label{def:work}
+  \lean{OpThermo.AdiabaticOps.work, OpThermo.AdiabaticOps.work_comp}
+  \leanok
+  \uses{def:ops, def:weighted-sum}
+  重みづけ $m$ を選ぶと、断熱操作 $p$ の仕事を $W_m(p) := \Sigma_m(\mathrm{drops}(p))$ と定める。
+\end{definition}
+
+重力加速度は使わない。
+$m$ が天秤の質量なら、$W_m(p)$ に $g$ を掛けたものが、重りに重力がした仕事 (定理~\ref{thm:gravity-work}) である。
+$W_m$ は断熱操作の上の関数であり、$\Gamma$ の上の関数ではない。
+続けて行った断熱操作の仕事は、それぞれの仕事の和である。
+
+以下、仕事の計算に使う重みづけ $m$ は、力学の法則 (定義~\ref{def:mechanical-law}) を満たす正のものに限る。
+天秤の質量目盛りがその代表である。
+定理~\ref{thm:mech-compatible} から、そうした重みづけは互いに定数倍しか違わない。
+
+\begin{empirical}[経路独立性 (Joule)]
+  \label{emp:path-indep}
+  \lean{OpThermo.AdiabaticOps.PathIndependent}
+  \leanok
+  \uses{def:work, def:mechanical-law}
+  同じ始状態と終状態を結ぶ二つの断熱操作 $p, q \in \mathrm{Operation}(X, Y)$ で $W_m(p) = W_m(q)$。
+\end{empirical}
+
+\begin{theorem}[重みづけの選び方によらない]
+  \label{thm:path-compatible}
+  \lean{OpThermo.AdiabaticOps.pathIndependent_iff_of_mechanicalLaw, OpThermo.AdiabaticOps.pathIndependent_iff_of_compatible, OpThermo.AdiabaticOps.work_of_compatible}
+  \leanok
+  \uses{emp:path-indep, thm:mech-compatible}
+  力学の法則を満たす正の重みづけ $m, m'$ の一方で経路独立性が成り立てば、他方でも成り立つ。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  定理~\ref{thm:mech-compatible} から $m' = c\, m$ ($c > 0$) なので $W_{m'} = c\, W_m$。
+\end{proof}
+
+\begin{definition}[経路独立な仕事を持つ断熱操作]
+  \label{def:processes}
+  \lean{OpThermo.AdiabaticProcesses, OpThermo.AdiabaticOps.toProcesses}
+  \leanok
+  \uses{emp:path-indep, emp:connected}
+  経路独立性が成り立つ重みづけを一つ固定すると、以下の議論に必要なのは各断熱操作の仕事 $W(p)$ だけになる。
+  そこで、断熱操作の集まりと仕事 $W$ の組で、仕事の加法性、経路独立性、連結性を満たすものを考える。
+  定義~\ref{def:ops} の断熱操作から、経路独立な重みづけを選んでこの組が作れる。
+\end{definition}
+
+\begin{lemma}[閉じた断熱操作の仕事]
+  \label{lem:work-loop}
+  \lean{OpThermo.AdiabaticProcesses.work_loop}
+  \leanok
+  \uses{def:processes}
+  $p : X \to X$ なら $W(p) = 0$。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  経路独立性から $W(p) = W(p \circ p) = 2 W(p)$。
+\end{proof}
+
+\begin{definition}[内部エネルギー]
+  \label{def:internal-energy}
+  \lean{OpThermo.AdiabaticProcesses.internalEnergy, OpThermo.AdiabaticOps.energy}
+  \leanok
+  \uses{def:processes}
+  基準状態 $X_0$ を固定する。
+  $X_0 \to X$ の断熱操作 $p$ があれば $U(X) := W(p)$、なければ $X \to X_0$ の断熱操作 $q$ をとって $U(X) := -W(q)$ とする。
+\end{definition}
+
+\begin{theorem}[内部エネルギーの存在]
+  \label{thm:internal-energy}
+  \lean{OpThermo.AdiabaticProcesses.internalEnergy_spec, OpThermo.AdiabaticProcesses.exists_internalEnergy, OpThermo.AdiabaticOps.energy_spec}
+  \leanok
+  \uses{def:internal-energy, lem:work-loop}
+  任意の断熱操作 $p : X \to Y$ について $U(Y) - U(X) = W(p)$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $X_0$ と $X$、$X_0$ と $Y$ をそれぞれどちら向きに結ぶかで四通りに分け、合成と経路独立性を使う。
+  $X_0 \to X \to Y \to X_0$ の場合は閉じた断熱操作の補題を使う。
+\end{proof}
+
+\begin{theorem}[内部エネルギーの一意性]
+  \label{thm:internal-energy-unique}
+  \lean{OpThermo.AdiabaticProcesses.internalEnergy_unique}
+  \leanok
+  \uses{def:processes}
+  断熱仕事を再現する状態関数は、定数の差を除いて一意である。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  連結性により任意の $X$ は $X_0$ と一方向に結べるので、差 $U' - U$ は定数になる。
+\end{proof}
+
+\begin{theorem}[内部エネルギーも重みづけの選び方によらない]
+  \label{thm:energy-compatible}
+  \lean{OpThermo.AdiabaticOps.internalEnergy_of_compatible}
+  \leanok
+  \uses{thm:path-compatible, thm:internal-energy-unique}
+  力学の法則を満たす正の重みづけ $m, m' = c\, m$ から作った内部エネルギーは、$U' = c\, U + d$ の関係にある。
+  違いは単位と基準点の選び方だけである。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $c\, U$ は $W_{m'}$ を再現するので、一意性の定理を適用する。
+\end{proof}
+
+\begin{definition}[熱]
+  \label{def:heat}
+  \lean{OpThermo.AdiabaticProcesses.heat}
+  \leanok
+  \uses{thm:internal-energy}
+  仕事 $W$ を伴う、断熱とは限らない手順 $X \to Y$ で入った熱を $Q := U(Y) - U(X) - W$ と定義する。
+  第一法則 $\Delta U = Q + W$ は定義から従う。
+\end{definition}
+
+\begin{theorem}[断熱操作の熱]
+  \label{thm:heat-adiabatic}
+  \lean{OpThermo.AdiabaticProcesses.heat_adiabatic, OpThermo.AdiabaticProcesses.first_law}
+  \leanok
+  \uses{def:heat}
+  断熱操作で系に入る熱は $0$ である。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  内部エネルギーの存在定理を代入する。
+\end{proof}
+
+\chapter{断熱到達性とエントロピー}
+
+エントロピーは、状態に対する測定の目盛りである。
+長さの測定 (定義~\ref{def:extensive} の外延的構造) と同じ形で組み立てる。
+
+\begin{itemize}
+  \item \textbf{比較}：棒では、並べてどちらの他端が出るかを見た。状態では、$X$ から $Y$ へ断熱操作で移せるかを試す。移せるとき $X \prec Y$ と書く (断熱到達性、定義~\ref{def:prec})。
+  \item \textbf{連結}：棒では、端と端でつないだ。状態では、二つの系を並べて一つの複合系 $X + Y$ とする。
+  \item \textbf{目盛り}：棒では、比較を $\le$ に、連結を $+$ に写す長さ $\ell$ を作った (定義~\ref{def:represents})。状態では、断熱到達性を $\le$ に、複合を $+$ に写すエントロピー $S$ を作る (定理~\ref{thm:entropy-principle}, \ref{thm:additive})。
+\end{itemize}
+
+長さとの違いは三つある。
+比較できるのは組成の等しい状態どうしだけである。
+連結のほかに、量を $t$ 倍した系 $tX$ を作る手順がある。
+目盛りの一意性は、定数倍ではなく、単位と成分ごとの基準値を選ぶ自由度を残す (定理~\ref{thm:unique})。
+
+この章の公理と証明の筋道は Lieb--Yngvason~\cite{LY99} の第 2 章に従う。
+Lieb--Yngvason は断熱到達性を原始概念として公理を置く。
+ここでは断熱到達性を断熱操作の存在として定義し、公理のうち A1--A4 を断熱操作についての前提から導く。
+抽象的な構成の全体は Lieb--Yngvason を参照されたい。
+教科書としての解説は Thess~\cite{Thess2011}、日本語では田崎~\cite{Tasaki2000} と佐々~\cite{Sasa2000} がある。
+
+\section{断熱操作から断熱到達性へ}
+\label{sec:accessibility-axioms}
+
+\begin{definition}[複合系の断熱操作]
+  \label{def:composite-ops}
+  \lean{OpThermo.CompositeOps}
+  \leanok
+  \uses{def:ops, def:state-space, def:mass}
+  $\mathcal{S}$ の状態の間の断熱操作も、定義~\ref{def:adiabatic-op} と同じ条件で定める。
+  何もしないことも断熱操作に含める。
+\end{definition}
+
+\begin{empirical}[複合系の断熱操作の法則]
+  \label{emp:composite-ops}
+  \lean{OpThermo.CompositeOps.alongside, OpThermo.CompositeOps.scale, OpThermo.CompositeOps.comp_eq}
+  \leanok
+  \uses{def:composite-ops}
+  \begin{itemize}
+    \item 断熱操作は続けて行える (経験則~\ref{emp:ops-seq} と同じ)。
+    \item 別の系 $Z$ を脇に置いたまま、$X$ に断熱操作を行える。重りの動きは変わらない。
+    \item 量を $t$ 倍した系にも同じ断熱操作を行え、重りの降下量は $t$ 倍になる。
+    \item 断熱操作で組成は変わらない。
+  \end{itemize}
+\end{empirical}
+
+組成が変わらないことは、物質が出入りせず、化学反応も起きないことを表す。
+化学反応は扱わない。
+
+\begin{definition}[複合系の断熱到達性]
+  \label{def:adiabatic}
+  \lean{OpThermo.CompositeOps.prec_iff}
+  \leanok
+  \uses{def:composite-ops, emp:composite-ops, def:prec}
+  $\mathcal{S}$ の状態の間でも、断熱操作が存在するとき $X \prec Y$ と書く (定義~\ref{def:prec} と同じ)。
+\end{definition}
+
+\begin{theorem}[断熱到達性の性質]
+  \label{thm:accessibility-axioms}
+  \lean{OpThermo.CompositeOps.toAdiabatic, OpThermo.Adiabatic}
+  \leanok
+  \uses{def:adiabatic}
+  \begin{itemize}
+    \item A1 反射律：$X \prec X$。
+    \item A2 推移律：$X \prec Y$ かつ $Y \prec Z$ なら $X \prec Z$。
+    \item A3 結合との整合性：$X \prec Y$ なら $X + Z \prec Y + Z$。
+    \item A4 スケーリング：$X \prec Y$ なら $tX \prec tY$。
+  \end{itemize}
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  順に、何もしない断熱操作、続けて行う断熱操作、$Z$ を脇に置いた断熱操作、量を $t$ 倍した系への断熱操作をとる。
+\end{proof}
+
+\begin{empirical}[安定性と比較仮説]
+  \label{emp:stability-ch}
+  \lean{OpThermo.CompositeOps.stability, OpThermo.CompositeOps.comparison}
+  \leanok
+  \uses{def:adiabatic, def:mass}
+  \begin{itemize}
+    \item A6 安定性：すべての $n$ で $X + \frac{1}{n+1} Z_0 \prec Y + \frac{1}{n+1} Z_1$ なら $X \prec Y$。
+    \item CH 比較仮説：$\mathrm{comp}\, X = \mathrm{comp}\, Y$ なら $X \prec Y$ または $Y \prec X$。
+  \end{itemize}
+\end{empirical}
+
+CH は連結性 (経験則~\ref{emp:connected}) を、組成の等しい複合系どうしに広げたものである。
+組成が違えば、断熱操作では組成が変わらないので、どちら向きにも移れない。
+CH は「どちらか一方向には必ず行ける」という主張であり、両方向に行けるとは言っていない。
+例えば容器に入った気体の二つの状態 $X, Y$ を考える。
+かき混ぜると、体積を保ったままエネルギーを上げられる。
+ピストンをゆっくり動かすと、体積を変えられる。
+この二つを組み合わせれば、$X$ から $Y$ か $Y$ から $X$ の少なくとも一方へは移れる。
+複合系では、例えば $1\,\mathrm{kg}$ の熱い水と $1\,\mathrm{kg}$ の冷たい水の組 $X$ と、$2\,\mathrm{kg}$ のぬるい水 $Y$ を比べる。
+混ぜれば $X$ から $Y$ に移れるが、$Y$ から $X$ には移れない。
+Lieb--Yngvason は単純系の CH を別の公理から導くが、ここでは仮定として置く。
+基準状態の混合と $X$ を比べるために使う (定理~\ref{thm:entropy-principle})。
+A1--A4 とこの二つを合わせたものが Lieb--Yngvason の公理系であり、以下の補題と定理はこの六つだけを使う。
+
+\section{複合系の内部エネルギー}
+
+第一法則の章では、一つの系の平衡状態の上に内部エネルギーを作った。
+ここでは状態の空間 $\mathcal{S}$ の上に作り、複合とスケーリングに対してどう振る舞うかを示す。
+仕事 $W(p)$ は定義~\ref{def:work} と同じく降下の記録から計算する。
+
+\begin{empirical}[複合系の経路独立性]
+  \label{emp:path-indep-composite}
+  \lean{OpThermo.CompositeOps.PathIndependent, OpThermo.CompositeOps.work}
+  \leanok
+  \uses{def:composite-ops, def:work}
+  $\mathcal{S}$ の同じ始状態と終状態を結ぶ二つの断熱操作の仕事は等しい。
+\end{empirical}
+
+\begin{definition}[組成ごとの基準状態]
+  \label{def:ref}
+  \lean{OpThermo.Adiabatic.Calibration.ref, OpThermo.Adiabatic.Calibration.comp_ref}
+  \leanok
+  \uses{def:mass}
+  成分ごとに、単位質量の基準状態を一つ選ぶ。
+  組成 $k$ に対し、各成分の基準状態を $k$ の割合で並べた状態を $\mathrm{ref}(k)$ と書く。
+\end{definition}
+
+$\mathrm{ref}$ は線形で、$\mathrm{comp}(\mathrm{ref}(k)) = k$ を満たす。
+Lean では、この性質を持つ線形写像として与える。
+
+\begin{definition}[複合系の内部エネルギー]
+  \label{def:energy-composite}
+  \lean{OpThermo.CompositeOps.energy, OpThermo.CompositeOps.energy_eq_of_to, OpThermo.CompositeOps.energy_eq_of_from}
+  \leanok
+  \uses{emp:path-indep-composite, def:ref, emp:stability-ch}
+  $\mathrm{ref}(\mathrm{comp}\, X) \to X$ の断熱操作 $p$ があれば $U(X) := W(p)$、なければ $X \to \mathrm{ref}(\mathrm{comp}\, X)$ の断熱操作 $q$ をとって $U(X) := -W(q)$ とする。
+\end{definition}
+
+$X$ と $\mathrm{ref}(\mathrm{comp}\, X)$ は組成が等しいので、CH からどちらかの断熱操作は存在する。
+
+\begin{theorem}[複合系の内部エネルギーの存在]
+  \label{thm:energy-composite}
+  \lean{OpThermo.CompositeOps.energy_spec, OpThermo.CompositeOps.energy_ref}
+  \leanok
+  \uses{def:energy-composite}
+  任意の断熱操作 $p : X \to Y$ について $U(Y) - U(X) = W(p)$。
+  基準状態では $U(\mathrm{ref}(k)) = 0$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  断熱操作で組成は変わらないので、$X$ と $Y$ の基準状態は同じである。
+  基準状態と $X$、基準状態と $Y$ をどちら向きに結ぶかで分け、続けて行った断熱操作に経路独立性を使う。
+\end{proof}
+
+\begin{theorem}[内部エネルギーは示量的]
+  \label{thm:energy-extensive}
+  \lean{OpThermo.CompositeOps.energy_add_sub, OpThermo.CompositeOps.energy_add, OpThermo.CompositeOps.energy_smul, OpThermo.CompositeOps.energy_extensive}
+  \leanok
+  \uses{thm:energy-composite, def:extensive-fn}
+  $U(X + Y) = U(X) + U(Y)$、$U(tX) = t\, U(X)$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  脇に $Z$ を置いた断熱操作は仕事を変えないので、組成の等しい $X, Y$ について $U(X + Z) - U(Y + Z) = U(X) - U(Y)$。
+  $X$ を $\mathrm{ref}(\mathrm{comp}\, X)$ に、$Y$ を $\mathrm{ref}(\mathrm{comp}\, Y)$ に順に置き換え、$\mathrm{ref}$ の線形性と $U(\mathrm{ref}(k)) = 0$ を使う。
+  スケーリングでは、$t$ 倍した系への断熱操作の仕事が $t$ 倍になることを使う。
+\end{proof}
+
+\section{相殺則}
+
+\begin{lemma}[分割と再結合 (A5)]
+  \label{lem:split}
+  \lean{OpThermo.Adiabatic.split_recombine}
+  \leanok
+  \uses{def:state-space}
+  $0 \le t \le 1$ なら $X = tX + (1-t)X$。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  加群の分配律による。
+\end{proof}
+
+\begin{theorem}[相殺則]
+  \label{thm:cancel}
+  \lean{OpThermo.Adiabatic.cancel}
+  \leanok
+  \uses{thm:accessibility-axioms, emp:stability-ch}
+  $X + Z \prec Y + Z$ なら $X \prec Y$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $e = 1/(n+1)$ とおくと、A4 から $eX + eZ \prec eY + eZ$。
+  $eX$ を一つずつ $eY$ に置き換える帰納法で、$j \cdot eX + eZ \prec j \cdot eY + eZ$ が任意の $j$ で成り立つ。
+  $j = n+1$ とすれば $X + eZ \prec Y + eZ$ となり、A6 から $X \prec Y$。
+\end{proof}
+
+\section{基準状態と形式的な不等式}
+
+エントロピーの目盛りを作るには、元に戻せない変化の例が一つ要る。
+すべての状態が断熱的に行き来できるなら、断熱到達性は何も区別せず、エントロピーは定数になる。
+
+\begin{empirical}[元に戻せない断熱操作がある]
+  \label{emp:irreversible}
+  \lean{OpThermo.Adiabatic.Calibration.strict}
+  \leanok
+  \uses{def:adiabatic, def:mass}
+  組成の等しい状態 $X_0, X_1$ で、$X_0 \prec X_1$ かつ $X_1 \not\prec X_0$ を満たすものがある。
+\end{empirical}
+
+Joule の実験 (図~\ref{fig:joule}) が例である。
+重りを下げて水をかき混ぜれば水は温まるが、水を冷やして重りを持ち上げる断熱操作は見つかっていない。
+これは Kelvin--Planck の形の第二法則にあたる (第~\ref{sec:second-law} 節)。
+
+\begin{definition}[基準状態]
+  \label{def:calibration}
+  \lean{OpThermo.Adiabatic.Calibration}
+  \leanok
+  \uses{thm:accessibility-axioms, emp:stability-ch, def:ref, emp:irreversible}
+  経験則~\ref{emp:irreversible} の状態の組を一つ選び、$X_0, X_1$ とする。$X_0 \sprec X_1$ と書く。
+  組成ごとの基準状態 $\mathrm{ref}$ (定義~\ref{def:ref}) は $\mathrm{ref}(\mathrm{comp}\, X_0) = X_0$ を満たすように選ぶ。
+  $Z(a, b) := a X_0 + b X_1$、$\mathrm{base}(X) := \mathrm{ref}(\mathrm{comp}\, X)$ とおく。
+\end{definition}
+
+\begin{definition}[形式的な不等式]
+  \label{def:R}
+  \lean{OpThermo.Adiabatic.Calibration.R}
+  \leanok
+  \uses{def:calibration}
+  $\alpha, \beta \in \R$ に対し、$R(P, Q, \alpha, \beta)$ を次で定める。
+  $a - a' = \alpha$、$b - b' = \beta$ を満たす $a, b, a', b' \ge 0$ が存在して $P + Z(a, b) \prec Q + Z(a', b')$。
+\end{definition}
+
+形式的には「$P + \alpha X_0 + \beta X_1 \prec Q$」と読む。
+この形にすると、元の議論の $X_0 \prec X \prec X_1$ という範囲の制限が要らなくなる。
+
+\begin{lemma}[表示によらない]
+  \label{lem:R-rep}
+  \lean{OpThermo.Adiabatic.Calibration.R.rep}
+  \leanok
+  \uses{def:R, thm:cancel}
+  $R(P, Q, \alpha, \beta)$ なら、$a - a' = \alpha$、$b - b' = \beta$ を満たす任意の $a, b, a', b' \ge 0$ で $P + Z(a,b) \prec Q + Z(a',b')$。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  与えられた表示 $(a_0, b_0, a_0', b_0')$ の両辺に $Z(a', b')$ を足し、$Z(a_0', b_0')$ を相殺する。
+\end{proof}
+
+\begin{lemma}[推移と加法とスケーリング]
+  \label{lem:R-algebra}
+  \lean{OpThermo.Adiabatic.Calibration.R.trans, OpThermo.Adiabatic.Calibration.R.add, OpThermo.Adiabatic.Calibration.R.smul, OpThermo.Adiabatic.Calibration.R_of_prec, OpThermo.Adiabatic.Calibration.R.to_prec}
+  \leanok
+  \uses{def:R, lem:R-rep}
+  $R$ は係数を足し合わせる形で推移的であり、複合とスケーリングで保たれる。
+  $R(P, Q, 0, 0)$ は $P \prec Q$ と同値である。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  A2, A3, A4 を表示に適用する。
+  $R(P,Q,0,0) \Rightarrow P \prec Q$ には表示によらないことを使う。
+\end{proof}
+
+\begin{lemma}[基準状態の順序]
+  \label{lem:R-base}
+  \lean{OpThermo.Adiabatic.Calibration.R_base, OpThermo.Adiabatic.Calibration.R_base', OpThermo.Adiabatic.Calibration.R_base_nonneg}
+  \leanok
+  \uses{def:R, lem:R-rep}
+  $R(P, P, \gamma, -\gamma)$ は $\gamma \ge 0$ と同値である。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  $\gamma \ge 0$ なら A4 から $\gamma X_0 \prec \gamma X_1$。
+  $\gamma < 0$ なら相殺則で $P$ を除いて $|\gamma| X_1 \prec |\gamma| X_0$ となり、$1/|\gamma|$ 倍して $X_1 \prec X_0$ が出て矛盾する。
+\end{proof}
+
+\begin{lemma}[形式的な不等式の安定性]
+  \label{lem:R-stability}
+  \lean{OpThermo.Adiabatic.Calibration.R.stability_up, OpThermo.Adiabatic.Calibration.R.stability_down}
+  \leanok
+  \uses{def:R, lem:R-rep}
+  $\varepsilon_n = 1/(n+1)$ とする。
+  すべての $n$ で $R(P, Q, \alpha + \varepsilon_n, \beta - \varepsilon_n)$ なら $R(P, Q, \alpha, \beta)$。
+  符号を入れ替えた形も成り立つ。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  固定した表示に $\varepsilon_n X_0$ と $\varepsilon_n X_1$ を足した表示をとり、A6 を適用する。
+\end{proof}
+
+\section{エントロピーの構成}
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{entropy}
+  \caption{エントロピーの構成。$X$ と同じ組成の基準状態から、$X_0$ を量 $s$ だけ $X_1$ に置き換えた系と $X$ を比べる。$X$ に断熱的に到達できる割合 (緑) と、$X$ から到達できる割合 (赤) の境目が $S(X)$ である。}
+  \label{fig:entropy}
+\end{figure}
+
+\begin{definition}[エントロピー]
+  \label{def:entropy}
+  \lean{OpThermo.Adiabatic.Calibration.entropy, OpThermo.Adiabatic.Calibration.Below, OpThermo.Adiabatic.Calibration.Above}
+  \leanok
+  \uses{def:R}
+  $\mathrm{Below}(X, s) := R(\mathrm{base}(X), X, -s, s)$、$\mathrm{Above}(X, s) := R(X, \mathrm{base}(X), s, -s)$ とおく。
+  エントロピーを $S(X) := \sup\{ s : \mathrm{Below}(X, s) \}$ と定義する。
+\end{definition}
+
+\begin{lemma}[下と上の比較]
+  \label{lem:below-le-above}
+  \lean{OpThermo.Adiabatic.Calibration.below_le_above, OpThermo.Adiabatic.Calibration.Below.mono}
+  \leanok
+  \uses{def:entropy, lem:R-algebra, lem:R-base}
+  $\mathrm{Below}(X, s)$ かつ $\mathrm{Above}(X, s')$ なら $s \le s'$。
+  また $\mathrm{Below}(X, s)$ は $s$ について下に閉じている。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  推移させると $R(\mathrm{base}(X), \mathrm{base}(X), s'-s, s-s')$ を得るので、基準状態の順序から $s' - s \ge 0$。
+\end{proof}
+
+\begin{lemma}[どちらか一方は成り立つ]
+  \label{lem:below-or-above}
+  \lean{OpThermo.Adiabatic.Calibration.below_or_above}
+  \leanok
+  \uses{def:entropy}
+  任意の $s$ で $\mathrm{Below}(X, s)$ または $\mathrm{Above}(X, s)$。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  表示 $\mathrm{base}(X) + Z(a, b)$ と $X + Z(a', b')$ の組成は等しいので、CH を適用する。
+\end{proof}
+
+\begin{lemma}[エントロピーは有限]
+  \label{lem:finite}
+  \lean{OpThermo.Adiabatic.Calibration.exists_above, OpThermo.Adiabatic.Calibration.exists_below}
+  \leanok
+  \uses{lem:below-or-above, lem:R-rep}
+  $\mathrm{Below}(X, s)$ を満たす $s$ も、$\mathrm{Above}(X, s)$ を満たす $s$ も存在する。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  $\mathrm{Above}$ を満たす $s$ がなければ、すべての $s$ で $\mathrm{Below}(X, s)$ が成り立つ。
+  $s = k$ ($k = n+1$) とすると $\mathrm{base}(X) + k X_1 \prec X + k X_0$。
+  $1/k$ 倍すると $X_1 + \frac{1}{k} \mathrm{base}(X) \prec X_0 + \frac{1}{k} X$ となり、A6 から $X_1 \prec X_0$ が出て矛盾する。
+  もう一方も同様である。
+\end{proof}
+
+\begin{lemma}[上限は達成される]
+  \label{lem:attained}
+  \lean{OpThermo.Adiabatic.Calibration.below_entropy, OpThermo.Adiabatic.Calibration.above_entropy}
+  \leanok
+  \uses{lem:finite, lem:below-le-above, lem:R-stability}
+  $\mathrm{Below}(X, S(X))$ かつ $\mathrm{Above}(X, S(X))$。
+  つまり形式的に $X \sim \mathrm{base}(X) - S(X) X_0 + S(X) X_1$。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  $S(X) - \varepsilon_n$ では $\mathrm{Below}$ が成り立つ (上限の性質と下に閉じていること)。
+  $S(X) + \varepsilon_n$ では $\mathrm{Below}$ が成り立たないので、どちらか一方の補題から $\mathrm{Above}$ が成り立つ。
+  どちらも安定性で $\varepsilon_n \to 0$ とする。
+\end{proof}
+
+\begin{lemma}[エントロピーの特徴づけ]
+  \label{lem:entropy-eq}
+  \lean{OpThermo.Adiabatic.Calibration.entropy_eq_of}
+  \leanok
+  \uses{lem:attained, lem:below-le-above}
+  $\mathrm{Below}(X, s)$ かつ $\mathrm{Above}(X, s)$ なら $S(X) = s$。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  上限の定義から $s \le S(X)$、下と上の比較から $S(X) \le s$。
+\end{proof}
+
+\section{エントロピーの測定}
+
+$S(X)$ は上限として定義した。
+Lean では実数の上限 $\sup$ を使うので、この定義は古典論理に頼っており、数を計算する手続きを直接は与えない。
+しかし、断熱到達性の実験を繰り返せば $S(X)$ は任意の精度で求まる。
+長さを、単位の棒の分数個と比べて測るのと同じである。
+
+一回の実験は次のとおり。
+$X$ と同じ組成の基準状態 $\mathrm{base}(X)$ から $X_0$ を量 $s$ だけ $X_1$ に置き換えた系を用意し、それを断熱操作で $X$ に移せるかを試す。
+移せれば $\mathrm{Below}(X, s)$ が成り立つ。
+移せなければ、CH により逆向きに移せる。つまり $\mathrm{Above}(X, s)$ が成り立つ。
+
+\begin{theorem}[二分法によるエントロピーの測定]
+  \label{thm:entropy-bisect}
+  \lean{OpThermo.Adiabatic.Calibration.entropy_bisect, OpThermo.Adiabatic.Calibration.bisectStep, OpThermo.Adiabatic.Calibration.le_entropy, OpThermo.Adiabatic.Calibration.entropy_le}
+  \leanok
+  \uses{def:entropy, lem:below-or-above, lem:below-le-above, lem:attained}
+  $\mathrm{Below}(X, a)$ と $\mathrm{Above}(X, b)$ から始め、区間の中点 $m$ で実験して、移せれば下端を、移せなければ上端を $m$ に動かす。
+  $n$ 回の実験の後の区間 $[a_n, b_n]$ は $a_n \le S(X) \le b_n$ かつ $b_n - a_n = (b - a)/2^n$ を満たす。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $\mathrm{Below}(X, a_n)$ と $\mathrm{Above}(X, b_n)$ が各段で保たれることを帰納法で示す。
+  $\mathrm{Below}(X, s)$ なら $s \le S(X)$、$\mathrm{Above}(X, s)$ なら $S(X) \le s$ である。
+\end{proof}
+
+この意味で、エントロピーは実験を問い合わせ先とする計算で求まる。
+ただし一回の実験は理想化されている。
+断熱操作が見つからないことは、存在しないことの証明にならない。
+実際には両向きの操作を試し、どちらかが見つかるまで続ける。
+CH はどちらかが必ず存在することを保証するだけで、見つけ方は与えない。
+実験室での実際の測定は第~\ref{chap:calorimetry} 章で述べる。
+
+\section{エントロピー原理}
+
+\begin{theorem}[エントロピー原理]
+  \label{thm:entropy-principle}
+  \lean{OpThermo.Adiabatic.Calibration.entropy_principle}
+  \leanok
+  \uses{lem:attained, lem:below-le-above, lem:R-algebra, lem:R-base}
+  $\mathrm{comp}\, X = \mathrm{comp}\, Y$ なら $X \prec Y \iff S(X) \le S(Y)$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  ($\Rightarrow$) $\mathrm{Below}(X, S(X))$ と $X \prec Y$ を推移させて $\mathrm{Below}(Y, S(X))$。
+  $\mathrm{Above}(Y, S(Y))$ と比べて $S(X) \le S(Y)$。
+  ($\Leftarrow$) $X \prec$ 基準混合 $(S(X))$ $\prec$ 基準混合 $(S(Y))$ $\prec Y$ を $R$ で推移させると $R(X, Y, 0, 0)$、すなわち $X \prec Y$。
+\end{proof}
+
+\begin{corollary}[不可逆性]
+  \label{cor:strict}
+  \lean{OpThermo.Adiabatic.Calibration.strictPrec_iff}
+  \leanok
+  \uses{thm:entropy-principle}
+  $\mathrm{comp}\, X = \mathrm{comp}\, Y$ なら $X \sprec Y \iff S(X) < S(Y)$。
+\end{corollary}
+
+\begin{proof}
+  \leanok
+  エントロピー原理を両方向に使う。
+\end{proof}
+
+\begin{theorem}[加法性と示量性]
+  \label{thm:additive}
+  \lean{OpThermo.Adiabatic.Calibration.entropy_add, OpThermo.Adiabatic.Calibration.entropy_smul, OpThermo.Adiabatic.Calibration.entropy_extensive}
+  \leanok
+  \uses{lem:entropy-eq, lem:attained, lem:R-algebra, def:extensive-fn}
+  $S(X + Y) = S(X) + S(Y)$、$S(tX) = t S(X)$。つまり $S$ は示量的である。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $X$ と $Y$ の $\mathrm{Below}$ と $\mathrm{Above}$ を足し合わせる (またはスケーリングする) と、$X + Y$ (または $tX$) について値 $S(X) + S(Y)$ (または $tS(X)$) の $\mathrm{Below}$ と $\mathrm{Above}$ が得られる。
+  特徴づけの補題を適用する。
+\end{proof}
+
+\begin{theorem}[較正]
+  \label{thm:calibration}
+  \lean{OpThermo.Adiabatic.Calibration.entropy_X₀, OpThermo.Adiabatic.Calibration.entropy_X₁}
+  \leanok
+  \uses{lem:entropy-eq}
+  $S(X_0) = 0$、$S(X_1) = 1$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  反射律から直接 $\mathrm{Below}$ と $\mathrm{Above}$ が成り立つ。
+\end{proof}
+
+\begin{theorem}[一意性]
+  \label{thm:unique}
+  \lean{OpThermo.Adiabatic.Calibration.entropy_unique}
+  \leanok
+  \uses{lem:attained, lem:R-rep}
+  $S' : \mathcal{S} \to \R$ が示量的で、組成の等しい状態について $X \prec Y \iff S'(X) \le S'(Y)$ を満たすとする。
+  このとき $a := S'(X_1) - S'(X_0) > 0$ であり、$S'(X) = a S(X) + S'(\mathrm{base}(X))$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $X + Z(a', b') \sim \mathrm{base}(X) + Z(a, b)$ の両辺に $S'$ を適用し、示量性で展開する。
+\end{proof}
+
+\section{第二法則}
+\label{sec:second-law}
+
+第二法則には歴史的にいくつもの言い方がある。
+この blueprint での位置づけは次のとおり。
+\begin{itemize}
+  \item \textbf{エントロピー原理} (定理~\ref{thm:entropy-principle})：組成の等しい状態について、断熱的に移れるのはエントロピーが減らないときに限る。この blueprint ではこれを第二法則の中心とみなす。Lieb--Yngvason~\cite{LY99} と同じ立場である。
+  \item \textbf{Kelvin--Planck}：熱を全部仕事に変える循環過程はない。ここでは、水を冷やして重りを持ち上げる断熱操作はないという形で、経験則~\ref{emp:irreversible} として置いた。
+  \item \textbf{Clausius}：熱は低温から高温へ自然には流れない。温度を定義した後で定理~\ref{thm:exchange-dir} として導く。
+  \item \textbf{Carathéodory}：どの状態のどんな近くにも、その状態から断熱的に到達できない状態がある。この形はここの公理からは出ない (下の注意と定理~\ref{thm:model})。公理から出るのは、次の定理の弱い形である。
+\end{itemize}
+
+\begin{theorem}[少量の補助系を添えても不可逆]
+  \label{thm:caratheodory}
+  \lean{OpThermo.Adiabatic.Calibration.caratheodory}
+  \leanok
+  \uses{thm:entropy-principle, thm:additive}
+  任意の状態 $X$ と $t > 0$ について、$X + tX_1 \not\prec X + tX_0$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  両辺の組成は等しく、エントロピーは $S(X) + t$ と $S(X)$ である。
+  エントロピー原理から、移れるなら $S(X) + t \le S(X)$ となり矛盾する。
+\end{proof}
+
+$t$ はいくらでも小さくとれるので、元に戻せない変化 $X_0 \to X_1$ は、どんなに少量でも、どんな系 $X$ を添えても元に戻せない。
+
+これは Carathéodory の原理そのものではない。
+Carathéodory の原理は、始状態 $Y$ を固定して、$Y$ の任意の近傍に $Y$ から到達できない状態があることを主張する。
+上の定理では始状態 $X + tX_1$ が $t$ とともに動く。
+また、ここの状態の空間 $\mathcal{S}$ には近傍を決める位相を入れていない。
+実際、定理~\ref{thm:model} のモデルでは、$X_0 = (1, 0)$ から質量の等しいすべての状態に断熱的に移れる。
+このモデルは公理をすべて満たすので、近傍の形の原理は公理から出ない。
+この形を得るには、状態の空間の位相と、考える状態が内点であることと、その点からエントロピーを下げる向きの状態が近くにあることを、別に仮定する必要がある~\cite{LY99}。
+
+経験的な入力は、A1--A4 を導いた断熱操作の法則、A6 と比較仮説、元に戻せない断熱操作の存在の三つである。
+エントロピー原理は、これらから導いた定理である。
+元に戻せない断熱操作の存在を除くと、エントロピーは定数になり、エントロピー原理は何も主張しなくなる。
+
+\section{無矛盾性}
+
+\begin{theorem}[モデルの存在]
+  \label{thm:model}
+  \lean{OpThermo.ModelState, OpThermo.modelCalibration, OpThermo.model_entropy, OpThermo.model_reach_all}
+  \leanok
+  \uses{def:adiabatic, def:calibration, thm:unique}
+  成分が一つで、$\mathcal{S} = \Rnn \times \Rnn$、$X \prec Y :\iff (X_1 = Y_1$ かつ $X_2 \le Y_2)$、組成 $X_1$ のモデルは公理をすべて満たし、$X_0 = (1, 0) \sprec X_1 = (1, 1)$。
+  このモデルで構成したエントロピーは第二成分に一致する。
+  したがって公理系は矛盾しない。
+  さらに、$X_0$ からは質量の等しいすべての状態に断熱的に移れる。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  A6 は $\varepsilon_n \to 0$ の極限で示す。質量の等式は $n = 0, 1$ の二つの式から出る。
+  エントロピーの一致は一意性の定理による。
+\end{proof}
+
+\chapter{温度、圧力、化学ポテンシャル}
+
+前章までで、組成の等しい状態の比較はエントロピー $S$ で決まることを示した。
+この章では、$S$ をエネルギー、体積、物質量の関数として見て、その微分から温度、圧力、化学ポテンシャルを定義する。
+温度計は、この定義の後で、熱接触の平衡から測定手順として得られる。
+この流儀は Callen~\cite{Callen1985} の教科書と同じである。
+Lieb--Yngvason~\cite[第 5 章]{LY99} は、温度の存在と微分可能性を熱平衡の公理から導いている。
+ここでは微分可能性を仮定として置く。
+
+\section{温度の定義}
+
+「体積と組成を固定し、内部エネルギーが $u$ の状態」と言うだけでは、状態が決まるとは限らない。
+そのような状態がない $u$ もあり、複数ある $u$ もありうる。
+例えば、仕切りで分けた二つの気体は、全体の $U, V, N$ が同じでも、エネルギーの分け方の数だけ状態がある (図~\ref{fig:simple})。
+そこで、状態が $U, V, N$ で決まる系に限る。
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{simple}
+  \caption{単純系とそうでない系。(a) 単純系の平衡状態は $U, V, N$ で決まる。(b) 仕切りで分けた系は、全体の $U, V, N$ が同じでも分け方の数だけ状態があるので、$U, V, N$ を座標にできない。}
+  \label{fig:simple}
+\end{figure}
+
+\begin{definition}[単純系]
+  \label{def:simple-system}
+  \uses{def:energy-composite, def:mass}
+  一つの容器に入った一様な物質で、内部に仕切りを持たない系を単純系という。
+\end{definition}
+
+\begin{definition}[体積]
+  \label{def:volume}
+  \uses{def:simple-system, thm:length-exists}
+  単純系の状態 $X$ の体積 $V(X)$ とは、容器の内側の寸法を物差しで測り (定理~\ref{thm:length-exists})、そこから計算した容器の容積である。
+  複合系の体積は、各部分の体積の和とする。
+\end{definition}
+
+体積は容器だけで決まり、中の物質の状態によらない。
+仕切りで割合 $t$ に分けた部分 $tX$ (定義~\ref{def:scaling}) の体積は $t V(X)$ である。
+組成 $N$ は、成分ごとに量り入れた質量 $\mathrm{comp}\, X$ (定義~\ref{def:mass}) である。
+内部エネルギー $U$ は定義~\ref{def:energy-composite}、エントロピー $S$ は定義~\ref{def:entropy} のものである。
+
+\begin{definition}[熱接触]
+  \label{def:thermal-contact}
+  \uses{def:simple-system, def:composite}
+  二つの単純系を、物質を通さず動かない薄い金属の壁で接することを熱接触という。
+  接した二つの系を合わせたものを結合系という。
+\end{definition}
+
+熱接触では体積と組成は変わらず、内部エネルギーだけがやりとりされる。
+接触させることも、断熱壁を差し込んで切り離すことも、壁を動かすだけの手順なので断熱操作である。
+重りは動かないので、内部エネルギーの合計は保存する。
+
+\begin{empirical}[単純系の座標]
+  \label{emp:coordinates}
+  \uses{def:simple-system, def:thermal-contact, def:volume}
+  \begin{itemize}
+    \item 単純系の平衡状態は、内部エネルギー $U$、体積 $V$、組成 $N$ で決まる。
+    \item 体積と組成を固定したとき、平衡状態として実現できる $U$ の値は区間 $I_{V,N}$ をなす。
+    \item 熱接触の結合系の平衡状態は、内部エネルギーの合計と、それぞれの体積と組成で決まる。
+  \end{itemize}
+\end{empirical}
+
+一つ目は、ほかに状態を区別する量がないという主張である。
+磁性体のように別の量 (磁化) が要る系では、それを座標に加える。
+二つ目の区間には下限がある。それより低いエネルギーの状態は作れない。
+三つ目は、結合系を一つの系とみなしたときの一つ目にあたる。
+接触前にエネルギーをどう分けていたかは、接触後の平衡に残らない。
+
+\begin{definition}[エネルギーで並べた状態]
+  \label{def:energy-curve}
+  \lean{OpThermo.entropy_monotone_of_stirring}
+  \leanok
+  \uses{emp:coordinates}
+  単純系の体積と組成を固定する。
+  $u \in I_{V,N}$ に対し、座標が $(u, V, N)$ の平衡状態を $\gamma(u)$ と書く。
+  エネルギーの関数としてのエントロピーを $s(u) := S(\gamma(u))$ とおく。
+\end{definition}
+
+経験則~\ref{emp:coordinates} から、$\gamma(u)$ はちょうど一つ存在する。
+Lean では、区間 $I$ 上の状態の族 $\gamma$ として与える。
+
+\begin{empirical}[かき混ぜでエネルギーを上げられる]
+  \label{emp:stirring}
+  \lean{OpThermo.entropy_monotone_of_stirring}
+  \leanok
+  \uses{def:energy-curve, def:adiabatic}
+  $u, v \in I_{V,N}$、$u \le v$ なら $\gamma(u) \prec \gamma(v)$。
+\end{empirical}
+
+Joule の実験 (図~\ref{fig:joule}) がこの操作である。
+体積を変えずに羽根車で水をかき混ぜると、重りの降下の分だけ内部エネルギーが上がる。
+逆向き、つまり水を冷やして重りを持ち上げる断熱操作は見つかっていない (経験則~\ref{emp:irreversible})。
+
+\begin{theorem}[エントロピーはエネルギーとともに増える]
+  \label{thm:entropy-monotone-energy}
+  \lean{OpThermo.entropy_monotone_of_stirring}
+  \leanok
+  \uses{emp:stirring, thm:entropy-principle}
+  $s$ は $I_{V,N}$ 上で単調非減少である。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $\gamma(u)$ と $\gamma(v)$ は組成が等しいので、エントロピー原理から $\gamma(u) \prec \gamma(v)$ は $s(u) \le s(v)$ を意味する。
+\end{proof}
+
+\begin{definition}[温度]
+  \label{def:temperature}
+  \lean{OpThermo.invTemp, OpThermo.temperature}
+  \leanok
+  \uses{def:energy-curve}
+  $u$ が $I_{V,N}$ の内点で $s$ が $u$ で微分可能なとき、逆温度を $\beta(u) := s'(u)$、温度を $T(u) := 1/\beta(u)$ と定義する。
+\end{definition}
+
+偏微分の記号では $\beta = (\partial S / \partial U)_{V, N}$ である。
+図~\ref{fig:temperature} に定義を示す。
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{temperature}
+  \caption{温度の定義。体積と組成を固定した単純系のエントロピーを内部エネルギーの関数 $s(u)$ として描く。接線の傾きが逆温度 $\beta$、その逆数が温度 $T$ である。かき混ぜでエネルギーを上げられるので $s$ は単調になる。}
+  \label{fig:temperature}
+\end{figure}
+
+\begin{theorem}[温度は正]
+  \label{thm:temperature-pos}
+  \lean{OpThermo.invTemp_nonneg, OpThermo.temperature_pos}
+  \leanok
+  \uses{def:temperature, thm:entropy-monotone-energy}
+  $I_{V,N}$ の内点で $\beta \ge 0$ である。$\beta \ne 0$ なら $T > 0$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  単調な関数の微分は非負である。
+\end{proof}
+
+$\beta = 0$ は、かき混ぜてもエントロピーが増えない状態である。
+Lieb--Yngvason はこれを公理で除いている。
+ここでは $\beta \ne 0$ を定理の仮定として置く。
+
+$S$ の単位を $a$ 倍すると (定理~\ref{thm:unique})、$T$ は $1/a$ 倍になる。
+温度の単位を選ぶことは、エントロピーの単位を選ぶことと同じである。
+
+\section{熱接触と温度の比較}
+
+熱接触 (定義~\ref{def:thermal-contact}) させた二つの系の内部エネルギーの合計を $Q$ とする。
+A の取り分を $x$ とすると、切り離した状態のエントロピーは $F(x) = f(x) + g(Q - x)$ である。
+ここで $f, g$ は A, B のエネルギーの関数としてのエントロピーである。
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{exchange}
+  \caption{交換平衡。内部エネルギーを分け合う二つの系の全エントロピーは、分配 $x$ の関数として極大をとる。極大点では両系のエントロピーのエネルギー微分が等しい。図 (a) の $q$ は、後で体積や物質量にも置き換える。}
+  \label{fig:exchange}
+\end{figure}
+
+\begin{lemma}[全エントロピーの微分]
+  \label{lem:exchange-deriv}
+  \lean{OpThermo.hasDerivAt_exchange}
+  \leanok
+  \uses{def:thermal-contact}
+  $f'(u)$, $g'(Q-u)$ が存在すれば $F'(u) = f'(u) - g'(Q - u)$。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  連鎖律。
+\end{proof}
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{contact}
+  \caption{熱接触の平衡が全エントロピーを最大にする理由。どの分配 $x$ から接触させても、結合系は合計 $Q$ だけで決まる同じ平衡 $J$ に達する。$J$ を断熱壁で切ると分配 $u$ になる。接触も切り離しも断熱操作である。}
+  \label{fig:contact}
+\end{figure}
+
+\begin{theorem}[熱接触の平衡は全エントロピーを最大にする]
+  \label{thm:contact-max}
+  \lean{OpThermo.contact_maximizes, OpThermo.contact_isLocalMax}
+  \leanok
+  \uses{emp:coordinates, def:thermal-contact, thm:entropy-principle, thm:additive}
+  熱接触の平衡を切り離した分配を $u$ とすると、どの分配 $x$ についても $F(x) \le F(u)$。
+  とくに $u$ が両系の区間の内点なら、$F$ は $u$ で極大になる。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  結合系の平衡状態を $J$ とする。経験則~\ref{emp:coordinates} から、$J$ は分配 $x$ によらない。
+  分配 $x$ の二つの系を接触させれば $J$ に移り、$J$ を切り離せば分配 $u$ になる。
+  どちらも断熱操作なので $\gamma_A(x) + \gamma_B(Q-x) \prec \gamma_A(u) + \gamma_B(Q-u)$。
+  両辺の組成は等しいので、エントロピー原理と加法性から $F(x) \le F(u)$。
+\end{proof}
+
+\begin{theorem}[熱平衡では温度が等しい]
+  \label{thm:exchange-eq}
+  \lean{OpThermo.exchange_temperature, OpThermo.exchange_equilibrium}
+  \leanok
+  \uses{lem:exchange-deriv, thm:contact-max, def:temperature}
+  熱接触の平衡では $T_A = T_B$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Fermat の定理 (極大点で微分は $0$) から $f'(u) = g'(Q - u)$。
+\end{proof}
+
+\begin{theorem}[熱力学第零法則]
+  \label{thm:zeroth-law}
+  \lean{OpThermo.zeroth_law}
+  \leanok
+  \uses{thm:exchange-eq}
+  A と B、B と C がそれぞれ熱平衡なら、A と C の温度は等しい。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  等号の推移律。
+\end{proof}
+
+伝統的な構成では、第零法則を公理として置き、それを使って経験温度を定義する。
+ここでは温度をエントロピーから定義したので、第零法則は定理になる。
+
+ただし、この定理が言うのは「熱平衡なら温度が等しい」の向きだけである。
+伝統的な第零法則は、A と C を接触させても何も起こらない、つまり温度が等しければ熱平衡でもあることを含む。
+この逆向きは、温度が等しいことから全エントロピーが最大であることを言う必要があり、極大の条件 (微分が $0$) だけからは出ない。
+エントロピーの凹性を使って定理~\ref{thm:contact-reversible} で示す。
+
+\begin{theorem}[熱は温度の高い系から低い系へ流れる]
+  \label{thm:exchange-dir}
+  \lean{OpThermo.heat_flows_to_colder, OpThermo.exchange_direction}
+  \leanok
+  \uses{lem:exchange-deriv, def:temperature}
+  $\beta_A, \beta_B > 0$ で $T_A < T_B$ なら、A にエネルギーを少し移すと全エントロピーが増える。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $T_A < T_B$ は $\beta_A > \beta_B$ と同値なので、$F'(u) > 0$。
+  差分商は $F'(u)$ に収束するので、右側の近くで正。
+\end{proof}
+
+温度計は、小さな系を測りたい系と熱接触させ、平衡に達してから読む手順である。
+定理~\ref{thm:exchange-eq} から、温度計の温度は測りたい系の温度に等しい。
+温度計が小さければ、相手の温度はほとんど変わらない。
+よく使う気体温度計は、第~\ref{sec:ideal-gas} 節の理想気体の状態方程式で読みを $T$ に換算する。
+
+\section{圧力と化学ポテンシャル}
+
+\begin{definition}[圧力と化学ポテンシャル]
+  \label{def:pressure-mu}
+  \uses{def:temperature}
+  $S$ を $(U, V, N_1, \dots)$ の関数として見て、$\pi := \partial S/\partial V$、$\kappa_i := \partial S/\partial N_i$ とおく。
+  圧力を $p := \pi/\beta = T\, \partial S/\partial V$、成分 $i$ の化学ポテンシャルを $\mu_i := -\kappa_i/\beta = -T\, \partial S/\partial N_i$ と定義する。
+\end{definition}
+
+熱接触と同じ議論が、ほかの保存量にも使える (図~\ref{fig:walls})。
+そのためには、経験則~\ref{emp:coordinates} の三つ目を、動く壁や膜で結んだ結合系にも広げる。
+Lean の定理 \texttt{exchange\_equilibrium} は、一つの量 $q$ を、他の座標を固定したまま A と B の間で移すときの主張である。
+したがって、どの量が独立に移せるかを壁ごとに指定しなければならない。
+合計が保存するとき、全エントロピーの変化の一次の項は
+\[ (\beta_A - \beta_B)\, \Delta U_A + (\pi_A - \pi_B)\, \Delta V_A + \textstyle\sum_i (\kappa_{A,i} - \kappa_{B,i})\, \Delta N_{A,i} \]
+である。
+
+\begin{itemize}
+  \item \textbf{熱を通す動く壁}：$U_A$ と $V_A$ を独立に変えられる。全エントロピーが $(U_A, V_A)$ の二変数の関数として極大なら、$V_A$ を固定した直線上でも、$U_A$ を固定した直線上でも極大である。それぞれに \texttt{exchange\_equilibrium} を使って $\beta_A = \beta_B$ と $\pi_A = \pi_B$、つまり $T_A = T_B$、$p_A = p_B$。
+  \item \textbf{成分 $i$ だけを通す熱を通す膜}：同様に $U_A$ と $N_{A,i}$ を独立に変えられ、$T_A = T_B$、$\mu_{A,i} = \mu_{B,i}$。
+  \item \textbf{断熱の動く壁}：壁が動くと、互いに仕事をし合うので内部エネルギーも変わる。$\Delta U_A = -p\, \Delta V_A$ のように $U_A$ と $V_A$ は独立に動かないので、上の極大の議論から $\pi_A = \pi_B$ だけを取り出すことはできない。力の釣り合いから $p_A = p_B$ を期待するのは力学の議論であり、温度がどう落ち着くかはこの枠組みでは決まらない (断熱ピストンの問題として知られている)。
+\end{itemize}
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{walls}
+  \caption{壁の種類と平衡の条件。熱を通す壁は内部エネルギーを、熱を通す動く壁はさらに体積を、熱を通す膜はさらに成分 $i$ をやりとりさせる。どの場合も、やりとりする量についてエントロピーの微分が等しくなる。}
+  \label{fig:walls}
+\end{figure}
+
+\section{理想気体}
+\label{sec:ideal-gas}
+
+理想気体は、温度、圧力、化学ポテンシャルの定義がどう働くかを具体的に確かめられる例である。
+さらに、気体温度計の原理でもある。
+十分に薄い気体では、Boyle と Charles の法則 ($pV$ は温度だけで決まり、温度に比例する) と、Joule の自由膨張の実験 (内部エネルギーは体積によらない) が成り立つ。
+これらを一つにまとめたのが、次のエントロピーである (定理~\ref{thm:ideal-gas-unique})。
+
+\begin{definition}[理想気体]
+  \label{def:ideal-gas}
+  \lean{OpThermo.idealGasEntropy}
+  \leanok
+  \uses{emp:coordinates, def:extensive-fn}
+  定数 $c > 0$, $s_0$ に対し、エントロピーが
+  \[ S(U, V, N) = N \left( c \log \frac{U}{N} + \log \frac{V}{N} + s_0 \right) \]
+  で与えられる単純系を理想気体という。
+\end{definition}
+
+\begin{empirical}[薄い気体は理想気体]
+  \label{emp:dilute}
+  \uses{def:ideal-gas}
+  十分に薄い気体のエントロピーは、ある $c > 0$, $s_0$ で理想気体のエントロピーに近い。
+\end{empirical}
+
+エントロピーの単位を Boltzmann 定数にとると、単原子気体で $c = 3/2$、二原子気体で常温では $c = 5/2$ である。
+$s_0$ はエントロピーの基準値の選び方 (定理~\ref{thm:unique}) と、分子の質量で決まる。
+
+\begin{theorem}[理想気体のエントロピーは示量的]
+  \label{thm:ideal-gas-extensive}
+  \lean{OpThermo.idealGas_homogeneous}
+  \leanok
+  \uses{def:ideal-gas}
+  $t > 0$ について $S(tU, tV, tN) = t\, S(U, V, N)$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $U/N$ と $V/N$ は $t$ 倍で変わらない。
+\end{proof}
+
+\begin{theorem}[理想気体の温度]
+  \label{thm:ideal-gas}
+  \lean{OpThermo.idealGas_hasDerivAt_U, OpThermo.idealGas_temperature, OpThermo.ideal_gas}
+  \leanok
+  \uses{def:ideal-gas, def:temperature}
+  $\partial S / \partial U = cN/U$ なので、$T = U/(cN)$。つまり $U = cNT$ であり、内部エネルギーは温度だけで決まる。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $\log(U/N)$ を $U$ で微分する。
+\end{proof}
+
+\begin{theorem}[理想気体の状態方程式]
+  \label{thm:ideal-gas-law}
+  \lean{OpThermo.idealGas_hasDerivAt_V, OpThermo.idealGas_law, OpThermo.ideal_gas_law}
+  \leanok
+  \uses{thm:ideal-gas, def:pressure-mu}
+  $\partial S / \partial V = N/V$ なので、$p = T\, \partial S/\partial V$ は $pV = NT$ を満たす。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $p = (N/V) / (cN/U) = U/(cV)$ と $T = U/(cN)$ を比べる。
+\end{proof}
+
+逆に、エントロピーの二つの偏微分の形と示量性から、エントロピーは理想気体の形に決まる。
+
+\begin{theorem}[理想気体の特徴づけ]
+  \label{thm:ideal-gas-unique}
+  \lean{OpThermo.idealGas_unique, OpThermo.const_of_hasDerivAt_zero_pos}
+  \leanok
+  \uses{def:ideal-gas, def:extensive-fn}
+  関数 $S(U, V, N)$ ($U, V, N > 0$) が次の三つを満たすとする。
+  \begin{itemize}
+    \item $S(tU, tV, tN) = t\, S(U, V, N)$ ($t > 0$)。
+    \item $\partial S/\partial U = cN/U$。
+    \item $\partial S/\partial V = N/V$。
+  \end{itemize}
+  このとき $S$ は理想気体のエントロピーであり、$s_0 = S(1, 1, 1)$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $S - N(c \log U + \log V)$ は $U$ で微分しても $V$ で微分しても $0$ なので、$N$ だけの関数 $h(N)$ である。
+  示量性を $U = V = N$ と $(1, 1, 1)$ の比較に使うと $h(N) = N\, S(1,1,1) - N(c+1) \log N$。
+  これを代入して整理する。
+\end{proof}
+
+この定理は温度を使わない、関数についての主張である。
+温度と圧力の定義 (定義~\ref{def:temperature}, \ref{def:pressure-mu}) で読みかえると、二つ目の条件は $U = cNT$、三つ目は $pV = NT$ になる。
+
+この読みかえは循環しない。
+$T$ はエントロピーから定義した量で、どの系で測っても同じ値になる (定理~\ref{thm:exchange-eq})。
+したがって $U = cNT$ と $pV = NT$ を確かめるには、調べたい気体とは別の系を温度計に使えばよい。
+その温度計の目盛りは、エントロピーの測定 (定理~\ref{thm:entropy-bisect}, \ref{thm:calorimetry}) で決める。
+調べたい気体そのものを気体温度計に使って確かめることはできない。それは循環である。
+実用の気体温度計は、経験則~\ref{emp:dilute} が確かめられた後で使うものである。
+
+二つの条件の経験的な意味は次のとおりである。
+二つ目は、Joule の自由膨張 (内部エネルギーが体積によらない) と、熱容量が一定であることを合わせたもの。
+三つ目は Boyle と Charles の法則である。
+どちらかを外すと、ほかのエントロピーも許される。
+例えば van der Waals 気体は三つ目を満たさない。
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{idealgas}
+  \caption{理想気体。(a) 等温線 $pV = NT$。温度が高いほど右上にある。(b) 気体温度計。体積を固定した薄い気体を測りたい系と熱接触させ、平衡で圧力を読むと $T = pV/N$。}
+  \label{fig:idealgas}
+\end{figure}
+
+気体温度計は、体積を固定した薄い気体を測りたい系と熱接触させ、圧力を読む手順である (図~\ref{fig:idealgas})。
+熱平衡では温度が等しいので (定理~\ref{thm:exchange-eq})、状態方程式から $T = pV/N$ と読める。
+ここまでの $N$ は組成、つまり天秤で量った質量 $M$ である (定義~\ref{def:mass})。
+この単位のままでは $pV = NT$ の $T$ は「質量あたりのエネルギー」の単位を持つ。
+気体分子一個の質量を $m_0$ として粒子数 $N := M/m_0$ に取り直し、エントロピーの単位を J/K にとると、$pV = N k_B T$ となる。
+以下の気体温度計の式の $N$ は粒子数である。
+
+化学ポテンシャルも計算できる。
+$\partial S/\partial N = c \log (U/N) + \log (V/N) + s_0 - c - 1$ なので、$\mu = -T\, \partial S/\partial N$ は濃度 $N/V$ が高いほど大きい。
+物質は化学ポテンシャルの高い側から低い側へ、つまり濃い側から薄い側へ移る。
+
+\section{基本関係式}
+\label{sec:fundamental}
+
+この節の $dS$, $dU$, $dV$, $dN_i$ は無限小の量ではなく、全微分の略記である。
+状態の座標を $x = (U, V, N_1, \dots)$ とし、$S$ が点 $x$ で微分可能とする。
+$S$ の全微分 $dS$ は、座標の変位 $h$ を $S$ の一次の変化 $S'(x)\, h$ に送る線形写像である。
+$dU$, $dV$, $dN_i$ は座標関数の全微分、つまり $h$ のそれぞれの成分を取り出す線形写像である。
+したがって $dS = \beta\, dU + \pi\, dV + \sum_i \kappa_i\, dN_i$ は線形写像の等式であり、すべての変位 $h$ に代入した実数の等式と同値である。
+Lean では、一つの変位に代入した実数の等式として述べている (\texttt{fundamental\_relation})。
+線形写像の等式としての形 (\texttt{fundamental\_relation\_forms}) も示した。
+熱 $\delta Q = dU + p\, dV$ も同じく線形写像だが、ある関数の全微分になっているとは限らない。$d$ でなく $\delta$ と書くのはそのためである。
+
+\begin{theorem}[基本関係式と Clausius の関係]
+  \label{thm:clausius}
+  \lean{OpThermo.fundamental_relation, OpThermo.fundamental_relation_forms, OpThermo.clausius}
+  \leanok
+  \uses{def:pressure-mu}
+  $dS = \beta\, dU + \pi\, dV$ のとき、$T := 1/\beta$, $p := \pi/\beta$ とおくと $dU = T\, dS - p\, dV$。
+  準静的過程で熱を $\delta Q := dU + p\, dV$ と定義すれば $dS = \delta Q / T$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  代数計算。
+\end{proof}
+
+\begin{theorem}[多成分系の基本関係式]
+  \label{thm:fundamental-multi}
+  \lean{OpThermo.fundamental_relation_multi}
+  \leanok
+  \uses{thm:clausius}
+  $dS = \beta\, dU + \pi\, dV + \sum_i \kappa_i\, dN_i$ のとき、$T := 1/\beta$, $p := \pi/\beta$, $\mu_i := -\kappa_i/\beta$ とおくと $dU = T\, dS - p\, dV + \sum_i \mu_i\, dN_i$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  代数計算。
+\end{proof}
+
+$\mu_i$ が成分 $i$ の化学ポテンシャルである。
+$\kappa_i = \partial S/\partial N_i$ なので、$\mu_i = -T\, \partial S/\partial N_i$ となる。
+
+\begin{theorem}[熱量測定によるエントロピー差]
+  \label{thm:calorimetry}
+  \lean{OpThermo.entropy_calorimetry}
+  \leanok
+  \uses{def:temperature, emp:stirring}
+  体積と組成を固定してエネルギーを $u$ から $v$ に上げるとき、$s(v) - s(u) = \int_u^v \beta(x)\, dx = \int_u^v dx / T(x)$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  微分積分学の基本定理。$\beta$ の積分可能性を仮定する。
+\end{proof}
+
+エネルギーの増分はかき混ぜの仕事 (重りの降下) で、$T$ は温度計で測る。
+こうしてエントロピー差は、重りと温度計の読みから求まる。
+
+\begin{theorem}[Euler の関係]
+  \label{thm:euler}
+  \lean{OpThermo.euler_homogeneous}
+  \leanok
+  \uses{def:extensive-fn}
+  $S(tx) = t\, S(x)$ ($t > 0$) を満たす関数が $x$ で微分可能なら、$S'(x)\, x = S(x)$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $t \mapsto S(tx)$ を $t = 1$ で二通りに微分する。連鎖律では $S'(x)\, x$、同次性では $S(x)$ になる。
+\end{proof}
+
+エントロピーは示量的なので (定理~\ref{thm:additive})、座標 $x = (U, V, N_1, \dots)$ で表して微分可能なら Euler の関係が使える。
+すると $S = \beta U + \pi V + \sum_i \kappa_i N_i$ となる。
+
+\section{エントロピーの凹性}
+\label{sec:concavity}
+
+エントロピーは状態の座標について凹 (上に凸) である。
+この性質は、熱容量が正であること、熱平衡が安定であること、相の共存が起こることをまとめて説明する。
+凹性は新しい経験則ではなく、仕切りを抜く操作とエントロピー原理から出る。
+
+単純系の平衡状態を、座標 $x = (U, V, N)$ で $\gamma(x)$ と書く (経験則~\ref{emp:coordinates})。
+多成分なら $N$ は成分ごとの物質量の組である。
+
+\begin{theorem}[エントロピーは凹]
+  \label{thm:entropy-concave}
+  \lean{OpThermo.Adiabatic.concaveOn_of_partition}
+  \leanok
+  \uses{thm:entropy-principle, thm:additive, emp:coordinates, def:scaling}
+  座標の凸集合 $D$ の $x, y$ と $a, b \ge 0$ ($a + b = 1$) について、$a\gamma(x) + b\gamma(y)$ から仕切りを抜いて $\gamma(ax + by)$ に断熱的に移れるとする。
+  このとき $S(\gamma(\cdot))$ は $D$ 上で凹：
+  \[ a\, S(\gamma(x)) + b\, S(\gamma(y)) \le S(\gamma(ax + by)). \]
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  組成は座標の $N$ について線形なので、両辺の組成は等しい。
+  エントロピー原理から $S(a\gamma(x) + b\gamma(y)) \le S(\gamma(ax + by))$。
+  左辺は加法性と示量性で $a S(\gamma(x)) + b S(\gamma(y))$。
+\end{proof}
+
+仮定の操作は次のとおりである。
+座標 $x$ の系から割合 $a$ の部分を、$y$ の系から割合 $b$ の部分を仕切りで切り出し (定義~\ref{def:scaling})、二つを並べる。
+並べた系の内部エネルギー、体積、物質量はそれぞれの和なので、座標は $ax + by$ である (定理~\ref{thm:energy-extensive})。
+二つの間の仕切りを抜いて待つと、重りを動かさずに一つの単純系の平衡状態になる。
+その状態は経験則~\ref{emp:coordinates} から $\gamma(ax + by)$ である。
+
+この操作は一般に不可逆である。
+$x$ と $y$ の温度や圧力が違えば、仕切りを抜いた後に熱や物質が流れ、元の二つの状態には断熱的に戻れない。
+$x$ と $y$ の温度、圧力、化学ポテンシャルがすべて等しければ、凹関数は二点の間で一次式になるので、凹性の不等式は等号になる。
+
+\subsection{凹性から出ること}
+
+\begin{theorem}[エントロピーは連続]
+  \label{thm:entropy-continuous}
+  \lean{OpThermo.concave_continuousOn}
+  \leanok
+  \uses{thm:entropy-concave}
+  開集合上の凹関数は連続である。
+  したがって $u \mapsto s(u)$ は区間 $I_{V,N}$ の内部で連続である。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Mathlib の \texttt{ConcaveOn.continuousOn}。凹関数は局所 Lipschitz である。
+\end{proof}
+
+凹関数は、さらに各点で左右の微分を持ち、微分可能でない点は高々可算個である。
+温度の定義 (定義~\ref{def:temperature}) で置いた微分可能性の仮定は、この可算個の点を除くためのものと見なせる。
+微分可能でない点では左右の微分が違い、一つのエネルギーに温度の区間が対応する。
+
+\begin{theorem}[優加法性]
+  \label{thm:superadditive}
+  \lean{OpThermo.superadditive_of_concave}
+  \leanok
+  \uses{thm:entropy-concave, thm:additive}
+  凹で一次同次な関数は $S(x) + S(y) \le S(x + y)$ を満たす。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $x + y = 2 \cdot \tfrac12 (x + y)$ と一次同次性から $S(x + y) = 2 S(\tfrac12 x + \tfrac12 y) \ge S(x) + S(y)$。
+\end{proof}
+
+二つの系を合わせて仕切りを抜くと、エントロピーは減らない。
+これは凹性を言いかえたものである。
+
+\begin{lemma}[微分が $0$ の点は最大点]
+  \label{lem:concave-max}
+  \lean{OpThermo.concave_max_of_deriv_zero}
+  \leanok
+  凹関数 $F$ が点 $x$ で微分可能で $F'(x) = 0$ なら、$x$ は $F$ の最大点である。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  凹関数の差分商は、$x$ の右では $F'(x)$ 以下、左では $F'(x)$ 以上。
+\end{proof}
+
+\begin{theorem}[温度が等しければ熱接触は可逆]
+  \label{thm:contact-reversible}
+  \lean{OpThermo.Adiabatic.contact_reversible_of_equal_temp}
+  \leanok
+  \uses{lem:concave-max, thm:entropy-concave, thm:entropy-principle, thm:additive, def:thermal-contact}
+  A, B のエネルギーの関数としてのエントロピー $s_A$, $s_B$ が凹で、分配 $x$ で逆温度が等しい ($s_A'(x) = s_B'(Q - x)$) とする。
+  熱接触で $\gamma_A(x) + \gamma_B(Q - x)$ から結合系の平衡状態 $J$ に移り、$J$ を切り離すと何らかの分配 $u$ の状態 $\gamma_A(u) + \gamma_B(Q - u)$ に移れるとする。
+  このとき $J$ から元の分配 $x$ にも断熱的に移れる：$\gamma_A(x) + \gamma_B(Q - x) \sim J$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  全エントロピー $F(y) = s_A(y) + s_B(Q - y)$ は凹で、$F'(x) = s_A'(x) - s_B'(Q - x) = 0$。
+  補題~\ref{lem:concave-max} から $F(u) \le F(x)$。
+  エントロピー原理から $S(J) \le F(u) \le F(x)$ なので、$J \prec \gamma_A(x) + \gamma_B(Q - x)$。
+\end{proof}
+
+温度が等しい二つの系を接触させても、エントロピーの増える変化は起こらず、切り離せば元に戻せる。
+これが第零法則の「温度が等しければ熱平衡」の向きである (定理~\ref{thm:zeroth-law} の後の注意)。
+全エントロピーの最大点が一つでない場合 (相の共存など) には、接触の後に切り離した分配が $x$ と違うこともありうる。
+その場合でも、どちらの分配もエントロピーが等しく、互いに断熱的に移れる。
+
+\subsection{安定性}
+
+凹性の不等式は、一様な状態が二つの部分に分かれる変化に対して安定であることを表す。
+座標 $x$ の一様な系を、仕切りなしで、割合 $a$ の部分が $x + b h$、割合 $b$ の部分が $x - a h$ になるように分けたとする。
+合計の座標は $x$ のままである。
+凹性から $a S(x + bh) + b S(x - ah) \le S(x)$ なので、このような自発的な分離はエントロピーを増やさない。
+
+$S$ が二回微分可能なら、凹性はヘッセ行列が負の半定値であることと同値である。
+一変数に制限すると、次の条件が出る。
+\begin{itemize}
+  \item $\partial^2 S/\partial U^2 \le 0$：定積熱容量が正 ($C_V > 0$、定理~\ref{thm:heat-capacity-pos})。
+  \item $\partial^2 S/\partial V^2 \le 0$ と $U$, $V$ の二変数の条件を合わせると、等温圧縮率が正 ($\kappa_T > 0$)。体積を押し縮めると圧力が上がる。
+\end{itemize}
+二つ目は、この blueprint では形式化していない。
+
+\subsection{相の共存}
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{concave}
+  \caption{相の共存と凹包。点線は一様な状態に制限したエントロピー $s_{\mathrm{hom}}(u)$ で、凹でない部分を持つ。実際の平衡状態のエントロピー $s(u)$ (実線) はその最小の凹な上界 (凹包) で、$u_1$ と $u_2$ の間は直線になる。この区間では系は二相に分かれ、温度 $T = 1/s'$ は一定である。}
+  \label{fig:concave}
+\end{figure}
+
+単純系の定義 (定義~\ref{def:simple-system}) は一様な物質を考えていた。
+一様な状態に制限したエントロピー $s_{\mathrm{hom}}(u)$ が凹でない区間があったとする (図~\ref{fig:concave} の点線)。
+その区間の状態は、$u_1$ と $u_2$ の二つの部分に分かれた方がエントロピーが大きい。
+したがって仕切りなしで放置すると、系は二つの部分 (二相) に分かれる。
+二相の割合を $a : b$ とすると、エネルギーは $u = a u_1 + b u_2$、エントロピーは $a s(u_1) + b s(u_2)$ である。
+これは $u$ について一次式で、点 $(u_1, s(u_1))$ と $(u_2, s(u_2))$ を結ぶ線分になる。
+
+こうして、実際の平衡状態のエントロピー $s(u)$ は、$s_{\mathrm{hom}}$ の上にある最小の凹関数 (凹包) になる。
+線分の区間では $s' = 1/T$ が一定なので、エネルギーを加えても温度は変わらない。
+これが一次相転移で、線分に沿って加えるエネルギーが潜熱 $L = u_2 - u_1$、エントロピーの増分は $L/T$ である。
+線分の両端で接線の傾きが等しいことが、二相の温度が等しいという共存条件である。
+体積も変数に入れると、同じ作図から圧力と化学ポテンシャルが等しいという条件も出る (Maxwell の等面積則の熱力学的な根拠)。
+
+この節の凹包の議論は、どの状態を「一様」と見なすかに依存し、Lean では形式化していない。
+凹性の定理~\ref{thm:entropy-concave} そのものは、相が共存する状態も含めて成り立つ。
+
+\subsection{凹性と自由エネルギー}
+
+Helmholtz 関数 $F = U - TS$ (第~\ref{chap:potentials} 章) は、温度 $T$ を与えて $u - T s(u)$ を $u$ について最小にした値として書ける。
+最小になるのは $s'(u) = 1/T$ の点で、$s$ が凹なのでこの点は最大ではなく最小である。
+$s$ が凹であれば、$F$ から逆に $s$ を復元できる (Legendre 変換)。
+凹でなければ、$F$ から復元できるのは $s$ の凹包だけである。
+エネルギーを変数とする記述と温度を変数とする記述が同じ情報を持つのは、エントロピーが凹だからである。
+
+\section{熱容量}
+\label{sec:heat-capacity}
+
+熱量測定 (定理~\ref{thm:calorimetry}) で実際に測るのは、エネルギーを加えたときの温度の上がり方である。
+これを表す量が熱容量である。
+この節でも、体積と組成を固定した単純系の状態 $\gamma(u)$ と $s(u) = S(\gamma(u))$ (定義~\ref{def:energy-curve}) を考える。
+
+\begin{definition}[熱容量]
+  \label{def:heat-capacity}
+  \lean{OpThermo.heatCapacity}
+  \leanok
+  \uses{def:temperature, def:energy-curve}
+  $T(u) = 1/s'(u)$ が $u$ で微分可能で $T'(u) \ne 0$ のとき、$C(u) := 1/T'(u) = du/dT$ を熱容量という。
+  体積を固定しているので、これは定積熱容量 $C_V$ である。
+\end{definition}
+
+Lean の \texttt{heatCapacity} は $(T'(u))^{-1}$ として定義しており、$T'(u) = 0$ のときは実数の約束 $0^{-1} = 0$ で $0$ を返す。
+この値は熱容量ではない。
+熱容量についての定理は、どれも $T'(u) \ne 0$ を保証する仮定を置いている。
+
+熱容量は温度の関数ではなく、エネルギー $u$ の関数として定義した。
+温度を座標に使うには、$u \mapsto T(u)$ が逆に解けなければならないからである。
+逆に解けることは、次の定理の $C > 0$ から出る。
+
+\begin{theorem}[熱容量とエントロピーの二階微分]
+  \label{thm:heat-capacity-eq}
+  \lean{OpThermo.temperature_hasDerivAt, OpThermo.heatCapacity_eq}
+  \leanok
+  \uses{def:heat-capacity}
+  $\beta = s'$ が $u$ で微分可能で $\beta(u) \ne 0$ とする。
+  $T = 1/\beta$ の微分は $-\beta'/\beta^2$ である。
+  さらに $\beta'(u) \ne 0$ なら $T'(u) \ne 0$ で、$C\, T' = 1$、$C = -\beta^2/\beta'$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  逆数の微分法則。
+\end{proof}
+
+熱容量の符号は $s$ の凹凸で決まる。
+$s$ が凹であることは前節で示した (定理~\ref{thm:entropy-concave})。
+
+\begin{theorem}[熱容量は正]
+  \label{thm:heat-capacity-pos}
+  \lean{OpThermo.heatCapacity_pos}
+  \leanok
+  \uses{thm:entropy-concave, thm:heat-capacity-eq}
+  $s$ が $u$ のまわりで凹かつ微分可能で、$\beta(u) \ne 0$、$\beta'(u) \ne 0$ なら $C(u) > 0$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  凹関数の微分は単調減少なので $\beta' \le 0$。$\beta' \ne 0$ から $\beta' < 0$、よって $C = -\beta^2/\beta' > 0$。
+\end{proof}
+
+熱容量が正であることは、熱平衡の安定性である。
+熱容量が負の系は、熱を受け取ると温度が下がり、さらに熱を受け取る。
+
+$\beta' = 0$ の場合は除いてある。
+一次相転移では、二相が共存するエネルギーの区間で $s$ は一次関数になり、$\beta' = 0$ となる。
+このとき温度は一定のままエネルギーだけが増え、加えたエネルギーが潜熱である。
+熱容量はこの区間で定義されない (無限大と見なす)。
+
+\begin{theorem}[温度の関数としてのエントロピー]
+  \label{thm:dS-dT}
+  \lean{OpThermo.entropy_hasDerivAt_temperature}
+  \leanok
+  \uses{def:heat-capacity, def:temperature}
+  $u$ を温度の関数 $u(T)$ と見て、その微分が $C$ とする。
+  このとき $dS/dT = C/T$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  連鎖律と $ds/du = 1/T$。
+\end{proof}
+
+したがって $S(T_2) - S(T_1) = \int_{T_1}^{T_2} C(T)/T\, dT$ である。
+熱量測定は、エネルギーを少しずつ加えて温度の上がり方 $C(T)$ を測り、この積分を計算する手順になる (第~\ref{chap:calorimetry} 章)。
+
+体積の代わりに圧力を一定に保つと、熱容量は $C_p = dH/dT$ になる (第~\ref{chap:potentials} 章のエンタルピーを参照)。
+理想気体では $C_V = cN$、$C_p = (c + 1)N$ である (定理~\ref{thm:ideal-gas-enthalpy})。
+一般には $C_p - C_V = TV\alpha^2/\kappa_T$ となる。ここで $\alpha$ は熱膨張率、$\kappa_T$ は等温圧縮率である。
+この式は Maxwell の関係式から導かれるが、この blueprint では形式化していない。
+
+固体の熱容量は、高温ではおよそ一定 (Dulong--Petit の法則) で、低温では $T \to 0$ で $0$ に近づく。
+絶縁体では $C \propto T^3$ (Debye の法則)、金属では電子の寄与 $C \propto T$ が加わる。
+$C \to 0$ は、$T \to 0$ でエントロピーが有限にとどまるために必要である。
+$\int_0^T C/T'\, dT'$ が収束しなければならないからである。
+
+\section{第三法則}
+\label{sec:third-law}
+
+第三法則は温度 $0$ の極限についての主張である。
+Gibbs 自由エネルギーまでの構成には使わない。
+役割は二つある。絶対零度に有限回の操作では届かないことと、エントロピーの基準値を決めることである。
+
+\begin{empirical}[Nernst の熱定理]
+  \label{emp:nernst}
+  \lean{OpThermo.unattainability}
+  \leanok
+  \uses{def:temperature, emp:coordinates}
+  単純系の組成を固定し、体積などの制御変数の値 $V$ ごとに、温度 $T > 0$ の平衡状態のエントロピーを $s_V(T)$ とする。
+  右極限 $\lim_{T \to +0} s_V(T)$ は $V$ によらない共通の値 $L$ である。
+\end{empirical}
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{thirdlaw}
+  \caption{第三法則と到達不能性。縦軸はエントロピー、横軸は温度。二本の曲線は制御変数 (体積や磁場) の二つの値に対応する。等温操作 (縦の矢印) で曲線を移り、断熱操作 (横の矢印) でエントロピーを保ったまま温度を下げる。(a) Nernst の熱定理が成り立つと、二本の曲線は $T = 0$ で交わり、段は小さくなる一方で $0$ に届かない。(b) 成り立たず $s_{V_2}(0) > s_{V_1}(0)$ なら、$V_1$ の曲線からエントロピーを保つ一回の断熱操作で $V_2$ の $T = 0$ に届く。}
+  \label{fig:thirdlaw}
+\end{figure}
+
+\begin{theorem}[絶対零度の到達不能性]
+  \label{thm:unattainability}
+  \lean{OpThermo.unattainability}
+  \leanok
+  \uses{emp:nernst, thm:entropy-principle}
+  各 $s_V$ は $T > 0$ で狭義単調増加とし、零度での値を極限 $s_V(0) := L$ で定める。
+  温度を保って制御変数を変える等温操作と、エントロピーを減らさない断熱操作をどう繰り返しても、正の温度から始めれば温度は正のままである。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  操作の回数についての帰納法。
+  等温操作では温度は変わらない。
+  単調性と極限から、正の温度 $T$ では $s_V(T) > s_V(T/2) \ge L$。
+  断熱操作で温度が $0$ になったとすると、$L = s_{V'}(0) \ge s_V(T) > L$ となり矛盾する。
+\end{proof}
+
+断熱消磁による冷却が図~\ref{fig:thirdlaw} (a) の手順である。
+磁場を制御変数とし、磁場をかけて等温で磁化をそろえ、断熱的に磁場を下げて温度を下げる。
+
+Nernst の熱定理から、組成ごとに、$T \to 0$ のエントロピーは状態によらない一つの値になる。
+エントロピーは組成ごとの基準値を選ぶ自由度を持つので (定理~\ref{thm:unique})、この値を $0$ に選べる。
+これが Planck の形の第三法則 $S \to 0$ である。
+化学反応を扱わないこの blueprint では、Planck の形は基準値の約束であり、経験的な内容を持たない。
+反応を扱うと、反応の前後で $T \to 0$ のエントロピーが等しいという主張が経験的な内容になる。
+
+理想気体のエントロピー (定義~\ref{def:ideal-gas}) は $T \to 0$ で $-\infty$ に発散し、Nernst の熱定理を満たさない。
+理想気体の式は、薄くて温度の高い気体の近似としてだけ使える。
+ガラスや氷のように、低温で乱れが凍結した物質は、エントロピーが $0$ に近づかないように見える。
+これは平衡状態でないためである (第~\ref{chap:calorimetry} 章)。
+
+\chapter{自由エネルギーとエンタルピー}
+\label{chap:potentials}
+
+エントロピー原理は、断熱的に孤立した系について、どの変化が起こりうるかを決める。
+実験では、系を一定温度の熱浴や一定圧力のピストンと接したまま扱うことが多い。
+系と接して、系とエネルギーや体積をやりとりする外部の装置や大きな系を、系の環境という。
+そのときは、系と環境を合わせた全体にエントロピー原理を使い、環境の寄与を系の量で書き直す。
+環境の種類ごとに、次の組み合わせが現れる (図~\ref{fig:potentials})。
+\begin{itemize}
+  \item 温度 $T_0$ の熱浴だけと接する：Helmholtz 自由エネルギー $F = U - T_0 S$。
+  \item 圧力 $p_0$ のピストンだけと接する：エンタルピー $H = U + p_0 V$。
+  \item 両方と接する：Gibbs 自由エネルギー $G = U + p_0 V - T_0 S$。
+\end{itemize}
+Clausius によるエントロピーの導入~\cite{Clausius1865} とは逆に、ここでは $dS = \delta Q_{\mathrm{rev}}/T$ は定義ではなく結果である。
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{potentials}
+  \caption{環境と熱力学ポテンシャル。(a) 動かない熱を通す壁で温度 $T_0$ の熱浴と接する系では $F$。(b) 断熱壁で囲み、重りを載せたピストンで圧力 $p_0$ をかけた系では $H$。(c) 両方と接する系では $G$。}
+  \label{fig:potentials}
+\end{figure}
+
+\section{環境}
+
+\begin{definition}[溜めと熱浴]
+  \label{def:reservoir}
+  \uses{def:simple-system, def:volume, def:energy-composite, def:entropy, def:temperature, def:pressure-mu}
+  系とエネルギーと体積をやりとりする単純系を考える。
+  その平衡状態 $R$ の内部エネルギー $U(R)$ (定義~\ref{def:energy-composite})、体積 $V(R)$ (定義~\ref{def:volume})、エントロピー $S(R)$ (定義~\ref{def:entropy}) が、どの $R$ でも定数 $T_0 > 0$, $p_0$, $\sigma$ を使って
+  \[ S(R) = \sigma + \frac{U(R) + p_0 V(R)}{T_0} \]
+  を満たすとき、この単純系を温度 $T_0$、圧力 $p_0$ の理想的な溜めという。
+  体積の変わらない単純系で、エントロピーが $S(R) = \sigma + U(R)/T_0$ と書けるものを、温度 $T_0$ の熱浴という。
+\end{definition}
+
+熱浴は、体積を固定した溜めである。
+体積が一定なら $p_0 V(R)/T_0$ は定数なので $\sigma$ に含められ、熱浴のエントロピーは $U$ だけの一次式になる。
+$p_0 = 0$ を仮定する必要はない。
+
+以下の定理で $X + R$ と書くときの $R$ は、溜めの平衡状態である。
+溜めのエントロピーの微分は $\partial S/\partial U = 1/T_0$、$\partial S/\partial V = p_0/T_0$ なので、$T_0, p_0$ は溜めの温度と圧力 (定義~\ref{def:temperature}, \ref{def:pressure-mu}) である。
+
+\begin{definition}[圧力 $p_0$ のピストン]
+  \label{def:piston}
+  \uses{def:weight, def:ops}
+  系の壁の一部を断面積 $A$ の動く蓋にし、その上に質量 $m$ の重りを載せた装置を、圧力 $p_0 := m/A$ のピストンという。
+\end{definition}
+
+系の体積が $\Delta V$ 増えると、重りは $\Delta V / A$ だけ上がる。
+降下の記録から計算した仕事 (定義~\ref{def:work}) は $W = -m \Delta V / A = -p_0 \Delta V$ である。
+ここでの圧力は重りの質量の単位で測っている。力の単位にするには、重力の換算係数 $g$ を掛ける。
+
+\subsection{大きな溜め}
+\label{sec:large-reservoir}
+
+実際の溜めは大量の水や大気のような大きな系で、そのエントロピーは一次式ではない。
+溜めを大きくする極限で、系とのやりとりによる溜めのエントロピー変化が一次式で表せることを示す。
+この意味で、理想的な溜めは大きな溜めの極限である。
+
+\begin{lemma}[大きな溜めの極限]
+  \label{lem:large-limit}
+  \lean{OpThermo.large_reservoir_limit}
+  \leanok
+  $s$ が $x_0$ で微分可能なら $\lambda \bigl(s(x_0 + \lambda^{-1}\Delta) - s(x_0)\bigr) \to s'(x_0)\Delta$ ($\lambda \to \infty$)。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  Fréchet 微分の方向微分としての特徴づけ。
+\end{proof}
+
+\begin{theorem}[大きな溜めのエントロピー]
+  \label{thm:large-reservoir}
+  \lean{OpThermo.large_reservoir_entropy}
+  \leanok
+  \uses{lem:large-limit, def:reservoir, thm:additive}
+  大きさ $\lambda$ の溜めの、内部エネルギー $u$、体積 $v$ の状態のエントロピーを $S_\lambda(u, v)$ とする。
+  示量性 $S_\lambda(\lambda x) = \lambda s(x)$ が成り立ち、$s$ が $x_0$ で微分可能で $\beta := \partial s/\partial u \ne 0$ とする。
+  $T_0 := 1/\beta$, $p_0 := (\partial s/\partial v)/\beta$ とおく。
+  溜めを状態 $\lambda x_0$ から内部エネルギー $\Delta U$、体積 $\Delta V$ だけ変えると、$\lambda \to \infty$ で
+  \[ S_\lambda(\lambda x_0 + (\Delta U, \Delta V)) - S_\lambda(\lambda x_0) \to \frac{\Delta U + p_0 \Delta V}{T_0}. \]
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  示量性で左辺を $\lambda\bigl(s(x_0 + \lambda^{-1}(\Delta U, \Delta V)) - s(x_0)\bigr)$ に書き換え、極限の補題を使う。
+\end{proof}
+
+右辺は理想的な溜め (定義~\ref{def:reservoir}) のエントロピー変化そのものである。
+系とやりとりする $\Delta U, \Delta V$ を固定して溜めだけを大きくすれば、どんな溜めも理想的な溜めに近づく。
+$T_0, p_0$ は、始めの状態 $x_0$ での溜めの温度と圧力である。
+
+\section{Helmholtz 自由エネルギー}
+
+\begin{definition}[Helmholtz 関数]
+  \label{def:helmholtz}
+  \lean{OpThermo.helmholtz, OpThermo.helmholtz_eq_gibbs}
+  \leanok
+  \uses{def:reservoir}
+  $T_0 > 0$ に対し $F_{T_0}(X) := U(X) - T_0 S(X)$ とする。
+  $T_0$ には、系が接する熱浴 (定義~\ref{def:reservoir}) の温度をとる。
+\end{definition}
+
+\begin{theorem}[Helmholtz 自由エネルギーの最小原理]
+  \label{thm:helmholtz}
+  \lean{OpThermo.Adiabatic.helmholtz_criterion, OpThermo.total_entropy_helmholtz}
+  \leanok
+  \uses{def:helmholtz, def:reservoir, thm:entropy-principle, thm:additive}
+  系と温度 $T_0$ の熱浴 $R$ の組成とエネルギーの和が保存するとする。
+  このとき $X + R \prec Y + R' \iff F_{T_0}(Y) \le F_{T_0}(X)$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  エントロピー原理で左辺を $S(X + R) \le S(Y + R')$ に、加法性で $S(X) + S(R) \le S(Y) + S(R')$ に書き換える。
+  熱浴のエントロピーを代入し、エネルギーの保存を使うと、全エントロピーの変化は $-\Delta F / T_0$ に等しい。
+  これが非負であることは $\Delta F \le 0$ と同値。
+\end{proof}
+
+体積を変えずに熱浴と接している系は、$F$ が最小の状態で平衡になる。
+
+\begin{theorem}[最大仕事の原理]
+  \label{thm:max-work}
+  \lean{OpThermo.CompositeOps.max_work}
+  \leanok
+  \uses{def:helmholtz, def:reservoir, thm:energy-extensive, thm:entropy-principle, thm:additive}
+  温度 $T_0$ の熱浴 $R$ と接した系を、断熱操作 $p$ で $X$ から $Y$ に移すとする。
+  このとき、取り出せる仕事 $-W(p)$ (重りを持ち上げた分) は $F_{T_0}(X) - F_{T_0}(Y)$ を超えない。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  内部エネルギーの存在定理から $U(Y) + U(R') - U(X) - U(R) = W(p)$。
+  エントロピー原理と加法性から $S(X) + S(R) \le S(Y) + S(R')$。
+  熱浴のエントロピーを代入して $T_0$ 倍し、二つを合わせる。
+\end{proof}
+
+内部エネルギーの減少 $U(X) - U(Y)$ のうち、仕事として取り出せるのは $F$ の減少分までである。
+残りの $T_0 (S(X) - S(Y))$ は熱として熱浴に渡さなければならない。
+「自由」エネルギーという名前はこの意味である。
+等号は可逆な操作で成り立つ。
+
+\section{エンタルピー}
+
+\begin{definition}[エンタルピー]
+  \label{def:enthalpy}
+  \lean{OpThermo.enthalpy}
+  \leanok
+  \uses{def:piston}
+  $p_0$ に対し $H_{p_0}(X) := U(X) + p_0 V(X)$ とする。
+  $p_0$ には、系が接するピストン (定義~\ref{def:piston}) の圧力をとる。
+\end{definition}
+
+重りの位置エネルギーを系に含めたものがエンタルピーである。
+
+\begin{theorem}[定圧での仕事とエンタルピー]
+  \label{thm:enthalpy-change}
+  \lean{OpThermo.CompositeOps.enthalpy_change}
+  \leanok
+  \uses{def:enthalpy, thm:energy-composite}
+  圧力 $p_0$ のピストンと接した系の断熱操作 $p : X \to Y$ で、仕事がピストンの重りの分 $-p_0 (V(Y) - V(X))$ とそれ以外の $W'$ に分かれるとする (定義~\ref{def:piston} の後の注意)。
+  このとき $H_{p_0}(Y) - H_{p_0}(X) = W'$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  内部エネルギーの存在定理 $U(Y) - U(X) = W(p)$ に代入する。
+\end{proof}
+
+$W'$ は電熱器やかき混ぜの仕事である。
+定圧の熱量測定 (第~\ref{chap:calorimetry} 章) で測っているのは、このエンタルピーの変化である。
+温度あたりのエンタルピーの増分が定圧熱容量 $C_p$、内部エネルギーの増分が定積熱容量 $C_V$ である。
+
+\begin{theorem}[理想気体のエンタルピー]
+  \label{thm:ideal-gas-enthalpy}
+  \lean{OpThermo.idealGas_enthalpy}
+  \leanok
+  \uses{def:enthalpy, thm:ideal-gas, thm:ideal-gas-law}
+  理想気体では $H = (c + 1) N T$。
+  したがって $C_V = cN$、$C_p = (c + 1) N$、$C_p - C_V = N$ (Mayer の関係)。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $U = cNT$ と $pV = NT$ を足す。
+\end{proof}
+
+\begin{theorem}[Joule--Thomson の絞り膨張]
+  \label{thm:joule-thomson}
+  \lean{OpThermo.joule_thomson}
+  \leanok
+  \uses{def:enthalpy, thm:energy-composite}
+  断熱した管の中で、気体を圧力 $p_1$ で多孔質の栓に押し込み、反対側に圧力 $p_2$ で押し出す。
+  押し込む前の気体の状態を $(U_1, V_1)$、押し出した後の状態を $(U_2, V_2)$ とすると $U_1 + p_1 V_1 = U_2 + p_2 V_2$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  二つのピストンがした仕事は $p_1 V_1 - p_2 V_2$ で、これが内部エネルギーの増分に等しい。
+\end{proof}
+
+絞り膨張ではエンタルピーが変わらない。
+理想気体では $H$ は温度だけで決まるので、温度も変わらない。
+実在の気体で温度が変わることは、理想気体からのずれを示す。
+気体の液化に使われるのはこの効果である。
+
+\section{Gibbs 自由エネルギー}
+
+一定温度・圧力の下での平衡条件は Gibbs~\cite{Gibbs1876} による。
+
+\begin{figure}[htbp]
+  \centering
+  \opgraphic{gibbs}
+  \caption{Gibbs 自由エネルギーの最小原理の設定。系は温度 $T_0$、圧力 $p_0$ の溜めとエネルギーと体積をやりとりし、全体は孤立している。}
+  \label{fig:gibbs}
+\end{figure}
+
+\begin{definition}[Gibbs 関数]
+  \label{def:gibbs}
+  \lean{OpThermo.gibbs}
+  \leanok
+  $T_0 > 0$, $p_0$ に対し $G_{T_0, p_0}(X) := U(X) + p_0 V(X) - T_0 S(X)$ とする。
+  $T_0, p_0$ には、系が接する溜め (定義~\ref{def:reservoir}) の温度と圧力をとる。
+\end{definition}
+
+\begin{lemma}[理想的な溜めの全エントロピー]
+  \label{lem:ideal-reservoir}
+  \lean{OpThermo.total_entropy_ideal}
+  \leanok
+  \uses{def:gibbs}
+  理想的な溜めと接した系で、系と溜めの $U$, $V$ の和が保存するなら、$\Delta S_{\text{全体}} = -\Delta G / T_0$。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  保存則を代入して整理する。
+\end{proof}
+
+\begin{theorem}[Gibbs 自由エネルギーの最小原理]
+  \label{thm:gibbs}
+  \lean{OpThermo.Adiabatic.gibbs_criterion}
+  \leanok
+  \uses{lem:ideal-reservoir, def:reservoir, thm:entropy-principle, thm:additive}
+  系と温度 $T_0$、圧力 $p_0$ の溜め $R$ の組成、エネルギー、体積の和が保存するとする。
+  このとき $X + R \prec Y + R' \iff G_{T_0,p_0}(Y) \le G_{T_0,p_0}(X)$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  エントロピー原理で左辺を $S(X + R) \le S(Y + R')$ に、加法性で $S(X) + S(R) \le S(Y) + S(R')$ に書き換える。
+  理想的な溜めの補題から、これは $-\Delta G / T_0 \ge 0$ と同値。
+\end{proof}
+
+次の二つの定理では、断熱到達性を断熱操作の存在 (定義~\ref{def:adiabatic}) とし、$U$ を複合系の内部エネルギー (定義~\ref{def:energy-composite}) とする。
+$U$ が示量的であることは定理~\ref{thm:energy-extensive} で示したので、追加の仮定は要らない。
+
+\begin{theorem}[仕事 $0$ の断熱操作は $G$ を増やさない]
+  \label{thm:gibbs-chain}
+  \lean{OpThermo.CompositeOps.isolated_process_lowers_gibbs}
+  \leanok
+  \uses{thm:gibbs, thm:energy-extensive, def:adiabatic}
+  仕事 $0$ の断熱操作で $X + R$ から $Y + R'$ に移れるなら $G_{T_0,p_0}(Y) \le G_{T_0,p_0}(X)$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  内部エネルギーの存在定理と示量性から $U(X) + U(R) = U(Y) + U(R')$ となる。組成の保存は断熱操作の前提から出る。
+  あとは Gibbs の最小原理を適用する。
+\end{proof}
+
+\begin{theorem}[$G$ を増やさない変化は仕事 $0$ で実現できる]
+  \label{thm:gibbs-chain-converse}
+  \lean{OpThermo.CompositeOps.reachable_of_gibbs_le}
+  \leanok
+  \uses{thm:gibbs, thm:energy-extensive, def:adiabatic}
+  組成、エネルギー、体積が保存し $G_{T_0,p_0}(Y) \le G_{T_0,p_0}(X)$ なら、$X + R$ から $Y + R'$ への仕事 $0$ の断熱操作が存在する。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  Gibbs の最小原理から断熱操作 $p$ が存在する。
+  内部エネルギーの存在定理と保存則から $W(p) = 0$。
+\end{proof}
+
+理想的な溜めの代わりに、大きな溜め (\ref{sec:large-reservoir} 節) を使っても同じ判定が得られる。
+
+\begin{theorem}[大きな溜めでの Gibbs 関数]
+  \label{thm:gibbs-large}
+  \lean{OpThermo.gibbs_large_reservoir, OpThermo.totalEntropyChange}
+  \leanok
+  \uses{thm:large-reservoir, def:gibbs, thm:additive}
+  大きさ $\lambda$ の溜めのエントロピーが示量性 $S_R(\lambda, \lambda x) = \lambda s(x)$ を満たし、$\beta = \partial s/\partial u > 0$ とする。
+  $T_0 = 1/\beta$, $p_0 = (\partial s/\partial v)/\beta$ とおくと、$\lambda \to \infty$ で $\Delta S_{\text{全体}} \to -\Delta G_{T_0,p_0} / T_0$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  示量性で溜めのエントロピー変化を $\lambda(s(x_0 + \lambda^{-1}\Delta) - s(x_0))$ に書き換え、極限の補題を使う。
+\end{proof}
+
+\begin{corollary}[大きな溜めでの判定]
+  \label{cor:gibbs-large}
+  \lean{OpThermo.large_reservoir_criterion}
+  \leanok
+  \uses{thm:gibbs-large}
+  到達可能性が全エントロピーの増減で決まるとする。
+  $G$ が厳密に減る変化は十分大きな溜めで到達可能、厳密に増える変化は到達不可能。
+  $\Delta G = 0$ の場合はこの議論では決まらない。
+\end{corollary}
+
+\begin{proof}
+  \leanok
+  極限が正 (負) なら、十分大きな $\lambda$ で $\Delta S_{\text{全体}}$ も正 (負)。
+\end{proof}
+
+\begin{theorem}[Gibbs 関数と化学ポテンシャル]
+  \label{thm:gibbs-euler}
+  \lean{OpThermo.gibbs_euler}
+  \leanok
+  \uses{thm:euler, thm:fundamental-multi, def:gibbs}
+  $S = \beta U + \pi V + \sum_i \kappa_i N_i$ のとき、$T, p, \mu_i$ を定理~\ref{thm:fundamental-multi} のとおりにとると $U + pV - TS = \sum_i \mu_i N_i$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  代数計算。
+\end{proof}
+
+系の温度と圧力が溜めの $T_0, p_0$ に等しいとき、Gibbs 関数は $G = \sum_i \mu_i N_i$ となる。
+一成分なら、化学ポテンシャルは物質量あたりの Gibbs 関数である。
+
+\section{エネルギーとエンタルピーの最小原理}
+
+これまでの最小原理は、全体のエントロピーが増えることから、環境と接した系のポテンシャルが減ることを導いた。
+内部エネルギーとエンタルピーについては、環境を使わない別の形の最小原理がある。
+エントロピーが等しい状態の中で、平衡状態はエネルギーが最小になる、というものである。
+エントロピー最大の原理から、温度が正であることを使って導く。
+
+\begin{lemma}[最大から最小へ]
+  \label{lem:min-of-max}
+  \lean{OpThermo.min_of_max}
+  \leanok
+  集合 $P$ 上の関数 $S, E$ と $x \in P$ について、次の二つを仮定する。
+  \begin{itemize}
+    \item $E(y) = E(x)$ を満たす $y \in P$ では $S(y) \le S(x)$。
+    \item どの $y \in P$ と $e > E(y)$ についても、$E(y') = e$ かつ $S(y) < S(y')$ を満たす $y' \in P$ がある。
+  \end{itemize}
+  このとき、$S(y) = S(x)$ を満たす $y \in P$ では $E(x) \le E(y)$。
+\end{lemma}
+
+\begin{proof}
+  \leanok
+  $E(y) < E(x)$ とすると、二つ目の仮定で $E(y') = E(x)$、$S(y') > S(y) = S(x)$ の $y'$ がとれ、一つ目の仮定と矛盾する。
+\end{proof}
+
+\begin{theorem}[エネルギー最小原理]
+  \label{thm:energy-min}
+  \lean{OpThermo.Adiabatic.energy_minimum}
+  \leanok
+  \uses{lem:min-of-max, thm:entropy-principle, emp:stirring}
+  $P$ を体積と組成の等しい状態の集まりとし、$X \in P$ とする。
+  次の二つを仮定する。
+  \begin{itemize}
+    \item 内部エネルギーが $U(X)$ に等しい $Y \in P$ からは、$X$ に断熱的に移れる。
+    \item どの $Y \in P$ からも、かき混ぜでエントロピーを厳密に増やしながら、内部エネルギーを任意の値まで上げられる。
+  \end{itemize}
+  このとき、エントロピーが $S(X)$ に等しい $Y \in P$ では $U(X) \le U(Y)$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  一つ目の仮定とエントロピー原理から、$U$ が等しい中で $S$ は $X$ で最大。
+  補題~\ref{lem:min-of-max} を $E = U$ に使う。
+\end{proof}
+
+一つ目の仮定は、$X$ が内部の拘束 (仕切りなど) を外して到達する平衡状態であることを表す。
+例えば熱接触では、どの分配から始めても同じ結合系の平衡状態に移る (定理~\ref{thm:contact-max})。
+二つ目の仮定は、温度が正であること (定理~\ref{thm:temperature-pos}) の、$\beta > 0$ の形である。
+
+\begin{theorem}[エンタルピー最小原理]
+  \label{thm:enthalpy-min}
+  \lean{OpThermo.Adiabatic.enthalpy_minimum}
+  \leanok
+  \uses{lem:min-of-max, thm:entropy-principle, def:enthalpy, thm:enthalpy-change}
+  $P$ を圧力 $p_0$ のピストンと接した、組成の等しい状態の集まりとし、$X \in P$ とする。
+  次の二つを仮定する。
+  \begin{itemize}
+    \item エンタルピーが $H(X)$ に等しい $Y \in P$ からは、ピストンの重りだけが動く断熱操作で $X$ に移れる。
+    \item どの $Y \in P$ からも、定圧でかき混ぜてエントロピーを厳密に増やしながら、エンタルピーを任意の値まで上げられる。
+  \end{itemize}
+  このとき、エントロピーが $S(X)$ に等しい $Y \in P$ では $H(X) \le H(Y)$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  エネルギー最小原理の $U$ を $H$ に置き換えたものである。
+  ピストンの重りだけが動く断熱操作では $H$ は変わらない (定理~\ref{thm:enthalpy-change} で $W' = 0$)。
+\end{proof}
+
+\section{ポテンシャルの微分}
+
+基本関係式 $dU = T\,dS - p\,dV$ (定理~\ref{thm:clausius}) から、各ポテンシャルの微分が出る。
+ここでの $T, p$ は系自身の温度と圧力で、環境の $T_0, p_0$ と等しい平衡状態の上で考える。
+$d$ は全微分の略記である (第~\ref{sec:fundamental} 節)。
+
+\begin{theorem}[$dF = -S\,dT - p\,dV$]
+  \label{thm:dF}
+  \lean{OpThermo.helmholtz_hasDerivAt}
+  \leanok
+  \uses{thm:clausius, def:helmholtz}
+  経路に沿って $dU = T\,dS - p\,dV$ なら、$F = U - TS$ について $dF = -S\,dT - p\,dV$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  積の微分法則と代入。
+\end{proof}
+
+\begin{theorem}[$dH = T\,dS + V\,dp$]
+  \label{thm:dH}
+  \lean{OpThermo.enthalpy_hasDerivAt}
+  \leanok
+  \uses{thm:clausius, def:enthalpy}
+  経路に沿って $dU = T\,dS - p\,dV$ なら、$H = U + pV$ について $dH = T\,dS + V\,dp$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  積の微分法則と代入。
+\end{proof}
+
+\begin{theorem}[$dG = -S\,dT + V\,dp$]
+  \label{thm:dG}
+  \lean{OpThermo.gibbs_hasDerivAt}
+  \leanok
+  \uses{thm:clausius}
+  経路に沿って $dU = T\,dS - p\,dV$ なら、$G = U + pV - TS$ について $dG = -S\,dT + V\,dp$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  積の微分法則と代入。
+\end{proof}
+
+まとめると次のとおり。
+どのポテンシャルも、環境が固定する量を変数とするとき微分が最も簡単になる。
+
+\begin{center}
+\begin{tabular}{llll}
+  ポテンシャル & 環境 & 微分 & 平衡で最小 \\
+  \hline
+  $U$ & 断熱、体積一定 & $T\,dS - p\,dV$ & $S, V$ 一定のとき \\
+  $H = U + pV$ & 断熱、圧力一定 & $T\,dS + V\,dp$ & $S, p$ 一定のとき \\
+  $F = U - TS$ & 温度一定、体積一定 & $-S\,dT - p\,dV$ & $T, V$ 一定のとき \\
+  $G = U + pV - TS$ & 温度一定、圧力一定 & $-S\,dT + V\,dp$ & $T, p$ 一定のとき \\
+\end{tabular}
+\end{center}
+
+多成分系では、どの微分にも $\sum_i \mu_i\, dN_i$ が加わる。
+最小原理は、$U$ と $H$ について定理~\ref{thm:energy-min}, \ref{thm:enthalpy-min}、$F$ と $G$ について定理~\ref{thm:helmholtz}, \ref{thm:gibbs} で示した。
+
+\chapter{実験室での熱測定}
+\label{chap:calorimetry}
+
+この章の大部分は形式化の外にある。
+前章までの構成では、温度もエントロピーも、重りの高さと断熱操作だけから原理的に決まる。
+実際の実験では、別の手順で同じ量を測っている。
+この章では、その手順が前章までの定義のどれに対応し、どこで近似や追加の仮定が入るかを述べる。
+最後に、熱力学そのものが実験でどう確かめられているかを述べる。
+
+\section{温度の測定}
+\label{sec:thermometry}
+
+\subsection{温度計が測っているもの}
+
+この blueprint の温度は $T := 1/s'(u)$ で、エントロピーの微分である (定義~\ref{def:temperature})。
+これを一回の読みで与える装置はない。
+温度計とは、読み $\theta$ (電気抵抗、気体の圧力、液柱の長さなど) を持つ小さな単純系で、$\theta$ が自分の温度の狭義単調な関数 $\theta = f(T)$ になっているものである。
+
+温度計を測りたい系と熱接触させ、平衡を待って $\theta$ を読む。
+平衡では両者の温度が等しい (定理~\ref{thm:exchange-eq})。
+第零法則 (定理~\ref{thm:zeroth-law}) から、同じ読みを与える二つの系は温度が等しい。
+エントロピーの凹性から、温度の等しい二つの系を熱接触させても、切り離せば元の状態に戻せる (定理~\ref{thm:contact-reversible})。
+熱の流れる向き (定理~\ref{thm:exchange-dir}) から、読みが大きい方が温度が高いかどうかもわかる ($f$ が増加なら)。
+
+ここまでで得られるのは温度の順序だけである。
+読み $\theta$ を $T$ の値に換算するには、関数 $f$ を知らなければならない。
+これを温度計の校正という。
+校正の方法は、原理から $f$ がわかる一次温度計を使うか、一次温度計で値を決めた定点と内挿の規則 (国際温度目盛) を使うかのどちらかである。
+
+温度計は測る相手を乱す。
+熱容量 $C_{\mathrm{th}}$ の温度計を、熱容量 $C$ の系に接触させると、系の温度は接触前の差のおよそ $C_{\mathrm{th}}/(C + C_{\mathrm{th}})$ 倍だけずれる。
+熱量計では、温度計を試料容器に固定し、その熱容量を空の容器の熱容量 (付加熱容量) に含めて差し引く。
+
+\subsection{温度の比と単位}
+
+温度の比は、エネルギーの測定だけで原理的に決まる。
+
+\begin{theorem}[Kelvin の温度比]
+  \label{thm:kelvin-ratio}
+  \lean{OpThermo.kelvin_ratio}
+  \leanok
+  \uses{def:reservoir, thm:entropy-principle}
+  温度 $T_1$, $T_2$ の理想的な熱浴が、全エントロピーを保つ操作でエネルギー $Q_1$, $Q_2$ を受け取るとする。
+  このとき $T_1 / T_2 = -Q_1 / Q_2$。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  熱浴のエントロピー変化は $Q_i / T_i$ (定義~\ref{def:reservoir})。全エントロピーが保たれるので $Q_1/T_1 + Q_2/T_2 = 0$。
+\end{proof}
+
+二つの熱浴の間で可逆な熱機関を動かし、出入りするエネルギーの比を測れば、温度の比が決まる。
+これが Kelvin による熱力学温度の定義である。
+実用にはならないが、温度の比がエネルギーの比だけで決まり、温度計の物質によらないことを示している。
+
+温度の値そのものは、エントロピーの単位を選ぶまで決まらない。
+
+\begin{theorem}[温度の単位はエントロピーの単位]
+  \label{thm:temperature-unit}
+  \lean{OpThermo.temperature_rescale}
+  \leanok
+  \uses{def:temperature, thm:unique}
+  エントロピー $s$ を $a s + b$ ($a > 0$) に取り替えると、温度は $T/a$ になる。
+\end{theorem}
+
+\begin{proof}
+  \leanok
+  $(as + b)' = a s'$ の逆数をとる。
+\end{proof}
+
+エントロピーは単位と組成ごとの基準値を除いて一意なので (定理~\ref{thm:unique})、温度は単位を除いて一意である。
+単位の選び方は歴史的に二通りあった。
+2019 年までは、水の三重点の温度を $273.16\,\mathrm{K}$ と定めていた。
+2019 年の SI 改定からは、Boltzmann 定数を $k = 1.380\,649 \times 10^{-23}\,\mathrm{J/K}$ と定め、温度をエネルギーの単位で測る~\cite{SI2019}。
+この定義の下では、水の三重点の温度は測定値になる。
+エントロピーの単位を $k$ にとる (無次元にする) ことと、ケルビンの定義は同じことである。
+
+\subsection{一次温度計}
+
+一次温度計とは、読みと温度の関係 $f$ が、温度によって変わる未知の定数を含まずに理論から決まる温度計である。
+どれも、測る量と温度を結ぶ式が熱力学 (と多くの場合は統計力学) から出ることを使う。
+
+\begin{itemize}
+  \item \textbf{定積気体温度計}：薄い気体の $pV = NkT$ (定理~\ref{thm:ideal-gas-law}) を使う。実在の気体は理想気体からずれるので、密度を変えて測り、密度 $0$ に外挿する。
+  \item \textbf{音響気体温度計}：薄い単原子気体の音速 $c$ が $c^2 = \gamma kT/m$ ($\gamma = 5/3$、$m$ は原子の質量) を満たすことを使う。球形の共鳴器の共鳴周波数から音速を測る~\cite{Moldover1988, Moldover2014}。
+  \item \textbf{誘電率気体温度計}：気体の誘電率から密度を測り、圧力と合わせて $pV = NkT$ を使う。
+  \item \textbf{Johnson 雑音温度計}：抵抗の両端の電圧のゆらぎの二乗平均が $4kTR\Delta f$ になることを使う。統計力学の揺動散逸定理による。
+  \item \textbf{放射温度計}：熱放射のスペクトルが Planck の法則に従うことを使う。高温で使う。
+\end{itemize}
+
+気体温度計が循環論法でないことは第~\ref{sec:ideal-gas} 節で述べた。
+理想気体のエントロピーの形 (経験則~\ref{emp:dilute}) は、温度を使わずに確かめられる主張である。
+例えば $pV = U/c$ (定理~\ref{thm:ideal-gas-law} の証明) は、圧力をピストンの重りで、内部エネルギーを仕事で測れば、温度計なしで確かめられる。
+理想気体以外の一次温度計は、この blueprint の外の統計力学を使う。
+
+\subsection{国際温度目盛}
+
+一次温度計は手間がかかるので、日常の測定には国際温度目盛 ITS-90~\cite{ITS90} を使う。
+ITS-90 は次の三つからなる。
+\begin{itemize}
+  \item \textbf{定点}：純物質の三重点、融点、凝固点に温度の値を割り当てる。例えば水の三重点 $273.16\,\mathrm{K}$、ガリウムの融点 $302.9146\,\mathrm{K}$。値は、制定時までの一次温度計の測定から決めた。
+  \item \textbf{内挿用の温度計}：$0.65\,\mathrm{K}$ から $5\,\mathrm{K}$ はヘリウムの蒸気圧、$3\,\mathrm{K}$ から $24.5561\,\mathrm{K}$ は内挿用の気体温度計、$13.8033\,\mathrm{K}$ (水素の三重点) から $961.78\,^\circ\mathrm{C}$ (銀の凝固点) は白金抵抗温度計、それより上は放射温度計を使う。
+  \item \textbf{内挿の式}：定点での読みから、間の温度を計算する規則。白金抵抗温度計では、抵抗比の基準関数とその補正の形が定められている。
+\end{itemize}
+ITS-90 の温度 $T_{90}$ は熱力学温度 $T$ の近似であり、定義上は別の量である。
+差 $T - T_{90}$ は一次温度計で測られ、まとめられている~\cite{Fischer2011}。
+熱量計の温度計 (白金抵抗温度計、低温ではゲルマニウムや酸化ルテニウムの抵抗温度計) は、ITS-90 で校正したものを使う。
+
+\subsection{一次温度計どうしの一致}
+
+違う原理の一次温度計が同じ温度を与えることは、自明ではない。
+気体の音速、気体の誘電率、抵抗の雑音は、それぞれ違う物理に基づく。
+2019 年の改定に先立ち、Boltzmann 定数がこれらの方法で独立に測られ、百万分の数の相対不確かさの範囲で一致した~\cite{Fischer2018, dePodesta2013}。
+この一致は、温度が測り方によらない一つの量であること (第零法則と温度の定義) の、精密な実験的裏付けと見なせる。
+
+\section{熱容量の測定}
+\label{sec:measure-heat-capacity}
+
+\subsection{断熱型熱量計}
+
+エントロピーの差を求める標準の方法は、断熱型熱量計で熱容量 $C(T)$ を測り、$\int C/T\, dT$ を計算することである (定理~\ref{thm:dS-dT})。
+低温の断熱型熱量計の標準的な手順は次のとおり~\cite{Westrum1968}。
+\begin{itemize}
+  \item 試料を薄い金属の容器に入れ、熱を伝えるためにヘリウム気体を少し封じる。容器には温度計とヒーターを固定する。
+  \item 容器を真空中に吊り、まわりを断熱シールドで囲む。シールドの温度を容器の温度に一致させるように制御し、熱の出入りをなくす。
+  \item ヒーターに既知の電力を一定時間流し、電気的な仕事 $W$ を加える。加熱をやめて平衡を待ち、温度の上昇 $\Delta T$ を読む。
+  \item $C \approx W/\Delta T$ を、温度を少しずつ上げながら繰り返す。空の容器でも同じ測定をし、差し引く。
+\end{itemize}
+
+前章までの構成との対応は次のとおりである。
+\begin{itemize}
+  \item 断熱シールドは、断熱操作 (定義~\ref{def:adiabatic-op}) の条件を実現する装置である。熱の出入りは完全には $0$ にならず、加熱の前後の温度の時間変化 (ドリフト) から補正する。
+  \item 電気ヒーターは Joule の羽根車 (経験則~\ref{emp:stirring}) の代わりである。電気的な仕事は、電流と電圧の測定から計算する。電気の単位は SI で力学の単位とつながっているので、これは重りを下ろす仕事と同じ量である。
+  \item 電気ヒーターによる加熱は不可逆な操作である。それでもエントロピーの差が $\int C/T\, dT$ で求まるのは、エントロピーが状態だけで決まるからである。加熱の各段の後で系が平衡に戻れば、途中の経路は結果に影響しない。定理~\ref{thm:calorimetry} が平衡状態の列 $\gamma(u)$ だけを使っているのはこのためである。
+  \item $W/\Delta T$ は微分 $du/dT$ の差分近似である。$\Delta T$ が小さいほど正確だが、温度の読みの相対誤差は大きくなる。曲率の補正をすることもある。
+\end{itemize}
+
+精度の良い断熱型熱量計では、熱容量の不確かさは室温付近で $0.1\%$ の程度とされる。
+試料が数グラム必要で、一点に数十分かかる。
+
+\subsection{定圧と定積}
+
+固体や液体の試料は、容器の中で大気圧か自分の蒸気圧の下にあり、体積は温度とともに変わる。
+したがって測っているのは定圧熱容量 $C_p$ に近く、得られる差はエンタルピーの差である (定理~\ref{thm:enthalpy-change})。
+エントロピーの差は $C_p$ からも同じ形の積分で求まる。
+圧力を一定に保つ経路でも $dS = dH/T$ だからである (定理~\ref{thm:dH})。
+理論と比べるために $C_V$ が要るときは、熱膨張率と圧縮率を別に測り、$C_p - C_V = TV\alpha^2/\kappa_T$ で換算する。
+
+\subsection{相転移}
+
+一次相転移の温度では、熱を加えても温度が上がらない (第~\ref{sec:concavity} 節)。
+熱容量の積分の代わりに、転移に要したエネルギー (潜熱) $L$ を測り、エントロピーの増分 $L/T_{\mathrm{tr}}$ を加える。
+潜熱は、転移の前後で温度が同じなので、加えた電気的な仕事からそのまま読める。
+
+\subsection{ほかの熱量計}
+
+\begin{itemize}
+  \item \textbf{緩和法}：小さな試料を、熱伝導の既知な細い線で熱浴につなぐ。ヒーターで少し温めて切り、温度が熱浴の温度に戻る時定数 $\tau = C/K$ ($K$ は線の熱伝導度) から $C$ を求める~\cite{Bachmann1972}。ミリグラムの試料で測れる。温度応答の全体を模型に当てはめる方法~\cite{Hwang1997} が市販の装置で使われ、その精度は断熱型熱量計と比べて検証されている~\cite{Lashley2003}。
+  \item \textbf{示差走査熱量測定 (DSC)}：試料と参照試料を同じ速さで加熱し、両者に要る電力の差を測る~\cite{Watson1964}。速く測れるが、平衡からのずれと較正のために精度は落ちる。
+  \item \textbf{交流法、薄膜の熱量計}：温度を周期的に揺らし、応答の振幅から熱容量を求める。微小な試料や高圧下で使う。
+\end{itemize}
+
+\section{エントロピーの値}
+
+\subsection{エントロピーは直接は測れない}
+
+長さや質量と違い、エントロピーを一回の読みで与える測定器はない。
+二分法 (定理~\ref{thm:entropy-bisect}) は原理的な測定手順だが、毎回断熱操作を探すので実用にならない。
+実際に測れるのはエントロピーの差で、熱容量と潜熱の積分から求める。
+
+\subsection{第三法則と絶対エントロピー}
+
+定理~\ref{thm:unique} では、エントロピーは単位と、組成ごとの基準値を除いて一意だった。
+化学反応を扱わなければ、基準値はどの結果にも影響しない。
+反応を扱うと、組成の違う状態を比べるので、基準値の選び方が効いてくる。
+
+実際には、第三法則 (第~\ref{sec:third-law} 節) で基準値を固定する。
+完全な結晶のエントロピーは $T \to 0$ で $0$ とする。
+最低温度の測定点 (多くは数ケルビン) より下は、Debye の $C \propto T^3$ (金属では電子の項 $C \propto T$ を加える) で外挿する。
+こうして求めた値は標準モルエントロピーとして表にまとめられ、データ全体が互いに矛盾しないように調整されている~\cite{CODATA1989}。
+
+第三法則には見かけの例外がある。
+氷は水素の配置の乱れを $0\,\mathrm{K}$ まで残し、熱量測定のエントロピーは分光学から計算した値より小さい~\cite{GiauqueStout1936}。
+この差 (残余エントロピー) は Pauling が配置の数から $R \log(3/2)$ と説明した~\cite{Pauling1935}。
+ガラスも乱れを凍結した状態である。
+どちらも、低温で平衡に達していないことによる (経験則~\ref{emp:nernst} は平衡状態についての主張である)。
+
+\subsection{ほかの方法}
+
+\begin{itemize}
+  \item 電池の起電力 $E$ の温度変化から、反応のエントロピー変化 $\Delta S = nF\, dE/dT$ が求まる~\cite{Gerke1922}。可逆な電池は、化学反応を可逆に進める装置である。
+  \item 平衡定数の温度変化 (van 't Hoff の式) から、反応のエンタルピー変化とエントロピー変化が求まる。
+  \item 統計力学を使えば、分子の振動数や慣性モーメントなどの分光学の値から、気体のエントロピーを計算できる。
+\end{itemize}
+どれもエントロピーの差か、理論を通した間接的な値である。
+
+\section{熱力学は実験で確かめられているか}
+\label{sec:tests}
+
+熱力学の法則は、一つの実験で白黒がつく形をしていない。
+第二法則の内容は「ある種の変化が起こらない」ことと、「状態の関数が存在し、それらの間に恒等式が成り立つ」ことである。
+したがって検証は、独立に測った量が熱力学の恒等式を満たすかどうか、という整合性の検査になる。
+次のような検査が行われてきた。
+
+\subsection{第一法則}
+
+Joule は、重りの降下による羽根車の仕事と、それによる水の温度上昇の関係を、いろいろな装置で測った~\cite{Joule1850}。
+仕事の量だけで温度上昇が決まり、装置によらないことが、経路独立性 (経験則~\ref{emp:path-indep}) の実験的な根拠である。
+化学では、反応熱が経路によらないこと (Hess の法則) が同じ主張にあたる。
+熱化学のデータは反応の網目をなし、閉じた経路での和が $0$ になるように全体を調整して使われる~\cite{CODATA1989}。
+調整の残差が測定誤差の範囲に収まることが、第一法則の大規模な検査になっている。
+
+\subsection{恒等式の検査}
+
+第二法則からは、別々に測れる量の間の恒等式が出る。
+\begin{itemize}
+  \item \textbf{Clapeyron の式}：蒸気圧曲線の傾き $dp/dT$ は、潜熱 $L$ と体積の変化 $\Delta V$ で $dp/dT = L/(T\Delta V)$ と書ける。左辺は圧力計で、右辺は熱量計で測る。
+  \item \textbf{Maxwell の関係式}：例えば等温で圧力を変えたときのエントロピー変化 (圧縮のときに出る熱) は、熱膨張率と $(\partial S/\partial p)_T = -(\partial V/\partial T)_p$ で結ばれる。
+  \item \textbf{$C_p - C_V$}：熱容量の差は、熱膨張率と圧縮率から計算できる。
+  \item \textbf{Joule--Thomson 係数}：絞り膨張での温度変化 (定理~\ref{thm:joule-thomson}) は、状態方程式と熱容量から計算できる。ヘリウム、アルゴン、窒素などで直接測られている~\cite{RoebuckOsterberg1933}。
+  \item \textbf{Gibbs--Duhem の式}：混合物の気液平衡では、各成分の化学ポテンシャルの変化が独立でない。この関係を使って、実測の気液平衡データが熱力学的に整合しているかを判定する検査 (面積検定など) が工業的に使われている~\cite{Herington1947, RedlichKister1948, VanNess1973}。現在の熱物性データベースは、こうした整合性の検査を自動で行っている~\cite{Frenkel2005}。
+\end{itemize}
+これらの検査で系統的な破れが見つかったときは、熱力学ではなく測定や試料 (平衡に達していない、不純物がある) の問題とされてきた。
+この扱いは、熱力学が十分に確かめられていると見なされていることの表れでもあり、検証の論理としては循環の危険もある。
+
+\subsection{第三法則}
+
+第三法則は、反応や相転移の前後で $T \to 0$ のエントロピーが等しいという主張なので、直接に検査できる。
+\begin{itemize}
+  \item 同じ物質の二つの結晶形 (硫黄の斜方晶と単斜晶、ホスフィンの二つの結晶形など) について、それぞれ熱容量を $0\,\mathrm{K}$ 近くまで測り、転移点での潜熱と合わせる。二つの経路で求めた転移点のエントロピーが一致すれば、$T \to 0$ で両者のエントロピーが等しいことになる~\cite{EastmanMcGavock1937, StephensonGiauque1937}。
+  \item 気体について、熱量測定で求めたエントロピー (第三法則のエントロピー) と、分光学のデータから統計力学で計算したエントロピーを比べる。多くの気体で一致し、一致しない場合 (氷、一酸化炭素など) は残余エントロピーとして説明された~\cite{GiauqueWiebe1928, GiauqueJohnston1929, GiauqueStout1936}。
+\end{itemize}
+総説として~\cite{Wilks1961} がある。
+
+\subsection{温度}
+
+前節で述べたとおり、原理の違う一次温度計による Boltzmann 定数の決定が百万分の数の範囲で一致している~\cite{Fischer2018}。
+温度がエントロピーの微分として一つに決まり、どの系で測っても同じ値になること (定理~\ref{thm:exchange-eq}) の精密な検査と見なせる。
+
+\subsection{小さな系}
+
+分子一個や微粒子のような小さな系では、熱力学の量がゆらぐ。
+この領域では、熱力学の不等式は平均についての主張になり、個々の試行では破れうる。
+\begin{itemize}
+  \item 光ピンセットで捕えた微粒子を動かす実験で、短い時間ではエントロピー生成が負になる試行が、ゆらぎの定理の予言どおりの頻度で観測された~\cite{Wang2002}。
+  \item RNA 分子を引き伸ばす実験で、非平衡の仕事の分布から平衡の自由エネルギー差を求める Jarzynski 等式と Crooks のゆらぎの定理が確かめられた~\cite{Liphardt2002, Collin2005}。$\langle W \rangle \ge \Delta F$ (最大仕事の原理、定理~\ref{thm:max-work}) は平均について成り立つ。
+  \item 情報を消去するのに要する最小の熱 ($kT \log 2$、Landauer の原理)~\cite{Berut2012} や、観測による情報を仕事に変える操作~\cite{Toyabe2010} も測られている。
+\end{itemize}
+これらは巨視的な熱力学の反例ではなく、その適用範囲の境界を示す。
+この blueprint は、読みが実数で再現することを前提にしている (第~\ref{chap:assumptions} 章)。
+小さな系では、この前提が成り立たない。
+
+\subsection{公理の検査}
+
+Lieb--Yngvason の公理や比較仮説のような、到達可能性の公理そのものを直接に検査した実験は、調べた範囲では見つからなかった。
+公理は経験の要約として置かれ、個々の公理ではなく、そこから出る恒等式と不等式の全体が検査されてきた、というのが実情である。
+
+\chapter{残っている仮定}
+\label{chap:assumptions}
+
+形式化で明示した仮定と、型の選び方に隠れている仮定を分けて挙げる。
+
+本文で経験則として置いたもの (Lean では定理の仮定や構造のフィールドとして現れる) は次のとおり。
+\begin{itemize}
+  \item 長さ：棒の比較と連結 (経験則~\ref{emp:rods})。
+  \item 状態と時間：状態が以後の変化を決めること (経験則~\ref{emp:state-determines})、時計があること (経験則~\ref{emp:clock})。
+  \item 状態の空間：仕切りが状態を変えないこと (経験則~\ref{emp:partition})、複合とスケーリングの法則 (経験則~\ref{emp:state-space})。
+  \item 力学：天秤の比較と連結 (経験則~\ref{emp:balance})、重力の法則 (経験則~\ref{emp:gravity})、天秤の質量が力学の法則を満たすこと (経験則~\ref{emp:balance-law})。
+  \item 第一法則：断熱操作を続けて行えること (経験則~\ref{emp:ops-seq})、連結性 (経験則~\ref{emp:connected})、経路独立性 (経験則~\ref{emp:path-indep})。
+  \item 断熱到達性：複合系の断熱操作の法則 (経験則~\ref{emp:composite-ops})、A6 と比較仮説 (経験則~\ref{emp:stability-ch})、元に戻せない断熱操作がある (経験則~\ref{emp:irreversible})、複合系の経路独立性 (経験則~\ref{emp:path-indep-composite})。
+  \item 温度：単純系の座標 (経験則~\ref{emp:coordinates})、かき混ぜでエネルギーを上げられること (経験則~\ref{emp:stirring})。
+  \item 第三法則：Nernst の熱定理 (経験則~\ref{emp:nernst})。到達不能性の定理にだけ使う。
+  \item 定理の仮定として置いたもの：エントロピーの微分可能性と $\beta \ne 0$ (定義~\ref{def:temperature})、溜めが理想的であること (定義~\ref{def:reservoir})、または示量性と微分可能性 (定理~\ref{thm:gibbs-large})、最小原理での拘束の外し方とかき混ぜ (定理~\ref{thm:energy-min}, \ref{thm:enthalpy-min})。
+\end{itemize}
+
+型の選び方に隠れていて、まだ定理の仮定として取り出していないものは次のとおり。
+\begin{itemize}
+  \item 読みが実数で再現すること。測定誤差と確率的なばらつきは扱っていない。
+  \item 同時に始めたことの判定。時計の比較の前提として、直接観測できるとしている。
+  \item 同じ重りや棒を、別の時刻、別の手順で同じ対象として扱えること。
+  \item 重力の法則 (経験則~\ref{emp:gravity})。Lean では重力を定義として与え、天秤と力の比例は型に書いていない。
+  \item 平衡状態の集合 $\Gamma$ から、複合とスケーリングを持つ状態の空間 $\mathcal{S}$ を作ること (定義~\ref{def:state-space})。Lean では $\mathcal{S}$ を加群として直接与えている。
+  \item 組成を天秤で測ること (定義~\ref{def:mass})。Lean では組成を線形写像として与え、天秤とはつないでいない。
+  \item 化学反応を扱わないこと。断熱操作で組成が変わらないことを前提にしている (経験則~\ref{emp:composite-ops})。
+  \item どの手順が断熱操作かの判定 (定義~\ref{def:ops})。Lean では断熱操作の集まり $\mathrm{Operation}(X, Y)$ を与えられたものとし、装置が元の状態に戻ることや、変化が重りの高さだけに残ることは型に書いていない。
+  \item 単純系の座標 (経験則~\ref{emp:coordinates})。Lean では状態の族 $\gamma$ を与えるだけで、$\gamma(u)$ の内部エネルギーが $u$ であることや、状態が座標で決まることは型に書いていない。体積 $V$ の測定も形式化していない。
+\end{itemize}
+
+\chapter{参考文献}
+
+\begin{thebibliography}{99}
+
+\bibitem{LY99}
+E.~H. Lieb and J.~Yngvason,
+The physics and mathematics of the second law of thermodynamics,
+\emph{Physics Reports} \textbf{310}, 1--96 (1999).
+
+\bibitem{LY98}
+E.~H. Lieb and J.~Yngvason,
+A guide to entropy and the second law of thermodynamics,
+\emph{Notices of the American Mathematical Society} \textbf{45}, 571--581 (1998).
+
+\bibitem{LY00}
+E.~H. Lieb and J.~Yngvason,
+A fresh look at entropy and the second law of thermodynamics,
+\emph{Physics Today} \textbf{53}(4), 32--37 (2000).
+
+\bibitem{LY13}
+E.~H. Lieb and J.~Yngvason,
+The entropy concept for non-equilibrium states,
+\emph{Proceedings of the Royal Society A} \textbf{469}, 20130408 (2013).
+
+\bibitem{Caratheodory1909}
+C.~Carathéodory,
+Untersuchungen über die Grundlagen der Thermodynamik,
+\emph{Mathematische Annalen} \textbf{67}, 355--386 (1909).
+
+\bibitem{Giles1964}
+R.~Giles,
+\emph{Mathematical Foundations of Thermodynamics},
+Pergamon Press (1964).
+
+\bibitem{Buchdahl1966}
+H.~A. Buchdahl,
+\emph{The Concepts of Classical Thermodynamics},
+Cambridge University Press (1966).
+
+\bibitem{Thess2011}
+A.~Thess,
+\emph{The Entropy Principle: Thermodynamics for the Unsatisfied},
+Springer (2011).
+
+\bibitem{Tasaki2000}
+田崎晴明,
+\emph{熱力学――現代的な視点から},
+培風館 (2000).
+
+\bibitem{Sasa2000}
+佐々真一,
+\emph{熱力学入門},
+共立出版 (2000).
+
+\bibitem{ITS90}
+H.~Preston-Thomas,
+The International Temperature Scale of 1990 (ITS-90),
+\emph{Metrologia} \textbf{27}, 3--10 (1990).
+
+\bibitem{SI2019}
+Bureau International des Poids et Mesures,
+\emph{The International System of Units (SI)}, 9th edition (2019).
+
+\bibitem{GiauqueStout1936}
+W.~F. Giauque and J.~W. Stout,
+The entropy of water and the third law of thermodynamics. The heat capacity of ice from 15 to 273$^\circ$K,
+\emph{Journal of the American Chemical Society} \textbf{58}, 1144--1150 (1936).
+
+\bibitem{Pauling1935}
+L.~Pauling,
+The structure and entropy of ice and of other crystals with some randomness of atomic arrangement,
+\emph{Journal of the American Chemical Society} \textbf{57}, 2680--2684 (1935).
+
+\bibitem{Callen1985}
+H.~B. Callen,
+\emph{Thermodynamics and an Introduction to Thermostatistics}, 2nd ed.,
+Wiley (1985).
+
+\bibitem{Joule1850}
+J.~P. Joule,
+On the mechanical equivalent of heat,
+\emph{Philosophical Transactions of the Royal Society of London} \textbf{140}, 61--82 (1850).
+
+\bibitem{Clausius1865}
+R.~Clausius,
+Über verschiedene für die Anwendung bequeme Formen der Hauptgleichungen der mechanischen Wärmetheorie,
+\emph{Annalen der Physik und Chemie} \textbf{125}, 353--400 (1865).
+
+\bibitem{Gibbs1876}
+J.~W. Gibbs,
+On the equilibrium of heterogeneous substances,
+\emph{Transactions of the Connecticut Academy of Arts and Sciences} \textbf{3}, 108--248 (1876) and 343--524 (1878).
+
+\bibitem{Bridgman1927}
+P.~W. Bridgman,
+\emph{The Logic of Modern Physics},
+Macmillan (1927).
+
+\bibitem{Holder1901}
+O.~Hölder,
+Die Axiome der Quantität und die Lehre vom Mass,
+\emph{Berichte über die Verhandlungen der Königlich Sächsischen Gesellschaft der Wissenschaften zu Leipzig, Mathematisch-Physische Classe} \textbf{53}, 1--64 (1901).
+
+\bibitem{KLST1971}
+D.~H. Krantz, R.~D. Luce, P.~Suppes, and A.~Tversky,
+\emph{Foundations of Measurement, Vol.~I: Additive and Polynomial Representations},
+Academic Press (1971).
+
+\bibitem{Hardy2001}
+L.~Hardy,
+Quantum theory from five reasonable axioms,
+arXiv:quant-ph/0101012 (2001).
+
+\bibitem{CDP2010}
+G.~Chiribella, G.~M. D'Ariano, and P.~Perinotti,
+Probabilistic theories with purification,
+\emph{Physical Review A} \textbf{81}, 062348 (2010).
+
+\bibitem{Lean4}
+L.~de Moura and S.~Ullrich,
+The Lean 4 theorem prover and programming language,
+in \emph{Automated Deduction -- CADE 28}, LNCS \textbf{12699}, 625--635, Springer (2021).
+
+\bibitem{Mathlib2020}
+The mathlib Community,
+The Lean mathematical library,
+in \emph{Proceedings of the 9th ACM SIGPLAN International Conference on Certified Programs and Proofs (CPP 2020)}, 367--381 (2020).
+
+\bibitem{Fischer2018}
+J.~Fischer \emph{et al.},
+The Boltzmann project,
+\emph{Metrologia} \textbf{55}, R1--R20 (2018).
+
+\bibitem{Fischer2011}
+J.~Fischer \emph{et al.},
+Present estimates of the differences between thermodynamic temperatures and the ITS-90,
+\emph{International Journal of Thermophysics} \textbf{32}, 12--25 (2011).
+
+\bibitem{Moldover1988}
+M.~R. Moldover, J.~P.~M. Trusler, T.~J. Edwards, J.~B. Mehl, and R.~S. Davis,
+Measurement of the universal gas constant $R$ using a spherical acoustic resonator,
+\emph{Journal of Research of the National Bureau of Standards} \textbf{93}, 85 (1988).
+
+\bibitem{Moldover2014}
+M.~R. Moldover, R.~M. Gavioso, J.~B. Mehl, L.~Pitre, M.~de~Podesta, and J.~T. Zhang,
+Acoustic gas thermometry,
+\emph{Metrologia} \textbf{51}, R1--R19 (2014).
+
+\bibitem{dePodesta2013}
+M.~de~Podesta \emph{et al.},
+A low-uncertainty measurement of the Boltzmann constant,
+\emph{Metrologia} \textbf{50}, 354--376 (2013).
+
+\bibitem{Westrum1968}
+E.~F. Westrum, Jr., G.~T. Furukawa, and J.~P. McCullough,
+Adiabatic low-temperature calorimetry,
+in J.~P. McCullough and D.~W. Scott (eds.), \emph{Experimental Thermodynamics, Vol.~I: Calorimetry of Non-reacting Systems},
+Butterworths (1968), pp.~133--214.
+
+\bibitem{Bachmann1972}
+R.~Bachmann \emph{et al.},
+Heat capacity measurements on small samples at low temperatures,
+\emph{Review of Scientific Instruments} \textbf{43}, 205--214 (1972).
+
+\bibitem{Hwang1997}
+J.~S. Hwang, K.~J. Lin, and C.~Tien,
+Measurement of heat capacity by fitting the whole temperature response of a heat-pulse calorimeter,
+\emph{Review of Scientific Instruments} \textbf{68}, 94--101 (1997).
+
+\bibitem{Lashley2003}
+J.~C. Lashley \emph{et al.},
+Critical examination of heat capacity measurements made on a Quantum Design physical property measurement system,
+\emph{Cryogenics} \textbf{43}, 369--378 (2003).
+
+\bibitem{Watson1964}
+E.~S. Watson, M.~J. O'Neill, J.~Justin, and N.~Brenner,
+A differential scanning calorimeter for quantitative differential thermal analysis,
+\emph{Analytical Chemistry} \textbf{36}, 1233--1238 (1964).
+
+\bibitem{CODATA1989}
+J.~D. Cox, D.~D. Wagman, and V.~A. Medvedev (eds.),
+\emph{CODATA Key Values for Thermodynamics},
+Hemisphere (1989).
+
+\bibitem{Gerke1922}
+R.~H. Gerke,
+Temperature coefficient of electromotive force of galvanic cells and the entropy of reactions,
+\emph{Journal of the American Chemical Society} \textbf{44}, 1684--1704 (1922).
+
+\bibitem{RoebuckOsterberg1933}
+J.~R. Roebuck and H.~Osterberg,
+The Joule--Thomson effect in helium,
+\emph{Physical Review} \textbf{43}, 60--69 (1933).
+
+\bibitem{Herington1947}
+E.~F.~G. Herington,
+A thermodynamic test for the internal consistency of experimental data on volatility ratios,
+\emph{Nature} \textbf{160}, 610--611 (1947).
+
+\bibitem{RedlichKister1948}
+O.~Redlich and A.~T. Kister,
+Algebraic representation of thermodynamic properties and the classification of solutions,
+\emph{Industrial \& Engineering Chemistry} \textbf{40}, 345--348 (1948).
+
+\bibitem{VanNess1973}
+H.~C. Van~Ness, S.~M. Byer, and R.~E. Gibbs,
+Vapor-liquid equilibrium: Part I. An appraisal of data reduction methods,
+\emph{AIChE Journal} \textbf{19}, 238--244 (1973).
+
+\bibitem{Frenkel2005}
+M.~Frenkel, R.~D. Chirico, V.~Diky, X.~Yan, Q.~Dong, and C.~Muzny,
+ThermoData Engine (TDE): software implementation of the dynamic data evaluation concept,
+\emph{Journal of Chemical Information and Modeling} \textbf{45}, 816--838 (2005).
+
+\bibitem{EastmanMcGavock1937}
+E.~D. Eastman and W.~C. McGavock,
+The heat capacity and entropy of rhombic and monoclinic sulfur,
+\emph{Journal of the American Chemical Society} \textbf{59}, 145--151 (1937).
+
+\bibitem{StephensonGiauque1937}
+C.~C. Stephenson and W.~F. Giauque,
+A test of the third law of thermodynamics by means of two crystalline forms of phosphine,
+\emph{Journal of Chemical Physics} \textbf{5}, 149--158 (1937).
+
+\bibitem{GiauqueWiebe1928}
+W.~F. Giauque and R.~Wiebe,
+The entropy of hydrogen chloride,
+\emph{Journal of the American Chemical Society} \textbf{50}, 101--122 (1928).
+
+\bibitem{GiauqueJohnston1929}
+W.~F. Giauque and H.~L. Johnston,
+The heat capacity of oxygen from 12$^\circ$K to its boiling point and its heat of vaporization. The entropy from spectroscopic data,
+\emph{Journal of the American Chemical Society} \textbf{51}, 2300--2321 (1929).
+
+\bibitem{Wilks1961}
+J.~Wilks,
+\emph{The Third Law of Thermodynamics},
+Oxford University Press (1961).
+
+\bibitem{Wang2002}
+G.~M. Wang, E.~M. Sevick, E.~Mittag, D.~J. Searles, and D.~J. Evans,
+Experimental demonstration of violations of the second law of thermodynamics for small systems and short time scales,
+\emph{Physical Review Letters} \textbf{89}, 050601 (2002).
+
+\bibitem{Liphardt2002}
+J.~Liphardt, S.~Dumont, S.~B. Smith, I.~Tinoco, Jr., and C.~Bustamante,
+Equilibrium information from nonequilibrium measurements in an experimental test of Jarzynski's equality,
+\emph{Science} \textbf{296}, 1832--1835 (2002).
+
+\bibitem{Collin2005}
+D.~Collin, F.~Ritort, C.~Jarzynski, S.~B. Smith, I.~Tinoco, Jr., and C.~Bustamante,
+Verification of the Crooks fluctuation theorem and recovery of RNA folding free energies,
+\emph{Nature} \textbf{437}, 231--234 (2005).
+
+\bibitem{Berut2012}
+A.~Bérut, A.~Arakelyan, A.~Petrosyan, S.~Ciliberto, R.~Dillenschneider, and E.~Lutz,
+Experimental verification of Landauer's principle linking information and thermodynamics,
+\emph{Nature} \textbf{483}, 187--189 (2012).
+
+\bibitem{Toyabe2010}
+S.~Toyabe, T.~Sagawa, M.~Ueda, E.~Muneyuki, and M.~Sano,
+Experimental demonstration of information-to-energy conversion and validation of the generalized Jarzynski equality,
+\emph{Nature Physics} \textbf{6}, 988--992 (2010).
+
+\end{thebibliography}

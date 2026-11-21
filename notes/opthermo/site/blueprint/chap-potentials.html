@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$'], ['\\(','\\)']] },
+  };
+  // MathJax 4 may re-render formulas after load, so tag the current containers at copy time.
+  function tagFormulas() {
+    for (const item of MathJax.startup.document.math) {
+      const root = item.typesetRoot;
+      if (!root) continue;
+      root.setAttribute('data-tex', item.math.trim());
+      if (item.display) root.setAttribute('data-display', 'true');
+    }
+  }
+  document.addEventListener('copy', (event) => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || !window.MathJax || !MathJax.startup) return;
+    tagFormulas();
+    const frag = sel.getRangeAt(0).cloneContents();
+    const boxes = frag.querySelectorAll('mjx-container[data-tex]');
+    if (boxes.length === 0) return;
+    for (const box of boxes) {
+      const tex = box.getAttribute('data-tex').replace(/\{\\gt\}/g, '>').replace(/\{\\lt\}/g, '<');
+      const text = box.hasAttribute('data-display') ? '\n$$' + tex + '$$\n' : '$' + tex + '$';
+      box.replaceWith(document.createTextNode(text));
+    }
+    const holder = document.createElement('div');
+    holder.style.position = 'fixed';
+    holder.style.left = '-10000px';
+    holder.appendChild(frag);
+    document.body.appendChild(holder);
+    const plain = holder.innerText;
+    holder.remove();
+    event.clipboardData.setData('text/plain', plain);
+    event.preventDefault();
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>自由エネルギーとエンタルピー</title>
+<link rel="next" href="chap-calorimetry.html" title="実験室での熱測定" />
+<link rel="prev" href="sect0007.html" title="温度、圧力、化学ポテンシャル" />
+<link rel="up" href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">概要</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000010"><span class="toc_ref">1.1</span> <span class="toc_entry">用語</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">2</span> <span class="toc_entry">長さの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">3</span> <span class="toc_entry">状態と平衡状態</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0003.html#a0000000011"><span class="toc_ref">3.1</span> <span class="toc_entry">時間の目盛り</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000012"><span class="toc_ref">3.2</span> <span class="toc_entry">状態の空間</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">4</span> <span class="toc_entry">仕事の力学的な基礎</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">5</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html"><span class="toc_ref">6</span> <span class="toc_entry">断熱到達性とエントロピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0006.html#sec:accessibility-axioms"><span class="toc_ref">6.1</span> <span class="toc_entry">断熱操作から断熱到達性へ</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000013"><span class="toc_ref">6.2</span> <span class="toc_entry">複合系の内部エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000014"><span class="toc_ref">6.3</span> <span class="toc_entry">相殺則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000015"><span class="toc_ref">6.4</span> <span class="toc_entry">基準状態と形式的な不等式</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000016"><span class="toc_ref">6.5</span> <span class="toc_entry">エントロピーの構成</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000017"><span class="toc_ref">6.6</span> <span class="toc_entry">エントロピーの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000018"><span class="toc_ref">6.7</span> <span class="toc_entry">エントロピー原理</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#sec:second-law"><span class="toc_ref">6.8</span> <span class="toc_entry">第二法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000019"><span class="toc_ref">6.9</span> <span class="toc_entry">無矛盾性</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">7</span> <span class="toc_entry">温度、圧力、化学ポテンシャル</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0007.html#a0000000020"><span class="toc_ref">7.1</span> <span class="toc_entry">温度の定義</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000021"><span class="toc_ref">7.2</span> <span class="toc_entry">熱接触と温度の比較</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000022"><span class="toc_ref">7.3</span> <span class="toc_entry">圧力と化学ポテンシャル</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:ideal-gas"><span class="toc_ref">7.4</span> <span class="toc_entry">理想気体</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:fundamental"><span class="toc_ref">7.5</span> <span class="toc_entry">基本関係式</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:concavity"><span class="toc_ref">7.6</span> <span class="toc_entry">エントロピーの凹性</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0007.html#a0000000023"><span class="toc_ref">7.6.1</span> <span class="toc_entry">凹性から出ること</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000024"><span class="toc_ref">7.6.2</span> <span class="toc_entry">安定性</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000025"><span class="toc_ref">7.6.3</span> <span class="toc_entry">相の共存</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000026"><span class="toc_ref">7.6.4</span> <span class="toc_entry">凹性と自由エネルギー</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:heat-capacity"><span class="toc_ref">7.7</span> <span class="toc_entry">熱容量</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:third-law"><span class="toc_ref">7.8</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class=" active current">
+  <a href="chap-potentials.html"><span class="toc_ref">8</span> <span class="toc_entry">自由エネルギーとエンタルピー</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="chap-potentials.html#a0000000027"><span class="toc_ref">8.1</span> <span class="toc_entry">環境</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-potentials.html#sec:large-reservoir"><span class="toc_ref">8.1.1</span> <span class="toc_entry">大きな溜め</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000028"><span class="toc_ref">8.2</span> <span class="toc_entry">Helmholtz 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000029"><span class="toc_ref">8.3</span> <span class="toc_entry">エンタルピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000030"><span class="toc_ref">8.4</span> <span class="toc_entry">Gibbs 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000031"><span class="toc_ref">8.5</span> <span class="toc_entry">エネルギーとエンタルピーの最小原理</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000032"><span class="toc_ref">8.6</span> <span class="toc_entry">ポテンシャルの微分</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html"><span class="toc_ref">9</span> <span class="toc_entry">実験室での熱測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-calorimetry.html#sec:thermometry"><span class="toc_ref">9.1</span> <span class="toc_entry">温度の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000033"><span class="toc_ref">9.1.1</span> <span class="toc_entry">温度計が測っているもの</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000034"><span class="toc_ref">9.1.2</span> <span class="toc_entry">温度の比と単位</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000035"><span class="toc_ref">9.1.3</span> <span class="toc_entry">一次温度計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000036"><span class="toc_ref">9.1.4</span> <span class="toc_entry">国際温度目盛</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000037"><span class="toc_ref">9.1.5</span> <span class="toc_entry">一次温度計どうしの一致</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:measure-heat-capacity"><span class="toc_ref">9.2</span> <span class="toc_entry">熱容量の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000038"><span class="toc_ref">9.2.1</span> <span class="toc_entry">断熱型熱量計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000039"><span class="toc_ref">9.2.2</span> <span class="toc_entry">定圧と定積</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000040"><span class="toc_ref">9.2.3</span> <span class="toc_entry">相転移</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000041"><span class="toc_ref">9.2.4</span> <span class="toc_entry">ほかの熱量計</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000042"><span class="toc_ref">9.3</span> <span class="toc_entry">エントロピーの値</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000043"><span class="toc_ref">9.3.1</span> <span class="toc_entry">エントロピーは直接は測れない</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000044"><span class="toc_ref">9.3.2</span> <span class="toc_entry">第三法則と絶対エントロピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000045"><span class="toc_ref">9.3.3</span> <span class="toc_entry">ほかの方法</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:tests"><span class="toc_ref">9.4</span> <span class="toc_entry">熱力学は実験で確かめられているか</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000046"><span class="toc_ref">9.4.1</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000047"><span class="toc_ref">9.4.2</span> <span class="toc_entry">恒等式の検査</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000048"><span class="toc_ref">9.4.3</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000049"><span class="toc_ref">9.4.4</span> <span class="toc_entry">温度</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000050"><span class="toc_ref">9.4.5</span> <span class="toc_entry">小さな系</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000051"><span class="toc_ref">9.4.6</span> <span class="toc_entry">公理の検査</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-assumptions.html"><span class="toc_ref">10</span> <span class="toc_entry">残っている仮定</span></a>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref">11</span> <span class="toc_entry">参考文献</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="chap:potentials">8 自由エネルギーとエンタルピー</h1>
+
+<p>エントロピー原理は、断熱的に孤立した系について、どの変化が起こりうるかを決める。 実験では、系を一定温度の熱浴や一定圧力のピストンと接したまま扱うことが多い。 系と接して、系とエネルギーや体積をやりとりする外部の装置や大きな系を、系の環境という。 そのときは、系と環境を合わせた全体にエントロピー原理を使い、環境の寄与を系の量で書き直す。 環境の種類ごとに、次の組み合わせが現れる (図&#160;<a href="chap-potentials.html#fig:potentials">8.1</a>)。 </p>
+<ul class="itemize">
+  <li><p>温度 \(T_0\) の熱浴だけと接する：Helmholtz 自由エネルギー \(F = U - T_0 S\)。 </p>
+</li>
+  <li><p>圧力 \(p_0\) のピストンだけと接する：エンタルピー \(H = U + p_0 V\)。 </p>
+</li>
+  <li><p>両方と接する：Gibbs 自由エネルギー \(G = U + p_0 V - T_0 S\)。 </p>
+</li>
+</ul>
+<p> Clausius によるエントロピーの導入&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Clausius1865" >17</a>
+	]
+</span> とは逆に、ここでは \(dS = \delta Q_{\mathrm{rev}}/T\) は定義ではなく結果である。 </p>
+<figure id="fig:potentials">
+  <div class="centered"><img src="images/img-0018.svg" alt="\includegraphics{figures/potentials.svg}" style="width: ; height: " />
+ <figcaption>
+  <span class="caption_title">図</span> 
+  <span class="caption_ref">8.1</span> 
+  <span class="caption_text">環境と熱力学ポテンシャル。(a) 動かない熱を通す壁で温度 \(T_0\) の熱浴と接する系では \(F\)。(b) 断熱壁で囲み、重りを載せたピストンで圧力 \(p_0\) をかけた系では \(H\)。(c) 両方と接する系では \(G\)。</span> 
+</figcaption>  </div>
+
+</figure>
+<h1 id="a0000000027">8.1 環境</h1>
+<div class="definition_thmwrapper theorem-style-definition" id="def:reservoir">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">129</span>
+    <span class="definition_thmtitle">溜めと熱浴</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#def:reservoir">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0007.html#def:simple-system">定義 93</a></li>
+          
+          <li><a href="sect0007.html#def:volume">定義 94</a></li>
+          
+          <li><a href="sect0006.html#def:energy-composite">定義 67</a></li>
+          
+          <li><a href="sect0006.html#def:entropy">定義 79</a></li>
+          
+          <li><a href="sect0007.html#def:temperature">定義 100</a></li>
+          
+          <li><a href="sect0007.html#def:pressure-mu">定義 107</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   系とエネルギーと体積をやりとりする単純系を考える。 その平衡状態 \(R\) の内部エネルギー \(U(R)\) (定義&#160;<a href="sect0006.html#def:energy-composite">67</a>)、体積 \(V(R)\) (定義&#160;<a href="sect0007.html#def:volume">94</a>)、エントロピー \(S(R)\) (定義&#160;<a href="sect0006.html#def:entropy">79</a>) が、どの \(R\) でも定数 \(T_0 {\gt} 0\), \(p_0\), \(\sigma \) を使って </p>
+<div class="displaymath" id="a0000000118">
+  \[  S(R) = \sigma + \frac{U(R) + p_0 V(R)}{T_0}  \]
+</div>
+<p> を満たすとき、この単純系を温度 \(T_0\)、圧力 \(p_0\) の理想的な溜めという。 体積の変わらない単純系で、エントロピーが \(S(R) = \sigma + U(R)/T_0\) と書けるものを、温度 \(T_0\) の熱浴という。 </p>
+
+  </div>
+</div>
+<p>熱浴は、体積を固定した溜めである。 体積が一定なら \(p_0 V(R)/T_0\) は定数なので \(\sigma \) に含められ、熱浴のエントロピーは \(U\) だけの一次式になる。 \(p_0 = 0\) を仮定する必要はない。 </p>
+<p>以下の定理で \(X + R\) と書くときの \(R\) は、溜めの平衡状態である。 溜めのエントロピーの微分は \(\partial S/\partial U = 1/T_0\)、\(\partial S/\partial V = p_0/T_0\) なので、\(T_0, p_0\) は溜めの温度と圧力 (定義&#160;<a href="sect0007.html#def:temperature">100</a>, <a href="sect0007.html#def:pressure-mu">107</a>) である。 </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:piston">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">130</span>
+    <span class="definition_thmtitle">圧力 \(p_0\) のピストン</span>
+    <div class="thm_header_extras">
+
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#def:piston">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0004.html#def:weight">定義 28</a></li>
+          
+          <li><a href="sect0005.html#def:ops">定義 45</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   系の壁の一部を断面積 \(A\) の動く蓋にし、その上に質量 \(m\) の重りを載せた装置を、圧力 \(p_0 := m/A\) のピストンという。 </p>
+
+  </div>
+</div>
+<p>系の体積が \(\Delta V\) 増えると、重りは \(\Delta V / A\) だけ上がる。 降下の記録から計算した仕事 (定義&#160;<a href="sect0005.html#def:work">49</a>) は \(W = -m \Delta V / A = -p_0 \Delta V\) である。 ここでの圧力は重りの質量の単位で測っている。力の単位にするには、重力の換算係数 \(g\) を掛ける。 </p>
+<h2 id="sec:large-reservoir">8.1.1 大きな溜め</h2>
+
+<p>実際の溜めは大量の水や大気のような大きな系で、そのエントロピーは一次式ではない。 溜めを大きくする極限で、系とのやりとりによる溜めのエントロピー変化が一次式で表せることを示す。 この意味で、理想的な溜めは大きな溜めの極限である。 </p>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:large-limit">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">131</span>
+    <span class="lemma_thmtitle">大きな溜めの極限</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#lem:large-limit">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000119"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.large_reservoir_limit" class="lean_decl">OpThermo.large_reservoir_limit</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   \(s\) が \(x_0\) で微分可能なら \(\lambda \bigl(s(x_0 + \lambda ^{-1}\Delta ) - s(x_0)\bigr) \to s'(x_0)\Delta \) (\(\lambda \to \infty \))。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000119">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>Fréchet 微分の方向微分としての特徴づけ。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:large-reservoir">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">132</span>
+    <span class="theorem_thmtitle">大きな溜めのエントロピー</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:large-reservoir">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000120"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#lem:large-limit">補題 131</a></li>
+          
+          <li><a href="chap-potentials.html#def:reservoir">定義 129</a></li>
+          
+          <li><a href="sect0006.html#thm:additive">定理 88</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.large_reservoir_entropy" class="lean_decl">OpThermo.large_reservoir_entropy</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    大きさ \(\lambda \) の溜めの、内部エネルギー \(u\)、体積 \(v\) の状態のエントロピーを \(S_\lambda (u, v)\) とする。 示量性 \(S_\lambda (\lambda x) = \lambda s(x)\) が成り立ち、\(s\) が \(x_0\) で微分可能で \(\beta := \partial s/\partial u \ne 0\) とする。 \(T_0 := 1/\beta \), \(p_0 := (\partial s/\partial v)/\beta \) とおく。 溜めを状態 \(\lambda x_0\) から内部エネルギー \(\Delta U\)、体積 \(\Delta V\) だけ変えると、\(\lambda \to \infty \) で </p>
+<div class="displaymath" id="a0000000121">
+  \[  S_\lambda (\lambda x_0 + (\Delta U, \Delta V)) - S_\lambda (\lambda x_0) \to \frac{\Delta U + p_0 \Delta V}{T_0}.  \]
+</div>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000120">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>示量性で左辺を \(\lambda \bigl(s(x_0 + \lambda ^{-1}(\Delta U, \Delta V)) - s(x_0)\bigr)\) に書き換え、極限の補題を使う。 </p>
+
+  </div>
+</div>
+<p>右辺は理想的な溜め (定義&#160;<a href="chap-potentials.html#def:reservoir">129</a>) のエントロピー変化そのものである。 系とやりとりする \(\Delta U, \Delta V\) を固定して溜めだけを大きくすれば、どんな溜めも理想的な溜めに近づく。 \(T_0, p_0\) は、始めの状態 \(x_0\) での溜めの温度と圧力である。 </p>
+<h1 id="a0000000028">8.2 Helmholtz 自由エネルギー</h1>
+<div class="definition_thmwrapper theorem-style-definition" id="def:helmholtz">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">133</span>
+    <span class="definition_thmtitle">Helmholtz 関数</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#def:helmholtz">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#def:reservoir">定義 129</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.helmholtz" class="lean_decl">OpThermo.helmholtz</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.helmholtz_eq_gibbs" class="lean_decl">OpThermo.helmholtz_eq_gibbs</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    \(T_0 {\gt} 0\) に対し \(F_{T_0}(X) := U(X) - T_0 S(X)\) とする。 \(T_0\) には、系が接する熱浴 (定義&#160;<a href="chap-potentials.html#def:reservoir">129</a>) の温度をとる。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:helmholtz">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">134</span>
+    <span class="theorem_thmtitle">Helmholtz 自由エネルギーの最小原理</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:helmholtz">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000122"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#def:helmholtz">定義 133</a></li>
+          
+          <li><a href="chap-potentials.html#def:reservoir">定義 129</a></li>
+          
+          <li><a href="sect0006.html#thm:entropy-principle">定理 86</a></li>
+          
+          <li><a href="sect0006.html#thm:additive">定理 88</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.helmholtz_criterion" class="lean_decl">OpThermo.Adiabatic.helmholtz_criterion</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.total_entropy_helmholtz" class="lean_decl">OpThermo.total_entropy_helmholtz</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    系と温度 \(T_0\) の熱浴 \(R\) の組成とエネルギーの和が保存するとする。 このとき \(X + R \prec Y + R' \iff F_{T_0}(Y) \le F_{T_0}(X)\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000122">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>エントロピー原理で左辺を \(S(X + R) \le S(Y + R')\) に、加法性で \(S(X) + S(R) \le S(Y) + S(R')\) に書き換える。 熱浴のエントロピーを代入し、エネルギーの保存を使うと、全エントロピーの変化は \(-\Delta F / T_0\) に等しい。 これが非負であることは \(\Delta F \le 0\) と同値。 </p>
+
+  </div>
+</div>
+<p>体積を変えずに熱浴と接している系は、\(F\) が最小の状態で平衡になる。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:max-work">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">135</span>
+    <span class="theorem_thmtitle">最大仕事の原理</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:max-work">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000123"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#def:helmholtz">定義 133</a></li>
+          
+          <li><a href="chap-potentials.html#def:reservoir">定義 129</a></li>
+          
+          <li><a href="sect0006.html#thm:energy-extensive">定理 69</a></li>
+          
+          <li><a href="sect0006.html#thm:entropy-principle">定理 86</a></li>
+          
+          <li><a href="sect0006.html#thm:additive">定理 88</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.max_work" class="lean_decl">OpThermo.CompositeOps.max_work</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    温度 \(T_0\) の熱浴 \(R\) と接した系を、断熱操作 \(p\) で \(X\) から \(Y\) に移すとする。 このとき、取り出せる仕事 \(-W(p)\) (重りを持ち上げた分) は \(F_{T_0}(X) - F_{T_0}(Y)\) を超えない。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000123">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>内部エネルギーの存在定理から \(U(Y) + U(R') - U(X) - U(R) = W(p)\)。 エントロピー原理と加法性から \(S(X) + S(R) \le S(Y) + S(R')\)。 熱浴のエントロピーを代入して \(T_0\) 倍し、二つを合わせる。 </p>
+
+  </div>
+</div>
+<p>内部エネルギーの減少 \(U(X) - U(Y)\) のうち、仕事として取り出せるのは \(F\) の減少分までである。 残りの \(T_0 (S(X) - S(Y))\) は熱として熱浴に渡さなければならない。 「自由」エネルギーという名前はこの意味である。 等号は可逆な操作で成り立つ。 </p>
+<h1 id="a0000000029">8.3 エンタルピー</h1>
+<div class="definition_thmwrapper theorem-style-definition" id="def:enthalpy">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">136</span>
+    <span class="definition_thmtitle">エンタルピー</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#def:enthalpy">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#def:piston">定義 130</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.enthalpy" class="lean_decl">OpThermo.enthalpy</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    \(p_0\) に対し \(H_{p_0}(X) := U(X) + p_0 V(X)\) とする。 \(p_0\) には、系が接するピストン (定義&#160;<a href="chap-potentials.html#def:piston">130</a>) の圧力をとる。 </p>
+
+  </div>
+</div>
+<p>重りの位置エネルギーを系に含めたものがエンタルピーである。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:enthalpy-change">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">137</span>
+    <span class="theorem_thmtitle">定圧での仕事とエンタルピー</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:enthalpy-change">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000124"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#def:enthalpy">定義 136</a></li>
+          
+          <li><a href="sect0006.html#thm:energy-composite">定理 68</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.enthalpy_change" class="lean_decl">OpThermo.CompositeOps.enthalpy_change</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    圧力 \(p_0\) のピストンと接した系の断熱操作 \(p : X \to Y\) で、仕事がピストンの重りの分 \(-p_0 (V(Y) - V(X))\) とそれ以外の \(W'\) に分かれるとする (定義&#160;<a href="chap-potentials.html#def:piston">130</a> の後の注意)。 このとき \(H_{p_0}(Y) - H_{p_0}(X) = W'\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000124">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>内部エネルギーの存在定理 \(U(Y) - U(X) = W(p)\) に代入する。 </p>
+
+  </div>
+</div>
+<p>\(W'\) は電熱器やかき混ぜの仕事である。 定圧の熱量測定 (第&#160;<a href="chap-calorimetry.html">9</a> 章) で測っているのは、このエンタルピーの変化である。 温度あたりのエンタルピーの増分が定圧熱容量 \(C_p\)、内部エネルギーの増分が定積熱容量 \(C_V\) である。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:ideal-gas-enthalpy">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">138</span>
+    <span class="theorem_thmtitle">理想気体のエンタルピー</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:ideal-gas-enthalpy">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000125"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#def:enthalpy">定義 136</a></li>
+          
+          <li><a href="sect0007.html#thm:ideal-gas">定理 111</a></li>
+          
+          <li><a href="sect0007.html#thm:ideal-gas-law">定理 112</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.idealGas_enthalpy" class="lean_decl">OpThermo.idealGas_enthalpy</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    理想気体では \(H = (c + 1) N T\)。 したがって \(C_V = cN\)、\(C_p = (c + 1) N\)、\(C_p - C_V = N\) (Mayer の関係)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000125">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(U = cNT\) と \(pV = NT\) を足す。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:joule-thomson">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">139</span>
+    <span class="theorem_thmtitle">Joule–Thomson の絞り膨張</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:joule-thomson">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000126"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#def:enthalpy">定義 136</a></li>
+          
+          <li><a href="sect0006.html#thm:energy-composite">定理 68</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.joule_thomson" class="lean_decl">OpThermo.joule_thomson</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    断熱した管の中で、気体を圧力 \(p_1\) で多孔質の栓に押し込み、反対側に圧力 \(p_2\) で押し出す。 押し込む前の気体の状態を \((U_1, V_1)\)、押し出した後の状態を \((U_2, V_2)\) とすると \(U_1 + p_1 V_1 = U_2 + p_2 V_2\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000126">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>二つのピストンがした仕事は \(p_1 V_1 - p_2 V_2\) で、これが内部エネルギーの増分に等しい。 </p>
+
+  </div>
+</div>
+<p>絞り膨張ではエンタルピーが変わらない。 理想気体では \(H\) は温度だけで決まるので、温度も変わらない。 実在の気体で温度が変わることは、理想気体からのずれを示す。 気体の液化に使われるのはこの効果である。 </p>
+<h1 id="a0000000030">8.4 Gibbs 自由エネルギー</h1>
+<p>一定温度・圧力の下での平衡条件は Gibbs&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Gibbs1876" >18</a>
+	]
+</span> による。 </p>
+<figure id="fig:gibbs">
+  <div class="centered"><img src="images/img-0019.svg" alt="\includegraphics{figures/gibbs.svg}" style="width: ; height: " />
+ <figcaption>
+  <span class="caption_title">図</span> 
+  <span class="caption_ref">8.2</span> 
+  <span class="caption_text">Gibbs 自由エネルギーの最小原理の設定。系は温度 \(T_0\)、圧力 \(p_0\) の溜めとエネルギーと体積をやりとりし、全体は孤立している。</span> 
+</figcaption>  </div>
+
+</figure>
+<div class="definition_thmwrapper theorem-style-definition" id="def:gibbs">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">140</span>
+    <span class="definition_thmtitle">Gibbs 関数</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#def:gibbs">#</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.gibbs" class="lean_decl">OpThermo.gibbs</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>   \(T_0 {\gt} 0\), \(p_0\) に対し \(G_{T_0, p_0}(X) := U(X) + p_0 V(X) - T_0 S(X)\) とする。 \(T_0, p_0\) には、系が接する溜め (定義&#160;<a href="chap-potentials.html#def:reservoir">129</a>) の温度と圧力をとる。 </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:ideal-reservoir">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">141</span>
+    <span class="lemma_thmtitle">理想的な溜めの全エントロピー</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#lem:ideal-reservoir">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000127"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#def:gibbs">定義 140</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.total_entropy_ideal" class="lean_decl">OpThermo.total_entropy_ideal</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>    理想的な溜めと接した系で、系と溜めの \(U\), \(V\) の和が保存するなら、\(\Delta S_{\text{全体}} = -\Delta G / T_0\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000127">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>保存則を代入して整理する。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:gibbs">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">142</span>
+    <span class="theorem_thmtitle">Gibbs 自由エネルギーの最小原理</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:gibbs">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000128"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#lem:ideal-reservoir">補題 141</a></li>
+          
+          <li><a href="chap-potentials.html#def:reservoir">定義 129</a></li>
+          
+          <li><a href="sect0006.html#thm:entropy-principle">定理 86</a></li>
+          
+          <li><a href="sect0006.html#thm:additive">定理 88</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.gibbs_criterion" class="lean_decl">OpThermo.Adiabatic.gibbs_criterion</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    系と温度 \(T_0\)、圧力 \(p_0\) の溜め \(R\) の組成、エネルギー、体積の和が保存するとする。 このとき \(X + R \prec Y + R' \iff G_{T_0,p_0}(Y) \le G_{T_0,p_0}(X)\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000128">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>エントロピー原理で左辺を \(S(X + R) \le S(Y + R')\) に、加法性で \(S(X) + S(R) \le S(Y) + S(R')\) に書き換える。 理想的な溜めの補題から、これは \(-\Delta G / T_0 \ge 0\) と同値。 </p>
+
+  </div>
+</div>
+<p>次の二つの定理では、断熱到達性を断熱操作の存在 (定義&#160;<a href="sect0006.html#def:adiabatic">62</a>) とし、\(U\) を複合系の内部エネルギー (定義&#160;<a href="sect0006.html#def:energy-composite">67</a>) とする。 \(U\) が示量的であることは定理&#160;<a href="sect0006.html#thm:energy-extensive">69</a> で示したので、追加の仮定は要らない。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:gibbs-chain">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">143</span>
+    <span class="theorem_thmtitle">仕事 \(0\) の断熱操作は \(G\) を増やさない</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:gibbs-chain">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000129"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#thm:gibbs">定理 142</a></li>
+          
+          <li><a href="sect0006.html#thm:energy-extensive">定理 69</a></li>
+          
+          <li><a href="sect0006.html#def:adiabatic">定義 62</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.isolated_process_lowers_gibbs" class="lean_decl">OpThermo.CompositeOps.isolated_process_lowers_gibbs</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    仕事 \(0\) の断熱操作で \(X + R\) から \(Y + R'\) に移れるなら \(G_{T_0,p_0}(Y) \le G_{T_0,p_0}(X)\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000129">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>内部エネルギーの存在定理と示量性から \(U(X) + U(R) = U(Y) + U(R')\) となる。組成の保存は断熱操作の前提から出る。 あとは Gibbs の最小原理を適用する。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:gibbs-chain-converse">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">144</span>
+    <span class="theorem_thmtitle">\(G\) を増やさない変化は仕事 \(0\) で実現できる</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:gibbs-chain-converse">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000130"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#thm:gibbs">定理 142</a></li>
+          
+          <li><a href="sect0006.html#thm:energy-extensive">定理 69</a></li>
+          
+          <li><a href="sect0006.html#def:adiabatic">定義 62</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.reachable_of_gibbs_le" class="lean_decl">OpThermo.CompositeOps.reachable_of_gibbs_le</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    組成、エネルギー、体積が保存し \(G_{T_0,p_0}(Y) \le G_{T_0,p_0}(X)\) なら、\(X + R\) から \(Y + R'\) への仕事 \(0\) の断熱操作が存在する。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000130">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>Gibbs の最小原理から断熱操作 \(p\) が存在する。 内部エネルギーの存在定理と保存則から \(W(p) = 0\)。 </p>
+
+  </div>
+</div>
+<p>理想的な溜めの代わりに、大きな溜め (<a href="chap-potentials.html#sec:large-reservoir">8.1.1</a> 節) を使っても同じ判定が得られる。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:gibbs-large">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">145</span>
+    <span class="theorem_thmtitle">大きな溜めでの Gibbs 関数</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:gibbs-large">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000131"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#thm:large-reservoir">定理 132</a></li>
+          
+          <li><a href="chap-potentials.html#def:gibbs">定義 140</a></li>
+          
+          <li><a href="sect0006.html#thm:additive">定理 88</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.gibbs_large_reservoir" class="lean_decl">OpThermo.gibbs_large_reservoir</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.totalEntropyChange" class="lean_decl">OpThermo.totalEntropyChange</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    大きさ \(\lambda \) の溜めのエントロピーが示量性 \(S_R(\lambda , \lambda x) = \lambda s(x)\) を満たし、\(\beta = \partial s/\partial u {\gt} 0\) とする。 \(T_0 = 1/\beta \), \(p_0 = (\partial s/\partial v)/\beta \) とおくと、\(\lambda \to \infty \) で \(\Delta S_{\text{全体}} \to -\Delta G_{T_0,p_0} / T_0\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000131">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>示量性で溜めのエントロピー変化を \(\lambda (s(x_0 + \lambda ^{-1}\Delta ) - s(x_0))\) に書き換え、極限の補題を使う。 </p>
+
+  </div>
+</div>
+<div class="corollary_thmwrapper theorem-style-plain" id="cor:gibbs-large">
+  <div class="corollary_thmheading">
+    <span class="corollary_thmcaption">
+    系
+    </span>
+    <span class="corollary_thmlabel">146</span>
+    <span class="corollary_thmtitle">大きな溜めでの判定</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#cor:gibbs-large">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000132"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#thm:gibbs-large">定理 145</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.large_reservoir_criterion" class="lean_decl">OpThermo.large_reservoir_criterion</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="corollary_thmcontent">
+  <p>    到達可能性が全エントロピーの増減で決まるとする。 \(G\) が厳密に減る変化は十分大きな溜めで到達可能、厳密に増える変化は到達不可能。 \(\Delta G = 0\) の場合はこの議論では決まらない。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000132">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>極限が正 (負) なら、十分大きな \(\lambda \) で \(\Delta S_{\text{全体}}\) も正 (負)。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:gibbs-euler">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">147</span>
+    <span class="theorem_thmtitle">Gibbs 関数と化学ポテンシャル</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:gibbs-euler">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000133"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0007.html#thm:euler">定理 117</a></li>
+          
+          <li><a href="sect0007.html#thm:fundamental-multi">定理 115</a></li>
+          
+          <li><a href="chap-potentials.html#def:gibbs">定義 140</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.gibbs_euler" class="lean_decl">OpThermo.gibbs_euler</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    \(S = \beta U + \pi V + \sum _i \kappa _i N_i\) のとき、\(T, p, \mu _i\) を定理&#160;<a href="sect0007.html#thm:fundamental-multi">115</a> のとおりにとると \(U + pV - TS = \sum _i \mu _i N_i\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000133">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>代数計算。 </p>
+
+  </div>
+</div>
+<p>系の温度と圧力が溜めの \(T_0, p_0\) に等しいとき、Gibbs 関数は \(G = \sum _i \mu _i N_i\) となる。 一成分なら、化学ポテンシャルは物質量あたりの Gibbs 関数である。 </p>
+<h1 id="a0000000031">8.5 エネルギーとエンタルピーの最小原理</h1>
+<p>これまでの最小原理は、全体のエントロピーが増えることから、環境と接した系のポテンシャルが減ることを導いた。 内部エネルギーとエンタルピーについては、環境を使わない別の形の最小原理がある。 エントロピーが等しい状態の中で、平衡状態はエネルギーが最小になる、というものである。 エントロピー最大の原理から、温度が正であることを使って導く。 </p>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:min-of-max">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">148</span>
+    <span class="lemma_thmtitle">最大から最小へ</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#lem:min-of-max">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000134"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.min_of_max" class="lean_decl">OpThermo.min_of_max</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>   集合 \(P\) 上の関数 \(S, E\) と \(x \in P\) について、次の二つを仮定する。 </p>
+<ul class="itemize">
+  <li><p>\(E(y) = E(x)\) を満たす \(y \in P\) では \(S(y) \le S(x)\)。 </p>
+</li>
+  <li><p>どの \(y \in P\) と \(e {\gt} E(y)\) についても、\(E(y') = e\) かつ \(S(y) {\lt} S(y')\) を満たす \(y' \in P\) がある。 </p>
+</li>
+</ul>
+<p> このとき、\(S(y) = S(x)\) を満たす \(y \in P\) では \(E(x) \le E(y)\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000134">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(E(y) {\lt} E(x)\) とすると、二つ目の仮定で \(E(y') = E(x)\)、\(S(y') {\gt} S(y) = S(x)\) の \(y'\) がとれ、一つ目の仮定と矛盾する。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:energy-min">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">149</span>
+    <span class="theorem_thmtitle">エネルギー最小原理</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:energy-min">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000135"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#lem:min-of-max">補題 148</a></li>
+          
+          <li><a href="sect0006.html#thm:entropy-principle">定理 86</a></li>
+          
+          <li><a href="sect0007.html#emp:stirring">経験則 98</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.energy_minimum" class="lean_decl">OpThermo.Adiabatic.energy_minimum</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    \(P\) を体積と組成の等しい状態の集まりとし、\(X \in P\) とする。 次の二つを仮定する。 </p>
+<ul class="itemize">
+  <li><p>内部エネルギーが \(U(X)\) に等しい \(Y \in P\) からは、\(X\) に断熱的に移れる。 </p>
+</li>
+  <li><p>どの \(Y \in P\) からも、かき混ぜでエントロピーを厳密に増やしながら、内部エネルギーを任意の値まで上げられる。 </p>
+</li>
+</ul>
+<p> このとき、エントロピーが \(S(X)\) に等しい \(Y \in P\) では \(U(X) \le U(Y)\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000135">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>一つ目の仮定とエントロピー原理から、\(U\) が等しい中で \(S\) は \(X\) で最大。 補題&#160;<a href="chap-potentials.html#lem:min-of-max">148</a> を \(E = U\) に使う。 </p>
+
+  </div>
+</div>
+<p>一つ目の仮定は、\(X\) が内部の拘束 (仕切りなど) を外して到達する平衡状態であることを表す。 例えば熱接触では、どの分配から始めても同じ結合系の平衡状態に移る (定理&#160;<a href="sect0007.html#thm:contact-max">103</a>)。 二つ目の仮定は、温度が正であること (定理&#160;<a href="sect0007.html#thm:temperature-pos">101</a>) の、\(\beta {\gt} 0\) の形である。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:enthalpy-min">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">150</span>
+    <span class="theorem_thmtitle">エンタルピー最小原理</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:enthalpy-min">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000136"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="chap-potentials.html#lem:min-of-max">補題 148</a></li>
+          
+          <li><a href="sect0006.html#thm:entropy-principle">定理 86</a></li>
+          
+          <li><a href="chap-potentials.html#def:enthalpy">定義 136</a></li>
+          
+          <li><a href="chap-potentials.html#thm:enthalpy-change">定理 137</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.enthalpy_minimum" class="lean_decl">OpThermo.Adiabatic.enthalpy_minimum</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    \(P\) を圧力 \(p_0\) のピストンと接した、組成の等しい状態の集まりとし、\(X \in P\) とする。 次の二つを仮定する。 </p>
+<ul class="itemize">
+  <li><p>エンタルピーが \(H(X)\) に等しい \(Y \in P\) からは、ピストンの重りだけが動く断熱操作で \(X\) に移れる。 </p>
+</li>
+  <li><p>どの \(Y \in P\) からも、定圧でかき混ぜてエントロピーを厳密に増やしながら、エンタルピーを任意の値まで上げられる。 </p>
+</li>
+</ul>
+<p> このとき、エントロピーが \(S(X)\) に等しい \(Y \in P\) では \(H(X) \le H(Y)\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000136">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>エネルギー最小原理の \(U\) を \(H\) に置き換えたものである。 ピストンの重りだけが動く断熱操作では \(H\) は変わらない (定理&#160;<a href="chap-potentials.html#thm:enthalpy-change">137</a> で \(W' = 0\))。 </p>
+
+  </div>
+</div>
+<h1 id="a0000000032">8.6 ポテンシャルの微分</h1>
+<p>基本関係式 \(dU = T\, dS - p\, dV\) (定理&#160;<a href="sect0007.html#thm:clausius">114</a>) から、各ポテンシャルの微分が出る。 ここでの \(T, p\) は系自身の温度と圧力で、環境の \(T_0, p_0\) と等しい平衡状態の上で考える。 \(d\) は全微分の略記である (第&#160;<a href="sect0007.html#sec:fundamental">7.5</a> 節)。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:dF">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">151</span>
+    <span class="theorem_thmtitle">\(dF = -S\, dT - p\, dV\)</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:dF">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000137"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0007.html#thm:clausius">定理 114</a></li>
+          
+          <li><a href="chap-potentials.html#def:helmholtz">定義 133</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.helmholtz_hasDerivAt" class="lean_decl">OpThermo.helmholtz_hasDerivAt</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    経路に沿って \(dU = T\, dS - p\, dV\) なら、\(F = U - TS\) について \(dF = -S\, dT - p\, dV\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000137">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>積の微分法則と代入。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:dH">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">152</span>
+    <span class="theorem_thmtitle">\(dH = T\, dS + V\, dp\)</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:dH">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000138"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0007.html#thm:clausius">定理 114</a></li>
+          
+          <li><a href="chap-potentials.html#def:enthalpy">定義 136</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.enthalpy_hasDerivAt" class="lean_decl">OpThermo.enthalpy_hasDerivAt</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    経路に沿って \(dU = T\, dS - p\, dV\) なら、\(H = U + pV\) について \(dH = T\, dS + V\, dp\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000138">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>積の微分法則と代入。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:dG">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">153</span>
+    <span class="theorem_thmtitle">\(dG = -S\, dT + V\, dp\)</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="chap-potentials.html#thm:dG">#</a>
+    
+    <a class="icon proof" href="chap-potentials.html#a0000000139"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0007.html#thm:clausius">定理 114</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.gibbs_hasDerivAt" class="lean_decl">OpThermo.gibbs_hasDerivAt</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    経路に沿って \(dU = T\, dS - p\, dV\) なら、\(G = U + pV - TS\) について \(dG = -S\, dT + V\, dp\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000139">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>積の微分法則と代入。 </p>
+
+  </div>
+</div>
+<p>まとめると次のとおり。 どのポテンシャルも、環境が固定する量を変数とするとき微分が最も簡単になる。 </p>
+<div class="centered"> <table class="tabular">
+  <tr>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> ポテンシャル </p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> 環境 </p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> 微分 </p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> 平衡で最小 </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>\(U\) </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> 断熱、体積一定 </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> \(T\, dS - p\, dV\) </p>
+
+    </td>
+    <td  style="border-top-style:solid; border-top-color:black; border-top-width:1px; text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> \(S, V\) 一定のとき </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>\(H = U + pV\) </p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> 断熱、圧力一定 </p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> \(T\, dS + V\, dp\) </p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> \(S, p\) 一定のとき </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>\(F = U - TS\) </p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> 温度一定、体積一定 </p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> \(-S\, dT - p\, dV\) </p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> \(T, V\) 一定のとき </p>
+
+    </td>
+  </tr>
+  <tr>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p>\(G = U + pV - TS\) </p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> 温度一定、圧力一定 </p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> \(-S\, dT + V\, dp\) </p>
+
+    </td>
+    <td  style="text-align:left" 
+        rowspan=""
+        colspan="">
+      <p> \(T, p\) 一定のとき </p>
+
+    </td>
+  </tr>
+</table> </div>
+<p>多成分系では、どの微分にも \(\sum _i \mu _i\,  dN_i\) が加わる。 最小原理は、\(U\) と \(H\) について定理&#160;<a href="chap-potentials.html#thm:energy-min">149</a>, <a href="chap-potentials.html#thm:enthalpy-min">150</a>、\(F\) と \(G\) について定理&#160;<a href="chap-potentials.html#thm:helmholtz">134</a>, <a href="chap-potentials.html#thm:gibbs">142</a> で示した。 </p>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sect0007.html" title="温度、圧力、化学ポテンシャル"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="chap-calorimetry.html" title="実験室での熱測定"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>

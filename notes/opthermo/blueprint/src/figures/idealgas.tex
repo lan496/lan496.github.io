@@ -1,0 +1,29 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}
+  \begin{scope}[x=1.1cm, y=0.9cm]
+    \node[anchor=west, font=\bfseries] at (-0.2, 5.2) {(a) 等温線 $pV = NT$};
+    \draw[->] (0,0) -- (5.2,0) node[right] {$V$};
+    \draw[->] (0,0) -- (0,4.2) node[above] {$p$};
+    \foreach \T/\col in {1/rod!50, 2/rod!75, 3/rod} {
+      \draw[very thick, \col, domain={0.25*\T+0.05}:5, samples=60] plot (\x, {\T/\x});
+      \node[\col, note, anchor=south west] at (1.6, {\T/1.6}) {$T_{\T}$};
+    }
+    \node[note] at (2.6,-0.6) {$T_1 < T_2 < T_3$};
+  \end{scope}
+  \begin{scope}[xshift=8.2cm]
+    \node[anchor=west, font=\bfseries] at (-0.2, 4.15) {(b) 気体温度計};
+    \draw[box] (0,0.6) rectangle (2.6,3.2);
+    \node at (1.3,1.9) {測りたい系};
+    \draw[box, fill=okc!12] (2.9,1.2) rectangle (4.3,2.6);
+    \node[note, align=center] at (3.6,1.9) {薄い気体\\$V, N$ 固定};
+    \draw[line width=2.5pt, rodb] (2.75,1.2) -- (2.75,2.6);
+    \draw (3.6,2.6) -- (3.6,3.0);
+    \draw[fill=white] (3.6,3.35) circle (0.35);
+    \draw[->] (3.6,3.35) -- ++(50:0.28);
+    \node[note, anchor=west] at (4.0,3.35) {圧力計 $p$};
+    \node[note, text width=5cm] at (2.2,0.05) {平衡で $T = pV/N$};
+  \end{scope}
+\end{tikzpicture}
+\end{document}

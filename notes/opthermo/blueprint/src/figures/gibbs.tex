@@ -1,0 +1,20 @@
+\documentclass[tikz, border=6pt]{standalone}
+\input{preamble}
+\begin{document}
+\begin{tikzpicture}
+  \fill[rodb!12] (0,0) rectangle (7,4);
+  \draw[thick] (0,0) rectangle (7,4);
+  \node[anchor=north west, note, text width=4cm, align=left] at (0.1,3.9) {溜め $R$\\ 温度 $T_0$、圧力 $p_0$};
+  \draw[box] (2.2,0.8) rectangle (5.0,2.6);
+  \node at (3.2,1.7) {系 $X$};
+  \fill[gray!50] (4.5,0.8) rectangle (4.75,2.6);
+  \draw[<->, thick] (4.0,1.0) -- (5.3,1.0) node[right, note] {体積 $V$};
+  \draw[<->, thick, rodb] (3.3,2.6) -- (3.3,3.3) node[right, note] {エネルギー $U$};
+  \node[expl, anchor=west, text width=7cm] at (7.5,2.0)
+    {全体は孤立し、重りの正味の仕事は $0$。\\
+     $U$, $V$, 物質量は系と溜めの和で保存する。\\[4pt]
+     $X + R \prec Y + R' \iff G(Y) \le G(X)$\\[2pt]
+     $G = U + p_0 V - T_0 S$\\[4pt]
+     溜めの分を足した全エントロピーの増加が $-\Delta G / T_0$ に等しいことから従う。};
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,3027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+  MathJax = {
+    tex: { inlineMath: [['$','$'], ['\\(','\\)']] },
+  };
+  // MathJax 4 may re-render formulas after load, so tag the current containers at copy time.
+  function tagFormulas() {
+    for (const item of MathJax.startup.document.math) {
+      const root = item.typesetRoot;
+      if (!root) continue;
+      root.setAttribute('data-tex', item.math.trim());
+      if (item.display) root.setAttribute('data-display', 'true');
+    }
+  }
+  document.addEventListener('copy', (event) => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || !window.MathJax || !MathJax.startup) return;
+    tagFormulas();
+    const frag = sel.getRangeAt(0).cloneContents();
+    const boxes = frag.querySelectorAll('mjx-container[data-tex]');
+    if (boxes.length === 0) return;
+    for (const box of boxes) {
+      const tex = box.getAttribute('data-tex').replace(/\{\\gt\}/g, '>').replace(/\{\\lt\}/g, '<');
+      const text = box.hasAttribute('data-display') ? '\n$$' + tex + '$$\n' : '$' + tex + '$';
+      box.replaceWith(document.createTextNode(text));
+    }
+    const holder = document.createElement('div');
+    holder.style.position = 'fixed';
+    holder.style.left = '-10000px';
+    holder.appendChild(frag);
+    document.body.appendChild(holder);
+    const plain = holder.innerText;
+    holder.remove();
+    event.clipboardData.setData('text/plain', plain);
+    event.preventDefault();
+  });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js"></script>
+<meta name="generator" content="plasTeX" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>断熱到達性とエントロピー</title>
+<link rel="next" href="sect0007.html" title="温度、圧力、化学ポテンシャル" />
+<link rel="prev" href="sect0005.html" title="第一法則" />
+<link rel="up" href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで" />
+<link rel="stylesheet" href="styles/theme-white.css" />
+<link rel="stylesheet" href="styles/amsthm.css" />
+<link rel="stylesheet" href="styles/showmore.css" />
+<link rel="stylesheet" href="styles/blueprint.css" />
+<link rel="stylesheet" href="styles/extra_styles.css" />
+</head>
+
+<body>
+<header>
+<svg  id="toc-toggle" class="icon icon-list-numbered "><use xlink:href="symbol-defs.svg#icon-list-numbered"></use></svg>
+<h1 id="doc_title"><a href="index.html">操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで</a></h1>
+</header>
+
+<div class="wrapper">
+<nav class="toc">
+<ul class="sub-toc-0">
+<li class="">
+  <a href="sect0001.html"><span class="toc_ref">1</span> <span class="toc_entry">概要</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0001.html#a0000000010"><span class="toc_ref">1.1</span> <span class="toc_entry">用語</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0002.html"><span class="toc_ref">2</span> <span class="toc_entry">長さの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html"><span class="toc_ref">3</span> <span class="toc_entry">状態と平衡状態</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0003.html#a0000000011"><span class="toc_ref">3.1</span> <span class="toc_entry">時間の目盛り</span></a>
+ </li>
+<li class="">
+  <a href="sect0003.html#a0000000012"><span class="toc_ref">3.2</span> <span class="toc_entry">状態の空間</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0004.html"><span class="toc_ref">4</span> <span class="toc_entry">仕事の力学的な基礎</span></a>
+ </li>
+<li class="">
+  <a href="sect0005.html"><span class="toc_ref">5</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class=" active current">
+  <a href="sect0006.html"><span class="toc_ref">6</span> <span class="toc_entry">断熱到達性とエントロピー</span></a>
+  <span class="expand-toc">▼</span>
+  <ul class="sub-toc-1 active">
+     <li class="">
+  <a href="sect0006.html#sec:accessibility-axioms"><span class="toc_ref">6.1</span> <span class="toc_entry">断熱操作から断熱到達性へ</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000013"><span class="toc_ref">6.2</span> <span class="toc_entry">複合系の内部エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000014"><span class="toc_ref">6.3</span> <span class="toc_entry">相殺則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000015"><span class="toc_ref">6.4</span> <span class="toc_entry">基準状態と形式的な不等式</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000016"><span class="toc_ref">6.5</span> <span class="toc_entry">エントロピーの構成</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000017"><span class="toc_ref">6.6</span> <span class="toc_entry">エントロピーの測定</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000018"><span class="toc_ref">6.7</span> <span class="toc_entry">エントロピー原理</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#sec:second-law"><span class="toc_ref">6.8</span> <span class="toc_entry">第二法則</span></a>
+ </li>
+<li class="">
+  <a href="sect0006.html#a0000000019"><span class="toc_ref">6.9</span> <span class="toc_entry">無矛盾性</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html"><span class="toc_ref">7</span> <span class="toc_entry">温度、圧力、化学ポテンシャル</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="sect0007.html#a0000000020"><span class="toc_ref">7.1</span> <span class="toc_entry">温度の定義</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000021"><span class="toc_ref">7.2</span> <span class="toc_entry">熱接触と温度の比較</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000022"><span class="toc_ref">7.3</span> <span class="toc_entry">圧力と化学ポテンシャル</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:ideal-gas"><span class="toc_ref">7.4</span> <span class="toc_entry">理想気体</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:fundamental"><span class="toc_ref">7.5</span> <span class="toc_entry">基本関係式</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:concavity"><span class="toc_ref">7.6</span> <span class="toc_entry">エントロピーの凹性</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="sect0007.html#a0000000023"><span class="toc_ref">7.6.1</span> <span class="toc_entry">凹性から出ること</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000024"><span class="toc_ref">7.6.2</span> <span class="toc_entry">安定性</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000025"><span class="toc_ref">7.6.3</span> <span class="toc_entry">相の共存</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#a0000000026"><span class="toc_ref">7.6.4</span> <span class="toc_entry">凹性と自由エネルギー</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:heat-capacity"><span class="toc_ref">7.7</span> <span class="toc_entry">熱容量</span></a>
+ </li>
+<li class="">
+  <a href="sect0007.html#sec:third-law"><span class="toc_ref">7.8</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html"><span class="toc_ref">8</span> <span class="toc_entry">自由エネルギーとエンタルピー</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-potentials.html#a0000000027"><span class="toc_ref">8.1</span> <span class="toc_entry">環境</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-potentials.html#sec:large-reservoir"><span class="toc_ref">8.1.1</span> <span class="toc_entry">大きな溜め</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000028"><span class="toc_ref">8.2</span> <span class="toc_entry">Helmholtz 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000029"><span class="toc_ref">8.3</span> <span class="toc_entry">エンタルピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000030"><span class="toc_ref">8.4</span> <span class="toc_entry">Gibbs 自由エネルギー</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000031"><span class="toc_ref">8.5</span> <span class="toc_entry">エネルギーとエンタルピーの最小原理</span></a>
+ </li>
+<li class="">
+  <a href="chap-potentials.html#a0000000032"><span class="toc_ref">8.6</span> <span class="toc_entry">ポテンシャルの微分</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html"><span class="toc_ref">9</span> <span class="toc_entry">実験室での熱測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-1">
+     <li class="">
+  <a href="chap-calorimetry.html#sec:thermometry"><span class="toc_ref">9.1</span> <span class="toc_entry">温度の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000033"><span class="toc_ref">9.1.1</span> <span class="toc_entry">温度計が測っているもの</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000034"><span class="toc_ref">9.1.2</span> <span class="toc_entry">温度の比と単位</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000035"><span class="toc_ref">9.1.3</span> <span class="toc_entry">一次温度計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000036"><span class="toc_ref">9.1.4</span> <span class="toc_entry">国際温度目盛</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000037"><span class="toc_ref">9.1.5</span> <span class="toc_entry">一次温度計どうしの一致</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:measure-heat-capacity"><span class="toc_ref">9.2</span> <span class="toc_entry">熱容量の測定</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000038"><span class="toc_ref">9.2.1</span> <span class="toc_entry">断熱型熱量計</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000039"><span class="toc_ref">9.2.2</span> <span class="toc_entry">定圧と定積</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000040"><span class="toc_ref">9.2.3</span> <span class="toc_entry">相転移</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000041"><span class="toc_ref">9.2.4</span> <span class="toc_entry">ほかの熱量計</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000042"><span class="toc_ref">9.3</span> <span class="toc_entry">エントロピーの値</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000043"><span class="toc_ref">9.3.1</span> <span class="toc_entry">エントロピーは直接は測れない</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000044"><span class="toc_ref">9.3.2</span> <span class="toc_entry">第三法則と絶対エントロピー</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000045"><span class="toc_ref">9.3.3</span> <span class="toc_entry">ほかの方法</span></a>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#sec:tests"><span class="toc_ref">9.4</span> <span class="toc_entry">熱力学は実験で確かめられているか</span></a>
+  <span class="expand-toc">▶</span>
+  <ul class="sub-toc-2">
+     <li class="">
+  <a href="chap-calorimetry.html#a0000000046"><span class="toc_ref">9.4.1</span> <span class="toc_entry">第一法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000047"><span class="toc_ref">9.4.2</span> <span class="toc_entry">恒等式の検査</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000048"><span class="toc_ref">9.4.3</span> <span class="toc_entry">第三法則</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000049"><span class="toc_ref">9.4.4</span> <span class="toc_entry">温度</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000050"><span class="toc_ref">9.4.5</span> <span class="toc_entry">小さな系</span></a>
+ </li>
+<li class="">
+  <a href="chap-calorimetry.html#a0000000051"><span class="toc_ref">9.4.6</span> <span class="toc_entry">公理の検査</span></a>
+ </li>
+
+  </ul>
+ </li>
+
+  </ul>
+ </li>
+<li class="">
+  <a href="chap-assumptions.html"><span class="toc_ref">10</span> <span class="toc_entry">残っている仮定</span></a>
+ </li>
+<li class="">
+  <a href="sect0008.html"><span class="toc_ref">11</span> <span class="toc_entry">参考文献</span></a>
+ </li>
+<li ><a href="dep_graph_document.html">Dependency graph</a></li>
+</ul>
+</nav>
+
+<div class="content">
+<div class="content-wrapper">
+
+
+<div class="main-text">
+<h1 id="a0000000007">6 断熱到達性とエントロピー</h1>
+<p>エントロピーは、状態に対する測定の目盛りである。 長さの測定 (定義&#160;<a href="sect0002.html#def:extensive">2</a> の外延的構造) と同じ形で組み立てる。 </p>
+<ul class="itemize">
+  <li><p><b class="bfseries">比較</b>：棒では、並べてどちらの他端が出るかを見た。状態では、\(X\) から \(Y\) へ断熱操作で移せるかを試す。移せるとき \(X \prec Y\) と書く (断熱到達性、定義&#160;<a href="sect0005.html#def:prec">47</a>)。 </p>
+</li>
+  <li><p><b class="bfseries">連結</b>：棒では、端と端でつないだ。状態では、二つの系を並べて一つの複合系 \(X + Y\) とする。 </p>
+</li>
+  <li><p><b class="bfseries">目盛り</b>：棒では、比較を \(\le \) に、連結を \(+\) に写す長さ \(\ell \) を作った (定義&#160;<a href="sect0002.html#def:represents">4</a>)。状態では、断熱到達性を \(\le \) に、複合を \(+\) に写すエントロピー \(S\) を作る (定理&#160;<a href="sect0006.html#thm:entropy-principle">86</a>, <a href="sect0006.html#thm:additive">88</a>)。 </p>
+</li>
+</ul>
+<p>長さとの違いは三つある。 比較できるのは組成の等しい状態どうしだけである。 連結のほかに、量を \(t\) 倍した系 \(tX\) を作る手順がある。 目盛りの一意性は、定数倍ではなく、単位と成分ごとの基準値を選ぶ自由度を残す (定理&#160;<a href="sect0006.html#thm:unique">90</a>)。 </p>
+<p>この章の公理と証明の筋道は Lieb–Yngvason&#160;<span class="cite">
+	[
+	<a href="sect0008.html#LY99" >1</a>
+	]
+</span> の第 2 章に従う。 Lieb–Yngvason は断熱到達性を原始概念として公理を置く。 ここでは断熱到達性を断熱操作の存在として定義し、公理のうち A1–A4 を断熱操作についての前提から導く。 抽象的な構成の全体は Lieb–Yngvason を参照されたい。 教科書としての解説は Thess&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Thess2011" >8</a>
+	]
+</span>、日本語では田崎&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Tasaki2000" >9</a>
+	]
+</span> と佐々&#160;<span class="cite">
+	[
+	<a href="sect0008.html#Sasa2000" >10</a>
+	]
+</span> がある。 </p>
+<h1 id="sec:accessibility-axioms">6.1 断熱操作から断熱到達性へ</h1>
+
+<div class="definition_thmwrapper theorem-style-definition" id="def:composite-ops">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">60</span>
+    <span class="definition_thmtitle">複合系の断熱操作</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#def:composite-ops">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0005.html#def:ops">定義 45</a></li>
+          
+          <li><a href="sect0003.html#def:state-space">定義 25</a></li>
+          
+          <li><a href="sect0004.html#def:mass">定義 32</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps" class="lean_decl">OpThermo.CompositeOps</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    \(\mathcal{S}\) の状態の間の断熱操作も、定義&#160;<a href="sect0005.html#def:adiabatic-op">44</a> と同じ条件で定める。 何もしないことも断熱操作に含める。 </p>
+
+  </div>
+</div>
+<div class="empirical_thmwrapper theorem-style-definition" id="emp:composite-ops">
+  <div class="empirical_thmheading">
+    <span class="empirical_thmcaption">
+    経験則
+    </span>
+    <span class="empirical_thmlabel">61</span>
+    <span class="empirical_thmtitle">複合系の断熱操作の法則</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#emp:composite-ops">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:composite-ops">定義 60</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.alongside" class="lean_decl">OpThermo.CompositeOps.alongside</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.scale" class="lean_decl">OpThermo.CompositeOps.scale</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.comp_eq" class="lean_decl">OpThermo.CompositeOps.comp_eq</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="empirical_thmcontent">
+  
+<ul class="itemize">
+  <li><p>断熱操作は続けて行える (経験則&#160;<a href="sect0005.html#emp:ops-seq">46</a> と同じ)。 </p>
+</li>
+  <li><p>別の系 \(Z\) を脇に置いたまま、\(X\) に断熱操作を行える。重りの動きは変わらない。 </p>
+</li>
+  <li><p>量を \(t\) 倍した系にも同じ断熱操作を行え、重りの降下量は \(t\) 倍になる。 </p>
+</li>
+  <li><p>断熱操作で組成は変わらない。 </p>
+</li>
+</ul>
+
+  </div>
+</div>
+<p>組成が変わらないことは、物質が出入りせず、化学反応も起きないことを表す。 化学反応は扱わない。 </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:adiabatic">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">62</span>
+    <span class="definition_thmtitle">複合系の断熱到達性</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#def:adiabatic">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:composite-ops">定義 60</a></li>
+          
+          <li><a href="sect0006.html#emp:composite-ops">経験則 61</a></li>
+          
+          <li><a href="sect0005.html#def:prec">定義 47</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.prec_iff" class="lean_decl">OpThermo.CompositeOps.prec_iff</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    \(\mathcal{S}\) の状態の間でも、断熱操作が存在するとき \(X \prec Y\) と書く (定義&#160;<a href="sect0005.html#def:prec">47</a> と同じ)。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:accessibility-axioms">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">63</span>
+    <span class="theorem_thmtitle">断熱到達性の性質</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:accessibility-axioms">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000069"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:adiabatic">定義 62</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.toAdiabatic" class="lean_decl">OpThermo.CompositeOps.toAdiabatic</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic" class="lean_decl">OpThermo.Adiabatic</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  
+<ul class="itemize">
+  <li><p>A1 反射律：\(X \prec X\)。 </p>
+</li>
+  <li><p>A2 推移律：\(X \prec Y\) かつ \(Y \prec Z\) なら \(X \prec Z\)。 </p>
+</li>
+  <li><p>A3 結合との整合性：\(X \prec Y\) なら \(X + Z \prec Y + Z\)。 </p>
+</li>
+  <li><p>A4 スケーリング：\(X \prec Y\) なら \(tX \prec tY\)。 </p>
+</li>
+</ul>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000069">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>順に、何もしない断熱操作、続けて行う断熱操作、\(Z\) を脇に置いた断熱操作、量を \(t\) 倍した系への断熱操作をとる。 </p>
+
+  </div>
+</div>
+<div class="empirical_thmwrapper theorem-style-definition" id="emp:stability-ch">
+  <div class="empirical_thmheading">
+    <span class="empirical_thmcaption">
+    経験則
+    </span>
+    <span class="empirical_thmlabel">64</span>
+    <span class="empirical_thmtitle">安定性と比較仮説</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#emp:stability-ch">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:adiabatic">定義 62</a></li>
+          
+          <li><a href="sect0004.html#def:mass">定義 32</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.stability" class="lean_decl">OpThermo.CompositeOps.stability</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.comparison" class="lean_decl">OpThermo.CompositeOps.comparison</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="empirical_thmcontent">
+  
+<ul class="itemize">
+  <li><p>A6 安定性：すべての \(n\) で \(X + \frac{1}{n+1} Z_0 \prec Y + \frac{1}{n+1} Z_1\) なら \(X \prec Y\)。 </p>
+</li>
+  <li><p>CH 比較仮説：\(\mathrm{comp}\,  X = \mathrm{comp}\,  Y\) なら \(X \prec Y\) または \(Y \prec X\)。 </p>
+</li>
+</ul>
+
+  </div>
+</div>
+<p>CH は連結性 (経験則&#160;<a href="sect0005.html#emp:connected">48</a>) を、組成の等しい複合系どうしに広げたものである。 組成が違えば、断熱操作では組成が変わらないので、どちら向きにも移れない。 CH は「どちらか一方向には必ず行ける」という主張であり、両方向に行けるとは言っていない。 例えば容器に入った気体の二つの状態 \(X, Y\) を考える。 かき混ぜると、体積を保ったままエネルギーを上げられる。 ピストンをゆっくり動かすと、体積を変えられる。 この二つを組み合わせれば、\(X\) から \(Y\) か \(Y\) から \(X\) の少なくとも一方へは移れる。 複合系では、例えば \(1\, \mathrm{kg}\) の熱い水と \(1\, \mathrm{kg}\) の冷たい水の組 \(X\) と、\(2\, \mathrm{kg}\) のぬるい水 \(Y\) を比べる。 混ぜれば \(X\) から \(Y\) に移れるが、\(Y\) から \(X\) には移れない。 Lieb–Yngvason は単純系の CH を別の公理から導くが、ここでは仮定として置く。 基準状態の混合と \(X\) を比べるために使う (定理&#160;<a href="sect0006.html#thm:entropy-principle">86</a>)。 A1–A4 とこの二つを合わせたものが Lieb–Yngvason の公理系であり、以下の補題と定理はこの六つだけを使う。 </p>
+<h1 id="a0000000013">6.2 複合系の内部エネルギー</h1>
+<p>第一法則の章では、一つの系の平衡状態の上に内部エネルギーを作った。 ここでは状態の空間 \(\mathcal{S}\) の上に作り、複合とスケーリングに対してどう振る舞うかを示す。 仕事 \(W(p)\) は定義&#160;<a href="sect0005.html#def:work">49</a> と同じく降下の記録から計算する。 </p>
+<div class="empirical_thmwrapper theorem-style-definition" id="emp:path-indep-composite">
+  <div class="empirical_thmheading">
+    <span class="empirical_thmcaption">
+    経験則
+    </span>
+    <span class="empirical_thmlabel">65</span>
+    <span class="empirical_thmtitle">複合系の経路独立性</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#emp:path-indep-composite">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:composite-ops">定義 60</a></li>
+          
+          <li><a href="sect0005.html#def:work">定義 49</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.PathIndependent" class="lean_decl">OpThermo.CompositeOps.PathIndependent</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.work" class="lean_decl">OpThermo.CompositeOps.work</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="empirical_thmcontent">
+  <p>    \(\mathcal{S}\) の同じ始状態と終状態を結ぶ二つの断熱操作の仕事は等しい。 </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:ref">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">66</span>
+    <span class="definition_thmtitle">組成ごとの基準状態</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#def:ref">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0004.html#def:mass">定義 32</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.ref" class="lean_decl">OpThermo.Adiabatic.Calibration.ref</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.comp_ref" class="lean_decl">OpThermo.Adiabatic.Calibration.comp_ref</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    成分ごとに、単位質量の基準状態を一つ選ぶ。 組成 \(k\) に対し、各成分の基準状態を \(k\) の割合で並べた状態を \(\mathrm{ref}(k)\) と書く。 </p>
+
+  </div>
+</div>
+<p>\(\mathrm{ref}\) は線形で、\(\mathrm{comp}(\mathrm{ref}(k)) = k\) を満たす。 Lean では、この性質を持つ線形写像として与える。 </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:energy-composite">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">67</span>
+    <span class="definition_thmtitle">複合系の内部エネルギー</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#def:energy-composite">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#emp:path-indep-composite">経験則 65</a></li>
+          
+          <li><a href="sect0006.html#def:ref">定義 66</a></li>
+          
+          <li><a href="sect0006.html#emp:stability-ch">経験則 64</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.energy" class="lean_decl">OpThermo.CompositeOps.energy</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.energy_eq_of_to" class="lean_decl">OpThermo.CompositeOps.energy_eq_of_to</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.energy_eq_of_from" class="lean_decl">OpThermo.CompositeOps.energy_eq_of_from</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    \(\mathrm{ref}(\mathrm{comp}\,  X) \to X\) の断熱操作 \(p\) があれば \(U(X) := W(p)\)、なければ \(X \to \mathrm{ref}(\mathrm{comp}\,  X)\) の断熱操作 \(q\) をとって \(U(X) := -W(q)\) とする。 </p>
+
+  </div>
+</div>
+<p>\(X\) と \(\mathrm{ref}(\mathrm{comp}\,  X)\) は組成が等しいので、CH からどちらかの断熱操作は存在する。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:energy-composite">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">68</span>
+    <span class="theorem_thmtitle">複合系の内部エネルギーの存在</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:energy-composite">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000070"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:energy-composite">定義 67</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.energy_spec" class="lean_decl">OpThermo.CompositeOps.energy_spec</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.energy_ref" class="lean_decl">OpThermo.CompositeOps.energy_ref</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    任意の断熱操作 \(p : X \to Y\) について \(U(Y) - U(X) = W(p)\)。 基準状態では \(U(\mathrm{ref}(k)) = 0\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000070">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>断熱操作で組成は変わらないので、\(X\) と \(Y\) の基準状態は同じである。 基準状態と \(X\)、基準状態と \(Y\) をどちら向きに結ぶかで分け、続けて行った断熱操作に経路独立性を使う。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:energy-extensive">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">69</span>
+    <span class="theorem_thmtitle">内部エネルギーは示量的</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:energy-extensive">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000071"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#thm:energy-composite">定理 68</a></li>
+          
+          <li><a href="sect0003.html#def:extensive-fn">定義 27</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.energy_add_sub" class="lean_decl">OpThermo.CompositeOps.energy_add_sub</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.energy_add" class="lean_decl">OpThermo.CompositeOps.energy_add</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.energy_smul" class="lean_decl">OpThermo.CompositeOps.energy_smul</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.CompositeOps.energy_extensive" class="lean_decl">OpThermo.CompositeOps.energy_extensive</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    \(U(X + Y) = U(X) + U(Y)\)、\(U(tX) = t\,  U(X)\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000071">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>脇に \(Z\) を置いた断熱操作は仕事を変えないので、組成の等しい \(X, Y\) について \(U(X + Z) - U(Y + Z) = U(X) - U(Y)\)。 \(X\) を \(\mathrm{ref}(\mathrm{comp}\,  X)\) に、\(Y\) を \(\mathrm{ref}(\mathrm{comp}\,  Y)\) に順に置き換え、\(\mathrm{ref}\) の線形性と \(U(\mathrm{ref}(k)) = 0\) を使う。 スケーリングでは、\(t\) 倍した系への断熱操作の仕事が \(t\) 倍になることを使う。 </p>
+
+  </div>
+</div>
+<h1 id="a0000000014">6.3 相殺則</h1>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:split">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">70</span>
+    <span class="lemma_thmtitle">分割と再結合 (A5)</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#lem:split">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000072"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0003.html#def:state-space">定義 25</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.split_recombine" class="lean_decl">OpThermo.Adiabatic.split_recombine</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>    \(0 \le t \le 1\) なら \(X = tX + (1-t)X\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000072">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>加群の分配律による。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:cancel">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">71</span>
+    <span class="theorem_thmtitle">相殺則</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:cancel">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000073"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#thm:accessibility-axioms">定理 63</a></li>
+          
+          <li><a href="sect0006.html#emp:stability-ch">経験則 64</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.cancel" class="lean_decl">OpThermo.Adiabatic.cancel</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    \(X + Z \prec Y + Z\) なら \(X \prec Y\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000073">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(e = 1/(n+1)\) とおくと、A4 から \(eX + eZ \prec eY + eZ\)。 \(eX\) を一つずつ \(eY\) に置き換える帰納法で、\(j \cdot eX + eZ \prec j \cdot eY + eZ\) が任意の \(j\) で成り立つ。 \(j = n+1\) とすれば \(X + eZ \prec Y + eZ\) となり、A6 から \(X \prec Y\)。 </p>
+
+  </div>
+</div>
+<h1 id="a0000000015">6.4 基準状態と形式的な不等式</h1>
+<p>エントロピーの目盛りを作るには、元に戻せない変化の例が一つ要る。 すべての状態が断熱的に行き来できるなら、断熱到達性は何も区別せず、エントロピーは定数になる。 </p>
+<div class="empirical_thmwrapper theorem-style-definition" id="emp:irreversible">
+  <div class="empirical_thmheading">
+    <span class="empirical_thmcaption">
+    経験則
+    </span>
+    <span class="empirical_thmlabel">72</span>
+    <span class="empirical_thmtitle">元に戻せない断熱操作がある</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#emp:irreversible">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:adiabatic">定義 62</a></li>
+          
+          <li><a href="sect0004.html#def:mass">定義 32</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.strict" class="lean_decl">OpThermo.Adiabatic.Calibration.strict</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="empirical_thmcontent">
+  <p>    組成の等しい状態 \(X_0, X_1\) で、\(X_0 \prec X_1\) かつ \(X_1 \not\prec X_0\) を満たすものがある。 </p>
+
+  </div>
+</div>
+<p>Joule の実験 (図&#160;<a href="sect0004.html#fig:joule">4.1</a>) が例である。 重りを下げて水をかき混ぜれば水は温まるが、水を冷やして重りを持ち上げる断熱操作は見つかっていない。 これは Kelvin–Planck の形の第二法則にあたる (第&#160;<a href="sect0006.html#sec:second-law">6.8</a> 節)。 </p>
+<div class="definition_thmwrapper theorem-style-definition" id="def:calibration">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">73</span>
+    <span class="definition_thmtitle">基準状態</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#def:calibration">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#thm:accessibility-axioms">定理 63</a></li>
+          
+          <li><a href="sect0006.html#emp:stability-ch">経験則 64</a></li>
+          
+          <li><a href="sect0006.html#def:ref">定義 66</a></li>
+          
+          <li><a href="sect0006.html#emp:irreversible">経験則 72</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration" class="lean_decl">OpThermo.Adiabatic.Calibration</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    経験則&#160;<a href="sect0006.html#emp:irreversible">72</a> の状態の組を一つ選び、\(X_0, X_1\) とする。\(X_0 \mathrel {\prec \! \prec }X_1\) と書く。 組成ごとの基準状態 \(\mathrm{ref}\) (定義&#160;<a href="sect0006.html#def:ref">66</a>) は \(\mathrm{ref}(\mathrm{comp}\,  X_0) = X_0\) を満たすように選ぶ。 \(Z(a, b) := a X_0 + b X_1\)、\(\mathrm{base}(X) := \mathrm{ref}(\mathrm{comp}\,  X)\) とおく。 </p>
+
+  </div>
+</div>
+<div class="definition_thmwrapper theorem-style-definition" id="def:R">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">74</span>
+    <span class="definition_thmtitle">形式的な不等式</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#def:R">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:calibration">定義 73</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.R" class="lean_decl">OpThermo.Adiabatic.Calibration.R</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    \(\alpha , \beta \in \mathbb {R}\) に対し、\(R(P, Q, \alpha , \beta )\) を次で定める。 \(a - a' = \alpha \)、\(b - b' = \beta \) を満たす \(a, b, a', b' \ge 0\) が存在して \(P + Z(a, b) \prec Q + Z(a', b')\)。 </p>
+
+  </div>
+</div>
+<p>形式的には「\(P + \alpha X_0 + \beta X_1 \prec Q\)」と読む。 この形にすると、元の議論の \(X_0 \prec X \prec X_1\) という範囲の制限が要らなくなる。 </p>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:R-rep">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">75</span>
+    <span class="lemma_thmtitle">表示によらない</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#lem:R-rep">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000074"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:R">定義 74</a></li>
+          
+          <li><a href="sect0006.html#thm:cancel">定理 71</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.R.rep" class="lean_decl">OpThermo.Adiabatic.Calibration.R.rep</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>    \(R(P, Q, \alpha , \beta )\) なら、\(a - a' = \alpha \)、\(b - b' = \beta \) を満たす任意の \(a, b, a', b' \ge 0\) で \(P + Z(a,b) \prec Q + Z(a',b')\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000074">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>与えられた表示 \((a_0, b_0, a_0', b_0')\) の両辺に \(Z(a', b')\) を足し、\(Z(a_0', b_0')\) を相殺する。 </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:R-algebra">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">76</span>
+    <span class="lemma_thmtitle">推移と加法とスケーリング</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#lem:R-algebra">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000075"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:R">定義 74</a></li>
+          
+          <li><a href="sect0006.html#lem:R-rep">補題 75</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.R.trans" class="lean_decl">OpThermo.Adiabatic.Calibration.R.trans</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.R.add" class="lean_decl">OpThermo.Adiabatic.Calibration.R.add</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.R.smul" class="lean_decl">OpThermo.Adiabatic.Calibration.R.smul</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.R_of_prec" class="lean_decl">OpThermo.Adiabatic.Calibration.R_of_prec</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.R.to_prec" class="lean_decl">OpThermo.Adiabatic.Calibration.R.to_prec</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>    \(R\) は係数を足し合わせる形で推移的であり、複合とスケーリングで保たれる。 \(R(P, Q, 0, 0)\) は \(P \prec Q\) と同値である。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000075">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>A2, A3, A4 を表示に適用する。 \(R(P,Q,0,0) \Rightarrow P \prec Q\) には表示によらないことを使う。 </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:R-base">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">77</span>
+    <span class="lemma_thmtitle">基準状態の順序</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#lem:R-base">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000076"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:R">定義 74</a></li>
+          
+          <li><a href="sect0006.html#lem:R-rep">補題 75</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.R_base" class="lean_decl">OpThermo.Adiabatic.Calibration.R_base</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.R_base'" class="lean_decl">OpThermo.Adiabatic.Calibration.R_base'</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.R_base_nonneg" class="lean_decl">OpThermo.Adiabatic.Calibration.R_base_nonneg</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>    \(R(P, P, \gamma , -\gamma )\) は \(\gamma \ge 0\) と同値である。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000076">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(\gamma \ge 0\) なら A4 から \(\gamma X_0 \prec \gamma X_1\)。 \(\gamma {\lt} 0\) なら相殺則で \(P\) を除いて \(|\gamma | X_1 \prec |\gamma | X_0\) となり、\(1/|\gamma |\) 倍して \(X_1 \prec X_0\) が出て矛盾する。 </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:R-stability">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">78</span>
+    <span class="lemma_thmtitle">形式的な不等式の安定性</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#lem:R-stability">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000077"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:R">定義 74</a></li>
+          
+          <li><a href="sect0006.html#lem:R-rep">補題 75</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.R.stability_up" class="lean_decl">OpThermo.Adiabatic.Calibration.R.stability_up</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.R.stability_down" class="lean_decl">OpThermo.Adiabatic.Calibration.R.stability_down</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>    \(\varepsilon _n = 1/(n+1)\) とする。 すべての \(n\) で \(R(P, Q, \alpha + \varepsilon _n, \beta - \varepsilon _n)\) なら \(R(P, Q, \alpha , \beta )\)。 符号を入れ替えた形も成り立つ。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000077">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>固定した表示に \(\varepsilon _n X_0\) と \(\varepsilon _n X_1\) を足した表示をとり、A6 を適用する。 </p>
+
+  </div>
+</div>
+<h1 id="a0000000016">6.5 エントロピーの構成</h1>
+<figure id="fig:entropy">
+  <div class="centered"><img src="images/img-0009.svg" alt="\includegraphics{figures/entropy.svg}" style="width: ; height: " />
+ <figcaption>
+  <span class="caption_title">図</span> 
+  <span class="caption_ref">6.1</span> 
+  <span class="caption_text">エントロピーの構成。\(X\) と同じ組成の基準状態から、\(X_0\) を量 \(s\) だけ \(X_1\) に置き換えた系と \(X\) を比べる。\(X\) に断熱的に到達できる割合 (緑) と、\(X\) から到達できる割合 (赤) の境目が \(S(X)\) である。</span> 
+</figcaption>  </div>
+
+</figure>
+<div class="definition_thmwrapper theorem-style-definition" id="def:entropy">
+  <div class="definition_thmheading">
+    <span class="definition_thmcaption">
+    定義
+    </span>
+    <span class="definition_thmlabel">79</span>
+    <span class="definition_thmtitle">エントロピー</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#def:entropy">#</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:R">定義 74</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.entropy" class="lean_decl">OpThermo.Adiabatic.Calibration.entropy</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.Below" class="lean_decl">OpThermo.Adiabatic.Calibration.Below</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.Above" class="lean_decl">OpThermo.Adiabatic.Calibration.Above</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="definition_thmcontent">
+  <p>    \(\mathrm{Below}(X, s) := R(\mathrm{base}(X), X, -s, s)\)、\(\mathrm{Above}(X, s) := R(X, \mathrm{base}(X), s, -s)\) とおく。 エントロピーを \(S(X) := \sup \{  s : \mathrm{Below}(X, s) \} \) と定義する。 </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:below-le-above">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">80</span>
+    <span class="lemma_thmtitle">下と上の比較</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#lem:below-le-above">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000078"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:entropy">定義 79</a></li>
+          
+          <li><a href="sect0006.html#lem:R-algebra">補題 76</a></li>
+          
+          <li><a href="sect0006.html#lem:R-base">補題 77</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.below_le_above" class="lean_decl">OpThermo.Adiabatic.Calibration.below_le_above</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.Below.mono" class="lean_decl">OpThermo.Adiabatic.Calibration.Below.mono</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>    \(\mathrm{Below}(X, s)\) かつ \(\mathrm{Above}(X, s')\) なら \(s \le s'\)。 また \(\mathrm{Below}(X, s)\) は \(s\) について下に閉じている。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000078">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>推移させると \(R(\mathrm{base}(X), \mathrm{base}(X), s'-s, s-s')\) を得るので、基準状態の順序から \(s' - s \ge 0\)。 </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:below-or-above">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">81</span>
+    <span class="lemma_thmtitle">どちらか一方は成り立つ</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#lem:below-or-above">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000079"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:entropy">定義 79</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.below_or_above" class="lean_decl">OpThermo.Adiabatic.Calibration.below_or_above</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>    任意の \(s\) で \(\mathrm{Below}(X, s)\) または \(\mathrm{Above}(X, s)\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000079">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>表示 \(\mathrm{base}(X) + Z(a, b)\) と \(X + Z(a', b')\) の組成は等しいので、CH を適用する。 </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:finite">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">82</span>
+    <span class="lemma_thmtitle">エントロピーは有限</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#lem:finite">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000080"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#lem:below-or-above">補題 81</a></li>
+          
+          <li><a href="sect0006.html#lem:R-rep">補題 75</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.exists_above" class="lean_decl">OpThermo.Adiabatic.Calibration.exists_above</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.exists_below" class="lean_decl">OpThermo.Adiabatic.Calibration.exists_below</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>    \(\mathrm{Below}(X, s)\) を満たす \(s\) も、\(\mathrm{Above}(X, s)\) を満たす \(s\) も存在する。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000080">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(\mathrm{Above}\) を満たす \(s\) がなければ、すべての \(s\) で \(\mathrm{Below}(X, s)\) が成り立つ。 \(s = k\) (\(k = n+1\)) とすると \(\mathrm{base}(X) + k X_1 \prec X + k X_0\)。 \(1/k\) 倍すると \(X_1 + \frac{1}{k} \mathrm{base}(X) \prec X_0 + \frac{1}{k} X\) となり、A6 から \(X_1 \prec X_0\) が出て矛盾する。 もう一方も同様である。 </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:attained">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">83</span>
+    <span class="lemma_thmtitle">上限は達成される</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#lem:attained">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000081"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#lem:finite">補題 82</a></li>
+          
+          <li><a href="sect0006.html#lem:below-le-above">補題 80</a></li>
+          
+          <li><a href="sect0006.html#lem:R-stability">補題 78</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.below_entropy" class="lean_decl">OpThermo.Adiabatic.Calibration.below_entropy</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.above_entropy" class="lean_decl">OpThermo.Adiabatic.Calibration.above_entropy</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>    \(\mathrm{Below}(X, S(X))\) かつ \(\mathrm{Above}(X, S(X))\)。 つまり形式的に \(X \sim \mathrm{base}(X) - S(X) X_0 + S(X) X_1\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000081">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(S(X) - \varepsilon _n\) では \(\mathrm{Below}\) が成り立つ (上限の性質と下に閉じていること)。 \(S(X) + \varepsilon _n\) では \(\mathrm{Below}\) が成り立たないので、どちらか一方の補題から \(\mathrm{Above}\) が成り立つ。 どちらも安定性で \(\varepsilon _n \to 0\) とする。 </p>
+
+  </div>
+</div>
+<div class="lemma_thmwrapper theorem-style-plain" id="lem:entropy-eq">
+  <div class="lemma_thmheading">
+    <span class="lemma_thmcaption">
+    補題
+    </span>
+    <span class="lemma_thmlabel">84</span>
+    <span class="lemma_thmtitle">エントロピーの特徴づけ</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#lem:entropy-eq">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000082"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#lem:attained">補題 83</a></li>
+          
+          <li><a href="sect0006.html#lem:below-le-above">補題 80</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.entropy_eq_of" class="lean_decl">OpThermo.Adiabatic.Calibration.entropy_eq_of</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="lemma_thmcontent">
+  <p>    \(\mathrm{Below}(X, s)\) かつ \(\mathrm{Above}(X, s)\) なら \(S(X) = s\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000082">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>上限の定義から \(s \le S(X)\)、下と上の比較から \(S(X) \le s\)。 </p>
+
+  </div>
+</div>
+<h1 id="a0000000017">6.6 エントロピーの測定</h1>
+<p>\(S(X)\) は上限として定義した。 Lean では実数の上限 \(\sup \) を使うので、この定義は古典論理に頼っており、数を計算する手続きを直接は与えない。 しかし、断熱到達性の実験を繰り返せば \(S(X)\) は任意の精度で求まる。 長さを、単位の棒の分数個と比べて測るのと同じである。 </p>
+<p>一回の実験は次のとおり。 \(X\) と同じ組成の基準状態 \(\mathrm{base}(X)\) から \(X_0\) を量 \(s\) だけ \(X_1\) に置き換えた系を用意し、それを断熱操作で \(X\) に移せるかを試す。 移せれば \(\mathrm{Below}(X, s)\) が成り立つ。 移せなければ、CH により逆向きに移せる。つまり \(\mathrm{Above}(X, s)\) が成り立つ。 </p>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:entropy-bisect">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">85</span>
+    <span class="theorem_thmtitle">二分法によるエントロピーの測定</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:entropy-bisect">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000083"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:entropy">定義 79</a></li>
+          
+          <li><a href="sect0006.html#lem:below-or-above">補題 81</a></li>
+          
+          <li><a href="sect0006.html#lem:below-le-above">補題 80</a></li>
+          
+          <li><a href="sect0006.html#lem:attained">補題 83</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.entropy_bisect" class="lean_decl">OpThermo.Adiabatic.Calibration.entropy_bisect</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.bisectStep" class="lean_decl">OpThermo.Adiabatic.Calibration.bisectStep</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.le_entropy" class="lean_decl">OpThermo.Adiabatic.Calibration.le_entropy</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.entropy_le" class="lean_decl">OpThermo.Adiabatic.Calibration.entropy_le</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    \(\mathrm{Below}(X, a)\) と \(\mathrm{Above}(X, b)\) から始め、区間の中点 \(m\) で実験して、移せれば下端を、移せなければ上端を \(m\) に動かす。 \(n\) 回の実験の後の区間 \([a_n, b_n]\) は \(a_n \le S(X) \le b_n\) かつ \(b_n - a_n = (b - a)/2^n\) を満たす。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000083">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(\mathrm{Below}(X, a_n)\) と \(\mathrm{Above}(X, b_n)\) が各段で保たれることを帰納法で示す。 \(\mathrm{Below}(X, s)\) なら \(s \le S(X)\)、\(\mathrm{Above}(X, s)\) なら \(S(X) \le s\) である。 </p>
+
+  </div>
+</div>
+<p>この意味で、エントロピーは実験を問い合わせ先とする計算で求まる。 ただし一回の実験は理想化されている。 断熱操作が見つからないことは、存在しないことの証明にならない。 実際には両向きの操作を試し、どちらかが見つかるまで続ける。 CH はどちらかが必ず存在することを保証するだけで、見つけ方は与えない。 実験室での実際の測定は第&#160;<a href="chap-calorimetry.html">9</a> 章で述べる。 </p>
+<h1 id="a0000000018">6.7 エントロピー原理</h1>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:entropy-principle">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">86</span>
+    <span class="theorem_thmtitle">エントロピー原理</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:entropy-principle">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000084"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#lem:attained">補題 83</a></li>
+          
+          <li><a href="sect0006.html#lem:below-le-above">補題 80</a></li>
+          
+          <li><a href="sect0006.html#lem:R-algebra">補題 76</a></li>
+          
+          <li><a href="sect0006.html#lem:R-base">補題 77</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.entropy_principle" class="lean_decl">OpThermo.Adiabatic.Calibration.entropy_principle</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    \(\mathrm{comp}\,  X = \mathrm{comp}\,  Y\) なら \(X \prec Y \iff S(X) \le S(Y)\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000084">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>(\(\Rightarrow \)) \(\mathrm{Below}(X, S(X))\) と \(X \prec Y\) を推移させて \(\mathrm{Below}(Y, S(X))\)。 \(\mathrm{Above}(Y, S(Y))\) と比べて \(S(X) \le S(Y)\)。 (\(\Leftarrow \)) \(X \prec \) 基準混合 \((S(X))\) \(\prec \) 基準混合 \((S(Y))\) \(\prec Y\) を \(R\) で推移させると \(R(X, Y, 0, 0)\)、すなわち \(X \prec Y\)。 </p>
+
+  </div>
+</div>
+<div class="corollary_thmwrapper theorem-style-plain" id="cor:strict">
+  <div class="corollary_thmheading">
+    <span class="corollary_thmcaption">
+    系
+    </span>
+    <span class="corollary_thmlabel">87</span>
+    <span class="corollary_thmtitle">不可逆性</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#cor:strict">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000085"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#thm:entropy-principle">定理 86</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.strictPrec_iff" class="lean_decl">OpThermo.Adiabatic.Calibration.strictPrec_iff</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="corollary_thmcontent">
+  <p>    \(\mathrm{comp}\,  X = \mathrm{comp}\,  Y\) なら \(X \mathrel {\prec \! \prec }Y \iff S(X) {\lt} S(Y)\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000085">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>エントロピー原理を両方向に使う。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:additive">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">88</span>
+    <span class="theorem_thmtitle">加法性と示量性</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:additive">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000086"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#lem:entropy-eq">補題 84</a></li>
+          
+          <li><a href="sect0006.html#lem:attained">補題 83</a></li>
+          
+          <li><a href="sect0006.html#lem:R-algebra">補題 76</a></li>
+          
+          <li><a href="sect0003.html#def:extensive-fn">定義 27</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.entropy_add" class="lean_decl">OpThermo.Adiabatic.Calibration.entropy_add</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.entropy_smul" class="lean_decl">OpThermo.Adiabatic.Calibration.entropy_smul</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.entropy_extensive" class="lean_decl">OpThermo.Adiabatic.Calibration.entropy_extensive</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    \(S(X + Y) = S(X) + S(Y)\)、\(S(tX) = t S(X)\)。つまり \(S\) は示量的である。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000086">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(X\) と \(Y\) の \(\mathrm{Below}\) と \(\mathrm{Above}\) を足し合わせる (またはスケーリングする) と、\(X + Y\) (または \(tX\)) について値 \(S(X) + S(Y)\) (または \(tS(X)\)) の \(\mathrm{Below}\) と \(\mathrm{Above}\) が得られる。 特徴づけの補題を適用する。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:calibration">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">89</span>
+    <span class="theorem_thmtitle">較正</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:calibration">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000087"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#lem:entropy-eq">補題 84</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.entropy_X₀" class="lean_decl">OpThermo.Adiabatic.Calibration.entropy_X₀</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.entropy_X₁" class="lean_decl">OpThermo.Adiabatic.Calibration.entropy_X₁</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    \(S(X_0) = 0\)、\(S(X_1) = 1\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000087">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>反射律から直接 \(\mathrm{Below}\) と \(\mathrm{Above}\) が成り立つ。 </p>
+
+  </div>
+</div>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:unique">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">90</span>
+    <span class="theorem_thmtitle">一意性</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:unique">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000088"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#lem:attained">補題 83</a></li>
+          
+          <li><a href="sect0006.html#lem:R-rep">補題 75</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.entropy_unique" class="lean_decl">OpThermo.Adiabatic.Calibration.entropy_unique</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    \(S' : \mathcal{S} \to \mathbb {R}\) が示量的で、組成の等しい状態について \(X \prec Y \iff S'(X) \le S'(Y)\) を満たすとする。 このとき \(a := S'(X_1) - S'(X_0) {\gt} 0\) であり、\(S'(X) = a S(X) + S'(\mathrm{base}(X))\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000088">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>\(X + Z(a', b') \sim \mathrm{base}(X) + Z(a, b)\) の両辺に \(S'\) を適用し、示量性で展開する。 </p>
+
+  </div>
+</div>
+<h1 id="sec:second-law">6.8 第二法則</h1>
+
+<p>第二法則には歴史的にいくつもの言い方がある。 この blueprint での位置づけは次のとおり。 </p>
+<ul class="itemize">
+  <li><p><b class="bfseries">エントロピー原理</b> (定理&#160;<a href="sect0006.html#thm:entropy-principle">86</a>)：組成の等しい状態について、断熱的に移れるのはエントロピーが減らないときに限る。この blueprint ではこれを第二法則の中心とみなす。Lieb–Yngvason&#160;<span class="cite">
+	[
+	<a href="sect0008.html#LY99" >1</a>
+	]
+</span> と同じ立場である。 </p>
+</li>
+  <li><p><b class="bfseries">Kelvin–Planck</b>：熱を全部仕事に変える循環過程はない。ここでは、水を冷やして重りを持ち上げる断熱操作はないという形で、経験則&#160;<a href="sect0006.html#emp:irreversible">72</a> として置いた。 </p>
+</li>
+  <li><p><b class="bfseries">Clausius</b>：熱は低温から高温へ自然には流れない。温度を定義した後で定理&#160;<a href="sect0007.html#thm:exchange-dir">106</a> として導く。 </p>
+</li>
+  <li><p><b class="bfseries">Carathéodory</b>：どの状態のどんな近くにも、その状態から断熱的に到達できない状態がある。この形はここの公理からは出ない (下の注意と定理&#160;<a href="sect0006.html#thm:model">92</a>)。公理から出るのは、次の定理の弱い形である。 </p>
+</li>
+</ul>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:caratheodory">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">91</span>
+    <span class="theorem_thmtitle">少量の補助系を添えても不可逆</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:caratheodory">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000089"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#thm:entropy-principle">定理 86</a></li>
+          
+          <li><a href="sect0006.html#thm:additive">定理 88</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.Adiabatic.Calibration.caratheodory" class="lean_decl">OpThermo.Adiabatic.Calibration.caratheodory</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    任意の状態 \(X\) と \(t {\gt} 0\) について、\(X + tX_1 \not\prec X + tX_0\)。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000089">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>両辺の組成は等しく、エントロピーは \(S(X) + t\) と \(S(X)\) である。 エントロピー原理から、移れるなら \(S(X) + t \le S(X)\) となり矛盾する。 </p>
+
+  </div>
+</div>
+<p>\(t\) はいくらでも小さくとれるので、元に戻せない変化 \(X_0 \to X_1\) は、どんなに少量でも、どんな系 \(X\) を添えても元に戻せない。 </p>
+<p>これは Carathéodory の原理そのものではない。 Carathéodory の原理は、始状態 \(Y\) を固定して、\(Y\) の任意の近傍に \(Y\) から到達できない状態があることを主張する。 上の定理では始状態 \(X + tX_1\) が \(t\) とともに動く。 また、ここの状態の空間 \(\mathcal{S}\) には近傍を決める位相を入れていない。 実際、定理&#160;<a href="sect0006.html#thm:model">92</a> のモデルでは、\(X_0 = (1, 0)\) から質量の等しいすべての状態に断熱的に移れる。 このモデルは公理をすべて満たすので、近傍の形の原理は公理から出ない。 この形を得るには、状態の空間の位相と、考える状態が内点であることと、その点からエントロピーを下げる向きの状態が近くにあることを、別に仮定する必要がある&#160;<span class="cite">
+	[
+	<a href="sect0008.html#LY99" >1</a>
+	]
+</span>。 </p>
+<p>経験的な入力は、A1–A4 を導いた断熱操作の法則、A6 と比較仮説、元に戻せない断熱操作の存在の三つである。 エントロピー原理は、これらから導いた定理である。 元に戻せない断熱操作の存在を除くと、エントロピーは定数になり、エントロピー原理は何も主張しなくなる。 </p>
+<h1 id="a0000000019">6.9 無矛盾性</h1>
+<div class="theorem_thmwrapper theorem-style-plain" id="thm:model">
+  <div class="theorem_thmheading">
+    <span class="theorem_thmcaption">
+    定理
+    </span>
+    <span class="theorem_thmlabel">92</span>
+    <span class="theorem_thmtitle">モデルの存在</span>
+    <div class="thm_header_extras">
+
+    
+    ✓
+        </div>
+    <div class="thm_header_hidden_extras">
+
+    <a class="icon proof" href="sect0006.html#thm:model">#</a>
+    
+    <a class="icon proof" href="sect0006.html#a0000000090"><svg  class="icon icon-cogs "><use xlink:href="symbol-defs.svg#icon-cogs"></use></svg>
+</a>
+    
+    
+    <button class="modal"><svg  class="icon icon-mindmap "><use xlink:href="symbol-defs.svg#icon-mindmap"></use></svg>
+</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Uses</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="sect0006.html#def:adiabatic">定義 62</a></li>
+          
+          <li><a href="sect0006.html#def:calibration">定義 73</a></li>
+          
+          <li><a href="sect0006.html#thm:unique">定理 90</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+    
+    <button class="modal lean">L∃∀N</button>
+        <div class="modal-container">
+      <div class="modal-content">
+        <header>
+          <h1>Lean declarations</h1>
+          <button class="closebtn"><svg  class="icon icon-cross "><use xlink:href="symbol-defs.svg#icon-cross"></use></svg>
+</button>
+        </header>
+        
+        <ul class="uses">
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.ModelState" class="lean_decl">OpThermo.ModelState</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.modelCalibration" class="lean_decl">OpThermo.modelCalibration</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.model_entropy" class="lean_decl">OpThermo.model_entropy</a></li>
+          
+          <li><a href="https://leanprover-community.github.io/mathlib4_docs/find/#doc/OpThermo.model_reach_all" class="lean_decl">OpThermo.model_reach_all</a></li>
+          
+        </ul>
+    
+      </div>
+    </div>
+
+    
+        </div>
+  </div>
+  <div class="theorem_thmcontent">
+  <p>    成分が一つで、\(\mathcal{S} = \mathbb {R}_{\ge 0}\times \mathbb {R}_{\ge 0}\)、\(X \prec Y :\iff (X_1 = Y_1\) かつ \(X_2 \le Y_2)\)、組成 \(X_1\) のモデルは公理をすべて満たし、\(X_0 = (1, 0) \mathrel {\prec \! \prec }X_1 = (1, 1)\)。 このモデルで構成したエントロピーは第二成分に一致する。 したがって公理系は矛盾しない。 さらに、\(X_0\) からは質量の等しいすべての状態に断熱的に移れる。 </p>
+
+  </div>
+</div>
+<div class="proof_wrapper" id="a0000000090">
+  <div class="proof_heading">
+    <span class="proof_caption">
+    Proof
+    </span>
+    <span class="expand-proof">▶</span>
+  </div>
+  <div class="proof_content">
+  <p>A6 は \(\varepsilon _n \to 0\) の極限で示す。質量の等式は \(n = 0, 1\) の二つの式から出る。 エントロピーの一致は一意性の定理による。 </p>
+
+  </div>
+</div>
+
+</div> <!--main-text -->
+</div> <!-- content-wrapper -->
+</div> <!-- content -->
+</div> <!-- wrapper -->
+
+<nav class="prev_up_next">
+  <svg  id="showmore-minus" class="icon icon-eye-minus showmore"><use xlink:href="symbol-defs.svg#icon-eye-minus"></use></svg>
+
+  <svg  id="showmore-plus" class="icon icon-eye-plus showmore"><use xlink:href="symbol-defs.svg#icon-eye-plus"></use></svg>
+
+  <a href="sect0005.html" title="第一法則"><svg  class="icon icon-arrow-left "><use xlink:href="symbol-defs.svg#icon-arrow-left"></use></svg>
+</a>
+  <a href="index.html" title="操作主義による熱力学：長さの測定から Gibbs 自由エネルギーまで"><svg  class="icon icon-arrow-up "><use xlink:href="symbol-defs.svg#icon-arrow-up"></use></svg>
+</a>
+  <a href="sect0007.html" title="温度、圧力、化学ポテンシャル"><svg  class="icon icon-arrow-right "><use xlink:href="symbol-defs.svg#icon-arrow-right"></use></svg>
+</a>
+</nav>
+
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/plastex.js"></script>
+<script type="text/javascript" src="js/svgxuse.js"></script>
+<script type="text/javascript" src="js/js.cookie.min.js"></script>
+<script type="text/javascript" src="js/showmore.js"></script>
+</body>
+</html>
