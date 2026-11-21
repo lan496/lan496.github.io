@@ -26,6 +26,7 @@ permalink: /publications/
 ## Technical Notes
 
 1. D. Shintani, S. Iwase, J. Oshiki, **K. Shinohara**, N. Charoenphakdee, M. Hiramatsu, Y. Tsuboi, Y. Asano, H. Akita, Y.-B. Zhuang, S. Takamoto, and C. Shinagawa, "Technical Note on Matlantis PFP v9: Extending the Element and Domain Coverage of the r2SCAN Training Data" [[arXiv:2611.23873](https://arxiv.org/abs/2611.23873)]
+1. **K. Shinohara**, "Conserved quantities and ensemble measure for Martyna--Tobias--Klein barostats with restricted cell degrees of freedom" [[arXiv:2603.24061](https://arxiv.org/abs/2603.24061)]
 
 ## Contributed Articles (in Japanese)
 
