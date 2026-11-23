@@ -8,10 +8,10 @@ permalink: /publications/
 
 1. J. George, M. K. Horton, A. D. Kaplan, S. R. Kavanagh, J. Riebesell, A. S. Rosen, H. Yang, ..., **K. Shinohara**, ..., K. A. Persson, A. Jain, and S. P. Ong (166 authors), "pymatgen: 15 years of community growth, new functionality, and future prospects" [[arXiv:2610.23538](https://arxiv.org/abs/2610.23538)]
 1. C. Shinagawa, S. Takamoto, D. Shintani, Y.-B. Zhuang, Y. Tsuboi, K. Nishimra, **K. Shinohara**, S. Iwase, Y. Tanaka, and J. Li, "Matlantis-PFP v8: Universal Machine Learning Interatomic Potential with Better Experimental Agreements via r2SCAN Functional" [[arXiv:2603.11063](https://arxiv.org/abs/2603.11063)]
-1. T. Nomoto, **K. Shinohara**, H. Watanabe, and R. Arita, "Systematic Magnetic Structure Generation Based on Oriented Spin Space Groups: Formulation, Applications, and High-Throughput First-Principles Calculations" [[arXiv:2601.15735](https://arxiv.org/abs/2601.15735)]
 
 ## Journal Publications
 
+1. T. Nomoto\*, **K. Shinohara**\*, H. Watanabe, and R. Arita, Systematic Magnetic Structure Generation Based on Oriented Spin Space Groups: Formulation, Applications, and High-Throughput First-Principles Calculations, [Phys. Rev. X 16, 041052 (2026)](https://journals.aps.org/prx/abstract/10.1103/8n3w-h2t1) [[arxiv:2601.15735](https://arxiv.org/abs/2601.15735)] (\*equal contribution; Featured in Physics: [Physics 19, 157 (2026)](https://physics.aps.org/articles/v19/157))
 1. T. Shibayama, H. Imamura, K. Nishimra, **K. Shinohara**, C. Shinagawa, S. Takamoto, and J. Li, Efficient crystal structure prediction using universal neural network potential with diversity preservation in genetic algorithms, [Phys. Rev. Mater. 10, 063401 (2026)](https://journals.aps.org/prmaterials/abstract/10.1103/4knt-ccqg) [[arxiv:2503.21201](https://arxiv.org/abs/2503.21201)]
 1. T. Ishii, K. Hisama, and **K. Shinohara**, Symmetry-aware conditional generation of crystal structures using diffusion models, [Comput. Mater. Sci. 271, 114789 (2026)](https://doi.org/10.1016/j.commatsci.2026.114789) [[arxiv:2601.08115](https://arxiv.org/abs/2601.08115)]
 1. A. Togo, **K. Shinohara**, and I. Tanaka, Spglib: a software library for crystal symmetry search, [STAM-M 4, 1, 2384822 (2024)](https://www.tandfonline.com/doi/full/10.1080/27660400.2024.2384822) [[arxiv:1808.01590](https://arxiv.org/abs/1808.01590)]
